@@ -1,8 +1,12 @@
 //
-//  File.swift
+//  MainPageViewModel.swift
 //  RunningBuddy
 //
 //  Created by Alexander Kozharin on 06.05.25.
 //
 
-import Foundation
+import SwiftUI
+
+class MainPageViewModel: ObservableObject {
+    
+}
