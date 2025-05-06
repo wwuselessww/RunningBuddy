@@ -8,10 +8,16 @@
 import SwiftUI
 
 struct MainPage: View {
+    @ObservedObject var vm = MainPageViewModel()
     var body: some View {
-        Text("hi")
+        VStack {
+            Header(distance: $vm.totalMonthDistance)
+            Spacer()
+        }
     }
 }
 #Preview {
     MainPage()
 }
+
+

@@ -8,12 +8,29 @@
 import SwiftUI
 
 struct Header: View {
+    @Binding var distance: Int
     var body: some View {
-        Text("Sss")
+        VStack {
+            Text("You have already run")
+            HStack {
+                Text("\(distance)km")
+                    .foregroundStyle(.white)
+                    .padding(.all, 5)
+                    .background {
+                        RoundedRectangle(cornerRadius: 16)
+                            .foregroundStyle(.red)
+                    }
+                    .foregroundStyle(.white)
+                Text(" this month")
+            }
+        }
+        .font(Font.system(size: 30))
+        .fontWeight(.semibold)
     }
 }
 
 #Preview {
-    Header()
+    Header(distance: .constant(0))
+    Spacer()
 }
 

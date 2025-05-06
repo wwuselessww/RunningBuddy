@@ -8,5 +8,5 @@
 import SwiftUI
 
 class MainPageViewModel: ObservableObject {
-    
+    @Published var totalMonthDistance: Int = 10
 }
