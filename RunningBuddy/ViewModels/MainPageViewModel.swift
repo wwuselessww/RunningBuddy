@@ -9,9 +9,9 @@ import SwiftUI
 import HealthKit
 
 class MainPageViewModel: ObservableObject {
-    @Published var totalMonthDistance: Int = 10
+    @Published var totalMonthDistance: Double = 10
     @Published var maxActivity: Int = 1000
-    @Published var currentActivity: Int = 200
+    @Published var currentActivity: Int = 0
     var healtKit = HealthKitManager.shared
     var store = HealthKitManager.shared.healthStore
     
@@ -24,6 +24,7 @@ class MainPageViewModel: ObservableObject {
                 print("working")
                 Task {
                     await self.getSteps()
+                    await self.getCallories()
                 }
             } else {
                 print(error?.localizedDescription)
@@ -45,9 +46,6 @@ class MainPageViewModel: ObservableObject {
                 let query = HKStatisticsQuery(quantityType: distanceType, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, error in
                     if let error = error {
                         continuation.resume(throwing: error)
-                    }
-                    if let error = error {
-                        continuation.resume(throwing: error)
                     } else {
                         let distanceInKm = result?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)) ?? -1.0
                         continuation.resume(returning: distanceInKm)
@@ -56,11 +54,42 @@ class MainPageViewModel: ObservableObject {
                 store.execute(query)
             }
             await MainActor.run {
-                totalMonthDistance = Int(distance)
+                totalMonthDistance = distance
             }
             
         } catch {
             print("error fetching distance")
+        }
+    }
+    
+    @MainActor
+    private func getCallories() async {
+        let startDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
+        let endDate = Date()
+
+        let calloriesType = HKQuantityType(.activeEnergyBurned)
+        
+        do {
+            let callories: Double = try await withCheckedThrowingContinuation { continuation in
+                let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
+                let query = HKStatisticsQuery(quantityType: calloriesType, quantitySamplePredicate: predicate) { _, result, error in
+                    if let error = error {
+                        
+                        continuation.resume(throwing: error)
+                    } else {
+                        let callories = result?.sumQuantity()?.doubleValue(for: .largeCalorie()) ?? -1.0
+                        print("callories", callories)
+                        continuation.resume(returning: callories)
+                    }
+                }
+                store.execute(query)
+            }
+            await MainActor.run {
+                currentActivity = Int(callories)
+            }
+        } catch let error {
+            print(error)
+            print("error fetching callories")
         }
     }
 }

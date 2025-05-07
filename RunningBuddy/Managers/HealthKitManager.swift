@@ -15,6 +15,7 @@ class HealthKitManager {
     let activityTypes: Set = [
         HKQuantityType.workoutType(),
         HKQuantityType(.activeEnergyBurned),
+        HKQuantityType(.basalEnergyBurned),
         HKQuantityType(.distanceWalkingRunning),
         HKQuantityType(.heartRate),
     ]
