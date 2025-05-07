@@ -13,7 +13,19 @@ struct MainPage: View {
         VStack {
             Header(distance: $vm.totalMonthDistance)
             ActivityBar(maxActivity: $vm.maxActivity, closedActivity: $vm.currentActivity)
-                .padding(.horizontal, 10)
+                .padding(.bottom, 20)
+            HStack {
+                Text("Workouts")
+                    .font(.system(size: 24))
+                Spacer()
+            }
+            ScrollView {
+                ForEach(0..<10, id: \.self) { _ in
+                    WorkoutCell(workoutType: .outdoorRun)
+                }
+                
+            }
+            .scrollIndicators(.hidden)
                 
             Button {
                 vm.currentActivity += 100
@@ -24,6 +36,7 @@ struct MainPage: View {
 
             Spacer()
         }
+        .padding(.horizontal, 10)
     }
 }
 #Preview {
