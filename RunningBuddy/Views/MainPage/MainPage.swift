@@ -12,6 +12,14 @@ struct MainPage: View {
     var body: some View {
         VStack {
             Header(distance: $vm.totalMonthDistance)
+            ActivityBar(maxActivity: $vm.maxActivity, closedActivity: $vm.currentActivity) 
+            Button {
+                vm.currentActivity += 100
+                print(vm.currentActivity)
+            } label: {
+                Text("Add")
+            }
+
             Spacer()
         }
     }

@@ -25,9 +25,8 @@ struct ActivityBar: View {
         return Int(res)
     }
     
-    @State var maxActivity: Int
-    @State var closedActivity: Int
-    @State var counter = 0
+    @Binding var maxActivity: Int
+    @Binding var closedActivity: Int
     var body: some View {
         VStack(alignment: .leading) {
             Text("Activity")
@@ -51,6 +50,14 @@ struct ActivityBar: View {
 }
 
 #Preview {
-    ActivityBar(maxActivity: 1000, closedActivity: 300)
+    @Previewable @State var currentActivity: Int = 0
+    ActivityBar(maxActivity: .constant(1000), closedActivity: $currentActivity)
+    Button {
+        currentActivity += 100
+        print(currentActivity)
+    } label: {
+        Text("add")
+        Text("\(currentActivity)")
+    }
 }
 
