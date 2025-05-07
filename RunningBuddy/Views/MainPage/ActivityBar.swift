@@ -32,26 +32,29 @@ struct ActivityBar: View {
             Text("Activity")
                 .font(Font.system(size: 24))
                 .fontDesign(.rounded)
-            HStack {
+            HStack( spacing: 7) {
                 ForEach(0..<colorArray.count, id: \.self) { index in
                     if index < activityToDraw {
                         RoundedRectangle(cornerRadius: 5, )
                             .foregroundStyle(colorArray[index])
-                            .frame(minWidth: 35, maxWidth: 40, minHeight: 26, maxHeight: 30)
+                            .frame(minWidth: 35, maxWidth: 90, minHeight: 26, maxHeight: 30)
                     } else {
                         RoundedRectangle(cornerRadius: 5, )
                             .foregroundStyle(.gray)
-                            .frame(minWidth: 35, maxWidth: 40, minHeight: 26, maxHeight: 30)
+                            .frame(minWidth: 35, maxWidth: 90, minHeight: 26, maxHeight: 30)
                     }
                 }
             }
         }
+        .frame(minWidth: 200, maxWidth: .infinity)
+        
     }
 }
 
 #Preview {
     @Previewable @State var currentActivity: Int = 0
     ActivityBar(maxActivity: .constant(1000), closedActivity: $currentActivity)
+    
     Button {
         currentActivity += 100
         print(currentActivity)

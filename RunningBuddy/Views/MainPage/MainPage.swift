@@ -12,7 +12,9 @@ struct MainPage: View {
     var body: some View {
         VStack {
             Header(distance: $vm.totalMonthDistance)
-            ActivityBar(maxActivity: $vm.maxActivity, closedActivity: $vm.currentActivity) 
+            ActivityBar(maxActivity: $vm.maxActivity, closedActivity: $vm.currentActivity)
+                .padding(.horizontal, 10)
+                
             Button {
                 vm.currentActivity += 100
                 print(vm.currentActivity)
