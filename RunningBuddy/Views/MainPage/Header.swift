@@ -25,6 +25,7 @@ struct Header: View {
             }
         }
         .font(Font.system(size: 30))
+        .fontDesign(.rounded)
         .fontWeight(.semibold)
     }
 }
