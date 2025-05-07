@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import HealthKit
+import HealthKitUI
 
 @main
 struct RunningBuddyApp: App {
@@ -15,3 +17,4 @@ struct RunningBuddyApp: App {
         }
     }
 }
+
