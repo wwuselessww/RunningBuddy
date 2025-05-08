@@ -25,7 +25,12 @@ struct MainPage: View {
             }
             ScrollView {
                 ForEach(0..<vm.workoutArray.count, id: \.self) { index in
-                    WorkoutCell(workoutModel: vm.workModelArray[index])
+                    NavigationLink {
+                        WorkoutInfo()
+                    } label: {
+                        WorkoutCell(workoutModel: vm.workModelArray[index])
+                    }
+
                 }
                 
             }
