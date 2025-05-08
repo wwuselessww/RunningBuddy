@@ -32,11 +32,6 @@ class HealthKitManager {
     }
     
     func getNumericFromHealthKit(startDate: Date, endDate: Date, sample type: HKQuantityType, resultType: HKUnit) async -> Double? {
-//        let startDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
-//        let endDate = Date()
-
-//        let calloriesType = HKQuantityType(.activeEnergyBurned)
-        
         do {
             let data: Double = try await withCheckedThrowingContinuation { continuation in
                 let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
@@ -58,6 +53,30 @@ class HealthKitManager {
             print(error)
             print("error fetching callories")
             return nil
+        }
+    }
+    
+    func getWorkouts(startDate: Date, endDate: Date) async -> [HKWorkout] {
+        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
+        do {
+            let data: [HKWorkout] = try await withCheckedThrowingContinuation { continuation in
+                let query = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [.init(keyPath: \HKSample.startDate, ascending: false)]) { query, sample, error in
+                    if let error = error {
+                        print(error)
+                        continuation.resume(throwing: error)
+                    }
+                    guard let samples = sample else {
+                        fatalError("some error")
+                    }
+                    let workouts = samples.compactMap { $0 as? HKWorkout }
+                    continuation.resume(returning: workouts)
+                }
+                healthStore.execute(query)
+            }
+            return data
+        } catch {
+            print(error)
+            return []
         }
     }
     
