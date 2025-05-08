@@ -21,7 +21,7 @@ struct WorkoutCell: View {
                 Text("Outdoor Run")
                     .font(.system(size: 24))
                     .fontDesign(.rounded)
-                Text("\(workoutModel.distance)km")
+                Text("\(String(format: "%.1f", workoutModel.distance))km")
                     .font(.system(size: 24))
                     .fontDesign(.rounded)
             }
@@ -37,7 +37,7 @@ struct WorkoutCell: View {
                 + Text ("\(workoutModel.avgPulse)")
                     .font(.system(size: 20))
                     .fontDesign(.rounded)
-                Text("\(workoutModel.date.description)")
+                Text("\(workoutModel.date.formateToString())")
                     .font(.system(size: 20))
                     .fontDesign(.rounded)
             }
