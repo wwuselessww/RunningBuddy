@@ -24,8 +24,8 @@ struct MainPage: View {
                 Spacer()
             }
             ScrollView {
-                ForEach(0..<vm.workoutArray.count, id: \.self) { _ in
-                    WorkoutCell(workoutType: .outdoorRun)
+                ForEach(0..<vm.workoutArray.count, id: \.self) { index in
+                    WorkoutCell(workoutModel: vm.workModelArray[index])
                 }
                 
             }

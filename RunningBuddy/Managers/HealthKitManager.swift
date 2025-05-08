@@ -80,5 +80,26 @@ class HealthKitManager {
         }
     }
     
+    func getAvgPulseFor(workout: HKWorkout) async -> Int? {
+        let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate)
+        do {
+            let heartRate: Double = try await withCheckedThrowingContinuation { continuation in
+                let query = HKStatisticsQuery(quantityType: HKQuantityType(.heartRate), quantitySamplePredicate: predicate, options: .discreteAverage) { query, stats, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                    }
+                    let bpm = stats?.averageQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
+                    continuation.resume(returning: bpm)
+                }
+                healthStore.execute(query)
+                
+            }
+            return Int(heartRate)
+        } catch {
+            print("***AVG ERROR, \(error)")
+            return nil
+        }
+    }
+    
 }
 
