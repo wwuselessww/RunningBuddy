@@ -36,7 +36,7 @@ struct WeatherConditions: View {
                 .stroke(lineWidth: 2)
                 .foregroundStyle(.gray)
         }
-        .frame(minWidth: 100, maxWidth: 250, minHeight: 20, maxHeight: 25)
+//        .frame(minWidth: 100, maxWidth: 250, minHeight: 20, maxHeight: 25)
     }
 }
 
