@@ -70,13 +70,7 @@ struct WorkoutInfo: View {
                                     .cornerRadius(10)
                                 }
                             }
-//                            .chartXAxis(.hidden)
-//                            .chartXAxis(content: {
-//                                AxisMarks(value: splitArray.map {$0.splitNumber}) { num in
-//                                    AxisValueLabel
-//                                }
-//                            })
-//                            .chartYAxis(.hidden)
+
                         }
                         Spacer()
                         VStack {

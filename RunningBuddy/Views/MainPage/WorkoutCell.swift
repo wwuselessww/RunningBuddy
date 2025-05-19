@@ -42,14 +42,17 @@ struct WorkoutCell: View {
                     .fontDesign(.rounded)
             }
         }
+        .foregroundStyle(.black)
     }
 }
 
 #Preview {
-    VStack {
+    NavigationStack {
+        VStack {
 
-        List {
-            WorkoutCell(workoutModel: WorkoutModel(workout: HKWorkout(activityType: .archery, start: Date(), end: Date().advanced(by: 10)), date: Date(), distance: 0.0, avgPulse: 10, type: .outdoorRun))
+            List {
+                WorkoutCell(workoutModel: WorkoutModel(workout: HKWorkout(activityType: .archery, start: Date(), end: Date().advanced(by: 10)), date: Date(), distance: 0.0, avgPulse: 10, type: .outdoorRun))
+            }
         }
     }
 }
