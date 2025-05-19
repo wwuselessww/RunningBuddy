@@ -7,6 +7,7 @@
 
 import SwiftUI
 import HealthKit
+import CoreLocation
 
 class WorkoutInfoViewModel: ObservableObject {
     @Published var dateSting: String = ""
@@ -17,6 +18,7 @@ class WorkoutInfoViewModel: ObservableObject {
     @Published var paceString: String = ""
     @Published var maxHearthRateString: String = ""
     @Published var avgHearthRateString: String = ""
+    @Published var locationsArray: [CLLocation] = []
     private var healthKitManager = HealthKitManager.shared
     func getDateInString(date: Date) {
         let formatter = DateFormatter()
@@ -24,6 +26,7 @@ class WorkoutInfoViewModel: ObservableObject {
         formatter.dateFormat = "EEEE, MMM d yyyy"
         dateSting = formatter.string(from: date)
     }
+    
     @MainActor
     func getWorkoutData() async {
         guard let model = workoutModel else {return}
@@ -51,9 +54,15 @@ class WorkoutInfoViewModel: ObservableObject {
         
         let activeEnergy = await healthKitManager.getNumericFromHealthKit(startDate: workout.startDate, endDate: workout.endDate, sample: HKQuantityType(.activeEnergyBurned), resultType: HKUnit.largeCalorie())
         activeEnergyString = String(format: "%0.0f", activeEnergy?.rounded() ?? 0)
+    }
+    
+    @MainActor
+    func getWorkoutPath() async {
+        guard let workout = workoutModel?.workout else {return}
         
-        
-        
-        
+        locationsArray = await healthKitManager.getRouteFor(workout: workout) ?? []
+        print("PATH")
+        print(locationsArray)
+        print("PATH")
     }
 }

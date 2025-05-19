@@ -61,7 +61,7 @@ class MainPageViewModel: ObservableObject {
     
     @MainActor
     func getWorkouts() async {
-        guard let start = Calendar.current.date(byAdding: .day, value: -3, to: Date()) else {
+        guard let start = Calendar.current.date(byAdding: .day, value: -7, to: Date()) else {
             print("no start date?")
             return
         }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import HealthKit
+import CoreLocation
 
 class HealthKitManager {
     static var shared = HealthKitManager()
@@ -105,7 +106,7 @@ class HealthKitManager {
         let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate)
         do {
             let heartRate: Double = try await withCheckedThrowingContinuation { continuation in
-                let query = HKStatisticsQuery(quantityType: HKQuantityType(.heartRate), quantitySamplePredicate: predicate, options: .discreteMax) { query, stats, error in
+                let query = HKStatisticsQuery(quantityType: HKQuantityType(.heartRate), quantitySamplePredicate: predicate, options: .discreteMax) { _, stats, error in
                     if let error = error {
                         continuation.resume(throwing: error)
                     }
@@ -136,5 +137,62 @@ class HealthKitManager {
         return pace
     }
     
+    func getRouteFor(workout: HKWorkout) async -> [CLLocation]? {
+        
+        do {
+            var locations: [CLLocation] = []
+            let predicate = HKQuery.predicateForObjects(from: workout)
+            return try await withCheckedThrowingContinuation { continuation in
+                let query = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, sample, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                    }
+                    if let route = sample?.first as? HKWorkoutRoute {
+                        let locsQuery = HKWorkoutRouteQuery(route: route) { _, locs, done, error in
+                            if let error = error {
+                                continuation.resume(throwing: error)
+                            }
+                            locations.append(contentsOf: locs ?? [])
+                            if done {
+                                continuation.resume(returning: locations)
+                            }
+                        }
+                        self.healthStore.execute(locsQuery)
+                        
+                        
+                    }
+                }
+                healthStore.execute(query)
+            }
+        } catch {
+            print(error)
+            return nil
+        }
+    }
+    
 }
-
+//
+//let predicate = HKQuery.predicateForObjects(from: workout)
+//let query = HKSampleQuery(sampleType: HKSampleType.workoutType(), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { query, sample, error in
+//    guard error == nil else {
+//        print(error?.localizedDescription)
+//        return
+//    }
+//    guard let route = sample?.first as? HKWorkoutRoute else {
+//        print("***NO WORKOUT")
+//        return
+//    }
+//    var locations: [CLLocation] = []
+//    
+//    var workoutQuery = HKWorkoutRouteQuery(route: route) { routeQuery, locs, done, error in
+//        guard error == nil else {
+//            print("*** ROUTE ERROR")
+//            return
+//        }
+//        locations.append(contentsOf: locs ?? [])
+//    }
+//    self.healthStore.execute(workoutQuery)
+//    
+//}
+//healthStore.execute(query)
+//

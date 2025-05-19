@@ -100,6 +100,7 @@ struct WorkoutInfo: View {
             vm.workoutModel = workoutModel
             Task {
                 await vm.getWorkoutData()
+                await vm.getWorkoutPath()
             }
         }
     }
