@@ -101,5 +101,40 @@ class HealthKitManager {
         }
     }
     
+    func getMaxPulseFor(workout: HKWorkout) async -> Int? {
+        let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate)
+        do {
+            let heartRate: Double = try await withCheckedThrowingContinuation { continuation in
+                let query = HKStatisticsQuery(quantityType: HKQuantityType(.heartRate), quantitySamplePredicate: predicate, options: .discreteMax) { query, stats, error in
+                    if let error = error {
+                        continuation.resume(throwing: error)
+                    }
+                    let maxBpm = stats?.maximumQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
+                    print(maxBpm)
+                    continuation.resume(returning: maxBpm)
+                }
+                healthStore.execute(query)
+            }
+            return Int(heartRate)
+            
+        } catch {
+            print("***MAX ERROR, \(error)")
+            return nil
+        }
+    }
+    
+    func getPace(workout: HKWorkout) async -> Double? {
+        let durationInMinutes = workout.duration / 60 // seconds to minutes
+        guard let distance = workout.totalDistance?.doubleValue(for: .meter()) else {
+            return nil
+        }
+        let distanceInKm = distance / 1000
+        guard distanceInKm > 0 else {
+            return nil
+        }
+        let pace = durationInMinutes / distanceInKm // minutes per km
+        return pace
+    }
+    
 }
 

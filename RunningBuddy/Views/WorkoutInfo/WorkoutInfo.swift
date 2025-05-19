@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 import Charts
+import HealthKit
 
 struct WorkoutInfo: View {
     let splitArray: [Split] = [
@@ -17,6 +18,9 @@ struct WorkoutInfo: View {
         .init(splitNumber: 4, timeInSplit: 4.0, color: .orange),
         .init(splitNumber: 5, timeInSplit: 1.0, color: .red)
     ]
+    
+    @StateObject var vm = WorkoutInfoViewModel()
+    @Binding var workoutModel: WorkoutModel
     var body: some View {
         
         GeometryReader { geo in
@@ -26,26 +30,26 @@ struct WorkoutInfo: View {
                     .ignoresSafeArea()
                     .frame(height: geo.size.height / 2)
                 Group {
-                    Text("Saturday 25, 2025")
+                    Text(vm.dateSting)
                         .font(.system(size: 24, weight: .bold))
                         .padding(.bottom, 3)
                     WeatherConditions(temperature: 10, windSpeed: 10, humidity: 10)
                         .padding(.bottom, 15)
                     Grid(alignment: .leading) {
                         GridRow {
-                            InfoCell(title: "Time", data: "00:00:00")
+                            InfoCell(title: "Time", data: vm.timeString)
                             Spacer()
-                            InfoCell(title: "Distance", data: "00:00:00")
+                            InfoCell(title: "Distance", data: vm.distanceString)
                             Spacer()
-                            InfoCell(title: "Max Hearth Rate", data: "00:00:00")
+                            InfoCell(title: "Max Hearth Rate", data: vm.maxHearthRateString)
                             
                         }
                         GridRow {
-                            InfoCell(title: "Active Energy", data: "00:00:00")
+                            InfoCell(title: "Active Energy", data: vm.activeEnergyString)
                             Spacer()
-                            InfoCell(title: "Pace", data: "00:00:00")
+                            InfoCell(title: "Pace", data: vm.paceString)
                             Spacer()
-                            InfoCell(title: "Avg Hearth Rate", data: "00:00:00")
+                            InfoCell(title: "Avg Hearth Rate", data: vm.avgHearthRateString)
                         }
                     }
                     .frame(height: 100)
@@ -91,11 +95,23 @@ struct WorkoutInfo: View {
             }
             .frame(maxWidth: .infinity)
         }
+        .onAppear {
+            vm.getDateInString(date: workoutModel.date)
+            vm.workoutModel = workoutModel
+            Task {
+                await vm.getWorkoutData()
+            }
+        }
     }
 }
-#Preview {
-    WorkoutInfo()
-}
+//#Preview {
+//    let healhStore = HealthKitManager.shared.healthStore
+//    let configuration = HKWorkoutConfiguration()
+//    let builder = HKWorkoutBuilder(healthStore: healhStore, configuration: configuration, device: .local())
+//    
+//    @Previewable @State var model = WorkoutModel(workout:, date: Date.now, distance: 10.0, avgPulse: 120, type: .outdoorRun)
+//    WorkoutInfo( workoutModel: .constant(model))
+//}
 
 struct Split: Identifiable {
     var id = UUID()
@@ -104,3 +120,4 @@ struct Split: Identifiable {
     var color: Color
     
 }
+
