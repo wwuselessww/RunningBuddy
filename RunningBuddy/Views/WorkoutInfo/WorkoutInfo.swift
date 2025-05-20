@@ -25,7 +25,14 @@ struct WorkoutInfo: View {
         
         GeometryReader { geo in
             VStack(alignment: .leading) {
-                Map()
+                
+                Map {
+                    if !vm.locationsArray.isEmpty {
+                        let coords = vm.locationsArray.map{$0.coordinate}
+                        MapPolyline(coordinates: coords)
+                            .stroke(.blue, lineWidth: 5)
+                    }
+                }
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .ignoresSafeArea()
                     .frame(height: geo.size.height / 2)
@@ -33,8 +40,7 @@ struct WorkoutInfo: View {
                     Text(vm.dateSting)
                         .font(.system(size: 24, weight: .bold))
                         .padding(.bottom, 3)
-                    WeatherConditions(temperature: 10, windSpeed: 10, humidity: 10)
-                        .padding(.bottom, 15)
+
                     Grid(alignment: .leading) {
                         GridRow {
                             InfoCell(title: "Time", data: vm.timeString)
@@ -56,7 +62,7 @@ struct WorkoutInfo: View {
                     
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("Splits")
+                            Text("Hearth Rate Zones")
                                 .font(.system(size: 20, weight: .bold))
                             Chart {
                                 ForEach(splitArray) { split in
@@ -101,18 +107,11 @@ struct WorkoutInfo: View {
             Task {
                 await vm.getWorkoutData()
                 await vm.getWorkoutPath()
+                await vm.getZones()
             }
         }
     }
 }
-//#Preview {
-//    let healhStore = HealthKitManager.shared.healthStore
-//    let configuration = HKWorkoutConfiguration()
-//    let builder = HKWorkoutBuilder(healthStore: healhStore, configuration: configuration, device: .local())
-//    
-//    @Previewable @State var model = WorkoutModel(workout:, date: Date.now, distance: 10.0, avgPulse: 120, type: .outdoorRun)
-//    WorkoutInfo( workoutModel: .constant(model))
-//}
 
 struct Split: Identifiable {
     var id = UUID()

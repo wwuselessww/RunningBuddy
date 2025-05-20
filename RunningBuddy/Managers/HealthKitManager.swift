@@ -138,61 +138,91 @@ class HealthKitManager {
     }
     
     func getRouteFor(workout: HKWorkout) async -> [CLLocation]? {
+        let predicate = HKQuery.predicateForObjects(from: workout)
         
-        do {
-            var locations: [CLLocation] = []
-            let predicate = HKQuery.predicateForObjects(from: workout)
-            return try await withCheckedThrowingContinuation { continuation in
-                let query = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, sample, error in
+        return try? await withCheckedThrowingContinuation { continuation in
+            let sampleQuery = HKSampleQuery(
+                sampleType: HKSeriesType.workoutRoute(),
+                predicate: predicate,
+                limit: HKObjectQueryNoLimit,
+                sortDescriptors: nil
+            ) { _, samples, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                
+                guard let route = samples?.first as? HKWorkoutRoute else {
+                    continuation.resume(returning: [])
+                    return
+                }
+                
+                var allLocations: [CLLocation] = []
+                
+                let routeQuery = HKWorkoutRouteQuery(route: route) { _, locations, done, error in
                     if let error = error {
                         continuation.resume(throwing: error)
+                        return
                     }
-                    if let route = sample?.first as? HKWorkoutRoute {
-                        let locsQuery = HKWorkoutRouteQuery(route: route) { _, locs, done, error in
-                            if let error = error {
-                                continuation.resume(throwing: error)
-                            }
-                            locations.append(contentsOf: locs ?? [])
-                            if done {
-                                continuation.resume(returning: locations)
-                            }
-                        }
-                        self.healthStore.execute(locsQuery)
-                        
-                        
+                    
+                    if let locations = locations {
+                        allLocations.append(contentsOf: locations)
+                    }
+                    
+                    if done {
+                        continuation.resume(returning: allLocations)
                     }
                 }
-                healthStore.execute(query)
+                
+                self.healthStore.execute(routeQuery)
             }
-        } catch {
-            print(error)
-            return nil
+            
+            self.healthStore.execute(sampleQuery)
         }
     }
     
+    func getHeartZonesFor(_ workout: HKWorkout) {
+        do {
+            let predicate = HKQuery.predicateForObjects(from: workout)
+            let query = HKSampleQuery(sampleType: HKQuantityType(.heartRate), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
+                guard error == nil else {
+                    print(error?.localizedDescription)
+                    return
+                }
+                guard let zones = samples as? [HKQuantitySample] else {
+                    print(error?.localizedDescription)
+                    return
+                }
+                var zonesArray: [Int : Double] = [1:0,2:0,3:0,4:0,5:0]
+                for sample in zones {
+                    let res = sample.quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
+                    
+                    switch res {
+                    case 120...134:
+                        zonesArray[0]! += res
+                    case 134...148:
+                        zonesArray[1]! += res
+                    case 148...162:
+                        zonesArray[2]! += res
+                    case 162...176:
+                        zonesArray[3]! += res
+                    case 176...190:
+                        zonesArray[4]! += res
+                    default:
+                        print("NO ZONE??? \(res)")
+                    }
+                    
+                    //MARK: now only left to display data and fix ranges in zones 
+                    
+//                    print("res \(res)")
+                }
+                print(zonesArray)
+            }
+            healthStore.execute(query)
+        } catch {
+            print("***ZONES \(error)")
+        }
+    }
+    
+    
 }
-//
-//let predicate = HKQuery.predicateForObjects(from: workout)
-//let query = HKSampleQuery(sampleType: HKSampleType.workoutType(), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { query, sample, error in
-//    guard error == nil else {
-//        print(error?.localizedDescription)
-//        return
-//    }
-//    guard let route = sample?.first as? HKWorkoutRoute else {
-//        print("***NO WORKOUT")
-//        return
-//    }
-//    var locations: [CLLocation] = []
-//    
-//    var workoutQuery = HKWorkoutRouteQuery(route: route) { routeQuery, locs, done, error in
-//        guard error == nil else {
-//            print("*** ROUTE ERROR")
-//            return
-//        }
-//        locations.append(contentsOf: locs ?? [])
-//    }
-//    self.healthStore.execute(workoutQuery)
-//    
-//}
-//healthStore.execute(query)
-//

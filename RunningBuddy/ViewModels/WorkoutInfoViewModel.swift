@@ -8,6 +8,7 @@
 import SwiftUI
 import HealthKit
 import CoreLocation
+import MapKit
 
 class WorkoutInfoViewModel: ObservableObject {
     @Published var dateSting: String = ""
@@ -59,10 +60,13 @@ class WorkoutInfoViewModel: ObservableObject {
     @MainActor
     func getWorkoutPath() async {
         guard let workout = workoutModel?.workout else {return}
-        
         locationsArray = await healthKitManager.getRouteFor(workout: workout) ?? []
-        print("PATH")
-        print(locationsArray)
-        print("PATH")
     }
+    
+    func getZones() async {
+        print("zones1")
+        guard let workout = workoutModel?.workout else {return}
+        healthKitManager.getHeartZonesFor(workout)
+    }
+    
 }
