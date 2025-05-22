@@ -12,8 +12,12 @@ class MainPageViewModel: ObservableObject {
     @Published var totalMonthDistance: Double = 10
     @Published var maxActivity: Int = 1000
     @Published var currentActivity: Int = 0
-    var healtKit = HealthKitManager.shared
+    @Published var workoutArray: [HKWorkout] = []
+    @Published var workModelArray: [WorkoutModel] = []
+    var healtKitManager = HealthKitManager.shared
     var store = HealthKitManager.shared.healthStore
+    let startDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
+    let endDate = Date()
     
     
     func getActivity() {
@@ -25,6 +29,7 @@ class MainPageViewModel: ObservableObject {
                 Task {
                     await self.getSteps()
                     await self.getCallories()
+                    await self.getWorkouts()
                 }
             } else {
                 print(error?.localizedDescription)
@@ -33,63 +38,52 @@ class MainPageViewModel: ObservableObject {
     }
     @MainActor
     private func getSteps() async {
-        let startDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
-        let endDate = Date()
-
-        guard let distanceType = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning) else {
+        guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startDate, endDate: endDate, sample: HKQuantityType(.distanceWalkingRunning), resultType: .meterUnit(with: .kilo)) else {
             return
         }
-        
-        do {
-            let distance: Double = try await withCheckedThrowingContinuation { continuation in
-                let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
-                let query = HKStatisticsQuery(quantityType: distanceType, quantitySamplePredicate: predicate, options: .cumulativeSum) { _, result, error in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                    } else {
-                        let distanceInKm = result?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)) ?? -1.0
-                        continuation.resume(returning: distanceInKm)
-                    }
-                }
-                store.execute(query)
-            }
-            await MainActor.run {
-                totalMonthDistance = distance
-            }
-            
-        } catch {
-            print("error fetching distance")
+        await MainActor.run {
+            totalMonthDistance = res
         }
     }
     
     @MainActor
     private func getCallories() async {
-        let startDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
-        let endDate = Date()
-
-        let calloriesType = HKQuantityType(.activeEnergyBurned)
-        
-        do {
-            let callories: Double = try await withCheckedThrowingContinuation { continuation in
-                let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
-                let query = HKStatisticsQuery(quantityType: calloriesType, quantitySamplePredicate: predicate) { _, result, error in
-                    if let error = error {
-                        
-                        continuation.resume(throwing: error)
-                    } else {
-                        let callories = result?.sumQuantity()?.doubleValue(for: .largeCalorie()) ?? -1.0
-                        print("callories", callories)
-                        continuation.resume(returning: callories)
-                    }
-                }
-                store.execute(query)
+            guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startDate, endDate: endDate, sample: HKQuantityType(.activeEnergyBurned), resultType: .largeCalorie()) else {
+                print("kek")
+                return
             }
+            
             await MainActor.run {
-                currentActivity = Int(callories)
+                currentActivity = Int(res)
+                print("res res \(res)")
             }
-        } catch let error {
-            print(error)
-            print("error fetching callories")
+    }
+    
+    @MainActor
+    func getWorkouts() async {
+        guard let start = Calendar.current.date(byAdding: .day, value: -14, to: Date()) else {
+            print("no start date?")
+            return
+        }
+        let res = await healtKitManager.getWorkouts(startDate: start, endDate: endDate)
+        var modelArray: [WorkoutModel] = []
+        for i in res {
+            print(String(i.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)) ?? 0))
+            let date = i.startDate
+            guard  let distance = i.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)), let pulse = await healtKitManager.getAvgPulseFor(workout: i) else {
+                print("no data")
+                return
+            }
+            let newWorkout = WorkoutModel(workout: i, date: date, distance: distance, avgPulse: pulse, type: .outdoorRun)
+            modelArray.append(newWorkout)
+            
+        }
+        print(modelArray)
+        await MainActor.run {
+            workoutArray = res
+            workModelArray = modelArray
         }
     }
+    
+    
 }

@@ -10,3 +10,5 @@ enum WorkoutType: String {
     case outdoorRun = "Outdoor Run"
     case outdoorWalk = "Outdoor Walk"
 }
+
+
