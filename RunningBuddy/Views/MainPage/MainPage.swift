@@ -24,8 +24,13 @@ struct MainPage: View {
                 Spacer()
             }
             ScrollView {
-                ForEach(0..<10, id: \.self) { _ in
-                    WorkoutCell(workoutType: .outdoorRun)
+                ForEach(0..<vm.workoutArray.count, id: \.self) { index in
+                    NavigationLink {
+                        WorkoutInfo(workoutModel: $vm.workModelArray[index])
+                    } label: {
+                        WorkoutCell(workoutModel: vm.workModelArray[index])
+                    }
+
                 }
                 
             }
@@ -41,7 +46,7 @@ struct MainPage: View {
             Spacer()
         }
         .padding(.horizontal, 10)
-        .healthDataAccessRequest(store: vm.healtKit.healthStore, readTypes: vm.healtKit.activityTypes, trigger: trigger) { result in
+        .healthDataAccessRequest(store: vm.healtKitManager.healthStore, readTypes: vm.healtKitManager.activityTypes, trigger: trigger) { result in
             switch result {
             case .success(_):
                 authenticated = true

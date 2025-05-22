@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import HealthKit
 
 struct WorkoutCell: View {
-    var workoutType: WorkoutType
+//    var workoutType: WorkoutType
+    var workoutModel: WorkoutModel
     var body: some View {
         HStack {
-            Image(systemName: workoutType == .outdoorRun ? "figure.run": "figure.walk")
+            Image(systemName: workoutModel.type == .outdoorRun ? "figure.run": "figure.walk")
                 .resizable()
                 .scaledToFit()
                 .frame(minWidth: 40, maxWidth: 60, minHeight: 40, maxHeight: 60)
@@ -19,7 +21,7 @@ struct WorkoutCell: View {
                 Text("Outdoor Run")
                     .font(.system(size: 24))
                     .fontDesign(.rounded)
-                Text("3.00km")
+                Text("\(String(format: "%.1f", workoutModel.distance))km")
                     .font(.system(size: 24))
                     .fontDesign(.rounded)
             }
@@ -32,22 +34,25 @@ struct WorkoutCell: View {
                     .font(.system(size: 20))
                     .fontDesign(.rounded)
                     .foregroundStyle(.red)
-                + Text ("160")
+                + Text ("\(workoutModel.avgPulse)")
                     .font(.system(size: 20))
                     .fontDesign(.rounded)
-                Text("April 26, 2025")
+                Text("\(workoutModel.date.formateToString())")
                     .font(.system(size: 20))
                     .fontDesign(.rounded)
             }
         }
+        .foregroundStyle(.black)
     }
 }
 
 #Preview {
-    VStack {
+    NavigationStack {
+        VStack {
 
-        List {
-            WorkoutCell(workoutType: .outdoorWalk)
+            List {
+                WorkoutCell(workoutModel: WorkoutModel(workout: HKWorkout(activityType: .archery, start: Date(), end: Date().advanced(by: 10)), date: Date(), distance: 0.0, avgPulse: 10, type: .outdoorRun))
+            }
         }
     }
 }
