@@ -61,15 +61,13 @@ class MainPageViewModel: ObservableObject {
     
     @MainActor
     func getWorkouts() async {
-        guard let start = Calendar.current.date(byAdding: .day, value: -7, to: Date()) else {
+        guard let start = Calendar.current.date(byAdding: .day, value: -14, to: Date()) else {
             print("no start date?")
             return
         }
         let res = await healtKitManager.getWorkouts(startDate: start, endDate: endDate)
-        let first = res.first?.statistics(for: HKQuantityType(.distanceWalkingRunning))
         var modelArray: [WorkoutModel] = []
         for i in res {
-//            print("first \(first?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)))")
             print(String(i.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)) ?? 0))
             let date = i.startDate
             guard  let distance = i.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)), let pulse = await healtKitManager.getAvgPulseFor(workout: i) else {

@@ -181,46 +181,54 @@ class HealthKitManager {
         }
     }
     
-    func getHeartZonesFor(_ workout: HKWorkout) {
-        do {
+    func getHeartZonesFor(_ workout: HKWorkout) async -> [Split] {
+        await withCheckedContinuation { continuation in
+            var zonesArray: [Split] = [
+                .init(splitNumber: 1, timeInSplit: 0, color: .blue),
+                .init(splitNumber: 2, timeInSplit: 0, color: .green),
+                .init(splitNumber: 3, timeInSplit: 0, color: .yellow),
+                .init(splitNumber: 4, timeInSplit: 0, color: .orange),
+                .init(splitNumber: 5, timeInSplit: 0, color: .red)
+            ]
+            var prevDateSample: Date?
+            
             let predicate = HKQuery.predicateForObjects(from: workout)
             let query = HKSampleQuery(sampleType: HKQuantityType(.heartRate), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
+
                 guard error == nil else {
-                    print(error?.localizedDescription)
+                    print(error?.localizedDescription ?? "Unknown error")
+                    continuation.resume(returning: zonesArray) // return empty/default if failed
                     return
                 }
+
                 guard let zones = samples as? [HKQuantitySample] else {
-                    print(error?.localizedDescription)
+                    continuation.resume(returning: zonesArray)
                     return
                 }
-                var zonesArray: [Int : Double] = [1:0,2:0,3:0,4:0,5:0]
+                
+               
                 for sample in zones {
-                    let res = sample.quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
+                    let res = sample.quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute()))
+                    let duration = sample.endDate.timeIntervalSince(prevDateSample ?? sample.startDate)
+                    prevDateSample = sample.endDate
+                    print("duration \(duration)")
+                    
                     
                     switch res {
-                    case 120...134:
-                        zonesArray[0]! += res
-                    case 134...148:
-                        zonesArray[1]! += res
-                    case 148...162:
-                        zonesArray[2]! += res
-                    case 162...176:
-                        zonesArray[3]! += res
-                    case 176...190:
-                        zonesArray[4]! += res
+                    case 0..<134: zonesArray[0].timeInSplit += duration / 60
+                    case 134..<148: zonesArray[1].timeInSplit += duration / 60
+                    case 148..<162: zonesArray[2].timeInSplit += duration / 60
+                    case 162..<176: zonesArray[3].timeInSplit += duration / 60
+                    case 176..<300: zonesArray[4].timeInSplit += duration / 60
                     default:
                         print("NO ZONE??? \(res)")
                     }
-                    
-                    //MARK: now only left to display data and fix ranges in zones 
-                    
-//                    print("res \(res)")
                 }
                 print(zonesArray)
+                continuation.resume(returning: zonesArray)
             }
+
             healthStore.execute(query)
-        } catch {
-            print("***ZONES \(error)")
         }
     }
     

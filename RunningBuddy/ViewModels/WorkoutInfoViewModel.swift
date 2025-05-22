@@ -20,7 +20,11 @@ class WorkoutInfoViewModel: ObservableObject {
     @Published var maxHearthRateString: String = ""
     @Published var avgHearthRateString: String = ""
     @Published var locationsArray: [CLLocation] = []
+    @Published var splitArray: [Split] = []
+    @Published var foodBurned: String = ""
+    
     private var healthKitManager = HealthKitManager.shared
+    
     func getDateInString(date: Date) {
         let formatter = DateFormatter()
         formatter.calendar = .current
@@ -62,11 +66,32 @@ class WorkoutInfoViewModel: ObservableObject {
         guard let workout = workoutModel?.workout else {return}
         locationsArray = await healthKitManager.getRouteFor(workout: workout) ?? []
     }
-    
+    @MainActor
     func getZones() async {
         print("zones1")
         guard let workout = workoutModel?.workout else {return}
-        healthKitManager.getHeartZonesFor(workout)
+        splitArray = await healthKitManager.getHeartZonesFor(workout)
+    }
+    
+    func calculateBurnedCaloriesInFood(caloriee: Int) -> String {
+        let foodCalories: [Int: String] = [563:"🍔", 112:"🥤", 230: "🍕"]
+        let sortedFoods = foodCalories.sorted(by: { $0.key > $1.key })
+        var remainingCalories = caloriee
+        var result = ""
+
+        for (calories, emoji) in sortedFoods {
+            let count = remainingCalories / calories
+            print(count)
+            if count > 0 {
+                result += String(repeating: emoji, count: count)
+                remainingCalories %= calories
+                print(remainingCalories %= calories)
+                
+            }
+        }
+
+        print("result", result)
+        return result
     }
     
 }
