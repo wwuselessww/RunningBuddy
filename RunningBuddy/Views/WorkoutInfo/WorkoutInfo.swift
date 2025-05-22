@@ -19,17 +19,32 @@ struct WorkoutInfo: View {
         
         GeometryReader { geo in
             VStack(alignment: .leading) {
-                
-                Map {
-                    if !vm.locationsArray.isEmpty {
-                        let coords = vm.locationsArray.map{$0.coordinate}
-                        MapPolyline(coordinates: coords)
-                            .stroke(.blue, lineWidth: 5)
+                    Group {
+                        if vm.isLoading {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                        } else {
+                            if vm.locationsArray.isEmpty {
+                                VStack(alignment: .center) {
+                                    Text("Hmmmm, no route for this workout? how queer!!!")
+                                        .font(.system(size: 30, weight: .bold))
+                                        .padding(.horizontal)
+                                }
+                            } else {
+                                Map {
+                                    let coords = vm.locationsArray.map{$0.coordinate}
+                                    MapPolyline(coordinates: coords)
+                                        .stroke(.blue, lineWidth: 5)
+                                }
+                            }
+                        }
                     }
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 16))
-                .ignoresSafeArea()
-                .frame(height: geo.size.height / 2)
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .ignoresSafeArea()
+                    .frame(height: geo.size.height / 2)
                 Group {
                     Text(vm.dateSting)
                         .font(.system(size: 24, weight: .bold))

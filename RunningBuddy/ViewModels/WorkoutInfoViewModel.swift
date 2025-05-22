@@ -22,6 +22,7 @@ class WorkoutInfoViewModel: ObservableObject {
     @Published var locationsArray: [CLLocation] = []
     @Published var splitArray: [Split] = []
     @Published var foodBurned: String = ""
+    @Published var isLoading: Bool = true
     
     private var healthKitManager = HealthKitManager.shared
     
@@ -65,6 +66,9 @@ class WorkoutInfoViewModel: ObservableObject {
     func getWorkoutPath() async {
         guard let workout = workoutModel?.workout else {return}
         locationsArray = await healthKitManager.getRouteFor(workout: workout) ?? []
+        withAnimation(Animation.easeInOut) {
+            isLoading = false
+        }
     }
     @MainActor
     func getZones() async {
