@@ -27,7 +27,7 @@ struct WorkoutPage: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                WorkoutDetails()
+//                WorkoutDetails()
 //                Spacer()
                 Button {
                     print("press")

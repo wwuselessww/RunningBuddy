@@ -7,8 +7,18 @@
 
 import SwiftUI
 
-struct WorkoutDetails: View {
+struct WorkoutDetails<Content: View>: View {
     @StateObject var vm = WorkOutDetailsViewModel()
+    var startView: Content
+    var centerView: Content
+    var finishView: Content
+    
+    init(@ViewBuilder startView: () -> Content, @ViewBuilder centerView: () -> Content, @ViewBuilder finishView: () -> Content) {
+        self.startView = startView()
+        self.centerView = centerView()
+        self.finishView = finishView()
+    }
+    
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -29,18 +39,19 @@ struct WorkoutDetails: View {
                 }
                 VStack {
                     HStack {
-                        Text("Start")
+                        startView
                             .track(index: 0)
                         Spacer()
                     }
                     Spacer()
-                    Text("Center")
+                    centerView
                         .frame(width: 100, height: 100)
                         .track(index: 1)
+
                     Spacer()
                     HStack {
                         Spacer()
-                        Text("Finish")
+                        finishView
                             .track(index: 2)
                     }
                 }
@@ -60,10 +71,12 @@ struct WorkoutDetails: View {
 }
 
 #Preview {
-    Circle()
-    Spacer()
-    WorkoutDetails()
+    WorkoutDetails {
+        Text("starting here")
+    } centerView: {
+        Text("i am in the midle")
+    } finishView: {
+        Text("now at the finish line")
+    }
+
 }
-
-
-//path.addArc(center: CGPoint(x: 200, y: 100), radius: 60, startAngle: .degrees(0), endAngle: .degrees(70), clockwise: false)
