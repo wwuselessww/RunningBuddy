@@ -32,7 +32,7 @@ struct WorkoutPage: View {
                     WorkoutDetails {
                         AnyView(
                             WorkoutSection(repeats: 0, {
-                                Text("\(Int(startingBlock.time)) minutes \(startingBlock.type.rawValue)")
+                                Text("^[\(Int(startingBlock.time)) minutes](inflect: true) \(startingBlock.type.rawValue)")
                                     .contentTransition(.numericText())
                                     
                             })
@@ -41,10 +41,9 @@ struct WorkoutPage: View {
                         AnyView (
                             WorkoutSection(repeats: vm.numberOfRepeats, {
                                 VStack(alignment: .leading) {
-                                    Text("4 minutes Run")
-                                    Text("2 minutes Walk")
-                                    Text("6 minutes Run")
-                                    Text("2 minutes Walk")
+                                    ForEach(vm.mainBlock, id: \.self) { section in
+                                        Text("^[\(Int(section.time)) minutes](inflect: true) \(section.type.rawValue)")
+                                    }
                                 }
                             })
                             .contentTransition(.numericText())
@@ -52,8 +51,7 @@ struct WorkoutPage: View {
                     } finishView: {
                         AnyView(
                             WorkoutSection(repeats: 0, {
-                                Text("\(Int(endBlock.time)) minutes \(endBlock.type.rawValue)")
-                                    .contentTransition(.numericText())
+                                Text("^[\(Int(endBlock.time)) minutes](inflect: true) \(endBlock.type.rawValue)")
                             })
                         )
                     }

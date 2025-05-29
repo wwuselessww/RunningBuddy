@@ -79,12 +79,11 @@ class WorkoutViewModel: ObservableObject {
     func getWorkoutData(_ workout: Workout) {
         withAnimation {
             numberOfRepeats = workout.coreRepeats ?? 0
-        }
-        
-        withAnimation {
             startingBlock = workout.start
             endBlock = workout.end
+            mainBlock = workout.core
         }
+        
         
     }
     
