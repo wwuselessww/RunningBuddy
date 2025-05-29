@@ -12,7 +12,6 @@ struct WorkoutPage: View {
     var body: some View {
         VStack {
             Text(vm.selectedDifficulty.image)
-                //FIXME: animation for changeing emoji
                 .font(.system(size: 200))
                 .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height / 2)
                 .background {
@@ -27,8 +26,33 @@ struct WorkoutPage: View {
                     }
                 }
                 .pickerStyle(.segmented)
-//                WorkoutDetails()
-//                Spacer()
+                WorkoutDetails {
+                    AnyView (
+                        Text("heah")
+                            .font(.largeTitle)
+                            .foregroundStyle(.red)
+                            .background {
+                                Rectangle()
+                                    .foregroundStyle(.blue)
+                                    
+                            }
+                    )
+                } centerView: {
+                    AnyView(
+                        Text("hea=dh")
+                        .font(.caption)
+                        .background (
+                            Circle()
+                                .foregroundStyle(.blue)
+                        )
+                    )
+                } finishView: {
+                    AnyView(
+                        Text("heh").foregroundStyle(.blue)
+                    )
+                    
+                }
+
                 Button {
                     print("press")
                 } label: {

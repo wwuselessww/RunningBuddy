@@ -11,9 +11,9 @@ struct TrackModifier: ViewModifier {
     var index: Int
     func body(content: Content) -> some View {
         content
-            .background {
+            .overlay {
                 GeometryReader { geo in
-                    Color.red
+                    Color.clear
                         .preference(key: UpdateArray.self, value: [ViewFramesPreferences(index: index, frame: geo.frame(in: .named("WorkoutDetailsSpace")))])
                   }
                 }
