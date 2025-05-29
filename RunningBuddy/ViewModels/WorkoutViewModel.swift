@@ -8,18 +8,12 @@
 import SwiftUI
 
 class WorkoutViewModel: ObservableObject {
-//    @Published var selectedDifficulty: WorkoutDifficulty = .init(level: "Easy", image: "🥰", color: .blue)
-    
-//    var difficultyArray: [WorkoutDifficulty] = [
-//        .init(level: "Easy", image: "🥰", color: .blue),
-//        .init(level: "Medium", image: "🫡", color: .yellow),
-//        .init(level: "Hard", image: "😔", color: .red),
-//        .init(level: "Free run", image: "😌", color: .green),
-//    ]
-    
     @Published var selectedIndex: Int = 0
     @Published var time: Int = 0
     @Published var numberOfRepeats: Int = 0
+    @Published var startingBlock: Activity?
+    @Published var mainBlock: [Activity] = []
+    @Published var endBlock: Activity?
     var selectedWorkout: Workout {
         workoutArray.indices.contains(selectedIndex) ? workoutArray[selectedIndex] : workoutArray.first!
     }
@@ -31,7 +25,7 @@ class WorkoutViewModel: ObservableObject {
                 Activity(time: 2, type: .walking),
                 Activity(time: 6, type: .running),
                 Activity(time: 2, type: .walking),
-              ], coreRepeats: 6,
+              ], coreRepeats: 1,
               end: Activity(time: 5, type: .walking)),
         .init(difficulty: .init(level: "Medium", image: "🫡", color: .yellow),
               start: Activity(time: 5, type: .walking, repeats: 0),
@@ -40,8 +34,8 @@ class WorkoutViewModel: ObservableObject {
                 Activity(time: 2, type: .walking),
                 Activity(time: 6, type: .running),
                 Activity(time: 2, type: .walking),
-              ], coreRepeats: 3,
-              end: Activity(time: 5, type: .walking)),
+              ], coreRepeats: 2,
+              end: Activity(time: 5, type: .running)),
         .init(difficulty: .init(level: "Hard", image: "😔", color: .red),
               start: Activity(time: 5, type: .walking, repeats: 0),
               core: [
@@ -62,26 +56,38 @@ class WorkoutViewModel: ObservableObject {
               end: Activity(time: 5, type: .walking)),
     ]
     
-    func calculateTime() {
-//        guard let workout = selectedWorkout else {return}
-        let workout = selectedWorkout
+    func calculateTime(_ workout: Workout) {
         var temp: Double = 0
+        var core: Int = 0
+        print("workout.start.time", workout.start.time)
         temp += workout.start.time
         for i in workout.core {
-            temp += i.time
+            core += Int(workout.end.time)
+            print("core", i.time)
         }
+        core *= workout.coreRepeats ?? 1
+        temp += Double(core)
+        print("workout.end.time",  workout.end.time)
         temp += workout.end.time
-        time = Int(temp)
+        print("result", temp)
+        withAnimation {
+            time = Int(temp)
+        }
         
     }
     
-    func getWorkoutData() {
-//        guard let workout = selectedWorkout else {return}
-        let workout = selectedWorkout
+    func getWorkoutData(_ workout: Workout) {
         withAnimation {
             numberOfRepeats = workout.coreRepeats ?? 0
         }
+        
+        withAnimation {
+            startingBlock = workout.start
+            endBlock = workout.end
+        }
+        
     }
+    
     
     
 }

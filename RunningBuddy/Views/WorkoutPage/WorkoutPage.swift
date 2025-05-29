@@ -28,32 +28,39 @@ struct WorkoutPage: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                WorkoutDetails {
-                    AnyView(
-                        WorkoutSection(repeats: 0, {
-                            Text("6 minutes Run")
-                                
-                        })
-                    )
-                } centerView: {
-                    AnyView (
-                        WorkoutSection(repeats: vm.numberOfRepeats, {
-                            VStack(alignment: .leading) {
-                                Text("4 minutes Run")
-                                Text("2 minutes Walk")
-                                Text("6 minutes Run")
-                                Text("2 minutes Walk")
-                            }
-                        })
-                        .contentTransition(.numericText())
-                    )
-                } finishView: {
-                    AnyView(
-                        WorkoutSection(repeats: 0, {
-                            Text("6 minutes Run")
-                        })
-                    )
+                if let startingBlock = vm.startingBlock, let endBlock = vm.endBlock {
+                    WorkoutDetails {
+                        AnyView(
+                            WorkoutSection(repeats: 0, {
+                                Text("\(Int(startingBlock.time)) minutes \(startingBlock.type.rawValue)")
+                                    .contentTransition(.numericText())
+                                    
+                            })
+                        )
+                    } centerView: {
+                        AnyView (
+                            WorkoutSection(repeats: vm.numberOfRepeats, {
+                                VStack(alignment: .leading) {
+                                    Text("4 minutes Run")
+                                    Text("2 minutes Walk")
+                                    Text("6 minutes Run")
+                                    Text("2 minutes Walk")
+                                }
+                            })
+                            .contentTransition(.numericText())
+                        )
+                    } finishView: {
+                        AnyView(
+                            WorkoutSection(repeats: 0, {
+                                Text("\(Int(endBlock.time)) minutes \(endBlock.type.rawValue)")
+                                    .contentTransition(.numericText())
+                            })
+                        )
+                    }
+                } else {
+                    Spacer()
                 }
+                
 
                 Button {
                     print("press")
@@ -64,18 +71,19 @@ struct WorkoutPage: View {
                         .background {
                             RoundedRectangle(cornerRadius: 20)
                         }
+                        .contentTransition(.numericText())
                 }
 
             }
             .padding(.all)
         }
         .onAppear(perform: {
-            vm.calculateTime()
-            vm.getWorkoutData()
+            vm.calculateTime(vm.selectedWorkout)
+            vm.getWorkoutData(vm.selectedWorkout)
         })
         .onChange(of: vm.selectedWorkout) { oldValue, newValue in
-            vm.calculateTime()
-            vm.getWorkoutData()
+            vm.calculateTime(vm.selectedWorkout)
+            vm.getWorkoutData(vm.selectedWorkout)
         }
         
     }

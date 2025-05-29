@@ -9,13 +9,20 @@ import SwiftUI
 
 class WorkOutDetailsViewModel: ObservableObject {
     @Published var viewFrames: [CGRect] = [.zero, .zero, .zero]
-    var pointArray: [CGPoint] = []
-    func getPoints() {
+    var pointArray: [CGPoint] {
+        var temp: [CGPoint] = []
         for frame in viewFrames {
-            pointArray.append(CGPoint(x: frame.midX, y: frame.midY))
+            temp.append(CGPoint(x: frame.midX, y: frame.midY))
         }
-        print(pointArray)
-        print("hehe")
+        return temp
     }
+//    func getPoints() {
+//        print("viewFrames", viewFrames)
+//        for frame in viewFrames {
+//            pointArray.append(CGPoint(x: frame.midX, y: frame.midY))
+//        }
+//        print(pointArray)
+//        print("hehe")
+//    }
     
 }

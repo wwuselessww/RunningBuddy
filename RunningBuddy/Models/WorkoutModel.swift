@@ -28,7 +28,7 @@ struct Activity: Hashable {
     var repeats: Int?
 }
 
-enum ActivityType {
-    case walking
-    case running
+enum ActivityType: String {
+    case walking = "Walk"
+    case running = "Run"
 }

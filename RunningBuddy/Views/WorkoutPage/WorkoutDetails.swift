@@ -55,14 +55,19 @@ struct WorkoutDetails<Content: View>: View {
                 }
                 
             }
+//            .onAppear(perform: {
+//                print("j")
+//                vm.getPoints()
+//            })
             .coordinateSpace(name: "WorkoutDetailsSpace")
             .onPreferenceChange(UpdateArray.self) { preferences in
                 for pref in preferences {
                     if vm.viewFrames.indices.contains(pref.index) {
                         vm.viewFrames[pref.index] = pref.frame
+//                        vm.getPoints()
                     }
                 }
-                vm.getPoints()
+                
             }
         }
     }
