@@ -12,7 +12,7 @@ import MapKit
 
 class WorkoutInfoViewModel: ObservableObject {
     @Published var dateSting: String = ""
-    @Published var workoutModel: WorkoutModel?
+    @Published var workoutModel: HKWorkoutModel?
     @Published var timeString: String = ""
     @Published var distanceString: String = ""
     @Published var activeEnergyString: String = ""

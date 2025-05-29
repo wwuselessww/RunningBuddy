@@ -39,25 +39,18 @@ struct WorkoutDetails<Content: View>: View {
                 }
                 VStack {
                     HStack {
-//                       AnyView(
                         startView
                         .track(index: 0)
-//                       )
                         Spacer()
                     }
                     Spacer()
-//                    AnyView(
                         centerView
                         .track(index: 1)
-//                    )
-
                     Spacer()
                     HStack {
                         Spacer()
-//                       AnyView(
                         finishView
                             .track(index: 2)
-//                       )
                     }
                 }
                 

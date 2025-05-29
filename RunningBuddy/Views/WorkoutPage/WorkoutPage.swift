@@ -11,56 +11,71 @@ struct WorkoutPage: View {
     @StateObject var vm = WorkoutViewModel()
     var body: some View {
         VStack {
-            Text(vm.selectedDifficulty.image)
-                .font(.system(size: 200))
-                .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height / 2)
-                .background {
-                    vm.selectedDifficulty.color
-                        .animation(.easeInOut)
-                        .ignoresSafeArea()
-                }
+//            if let selectedWorkout = vm.selectedWorkout {
+            Text(vm.selectedWorkout.difficulty.image)
+                    .font(.system(size: 200))
+                    .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height / 2)
+                    .background {
+                        vm.selectedWorkout.difficulty.color
+                            .animation(.easeInOut)
+                            .ignoresSafeArea()
+                    }
+//            }
             Group {
-                Picker("selection of difficulty", selection: $vm.selectedDifficulty) {
-                    ForEach(vm.difficultyArray, id: \.self) { difficulty in
-                        Text(difficulty.level)
+                Picker("selection of difficulty", selection: $vm.selectedIndex) {
+                    ForEach(vm.workoutArray.indices, id: \.self) { index in
+                        Text(vm.workoutArray[index].difficulty.level)
                     }
                 }
                 .pickerStyle(.segmented)
                 WorkoutDetails {
-                    AnyView (
-                        Text("heah")
-                            .font(.largeTitle)
-                            .foregroundStyle(.red)
-                            .background {
-                                Rectangle()
-                                    .foregroundStyle(.blue)
-                                    
-                            }
+                    AnyView(
+                        WorkoutSection(repeats: 0, {
+                            Text("6 minutes Run")
+                                
+                        })
                     )
                 } centerView: {
-                    AnyView(
-                        Text("hea=dh")
-                        .font(.caption)
-                        .background (
-                            Circle()
-                                .foregroundStyle(.blue)
-                        )
+                    AnyView (
+                        WorkoutSection(repeats: vm.numberOfRepeats, {
+                            VStack(alignment: .leading) {
+                                Text("4 minutes Run")
+                                Text("2 minutes Walk")
+                                Text("6 minutes Run")
+                                Text("2 minutes Walk")
+                            }
+                        })
+                        .contentTransition(.numericText())
                     )
                 } finishView: {
                     AnyView(
-                        Text("heh").foregroundStyle(.blue)
+                        WorkoutSection(repeats: 0, {
+                            Text("6 minutes Run")
+                        })
                     )
-                    
                 }
 
                 Button {
                     print("press")
                 } label: {
-                    Text("Start")
+                    Text("Start \(vm.time) Min Workout")
+                        .foregroundStyle(.white)
+                        .padding()
+                        .background {
+                            RoundedRectangle(cornerRadius: 20)
+                        }
                 }
 
             }
-            .padding(.horizontal)
+            .padding(.all)
+        }
+        .onAppear(perform: {
+            vm.calculateTime()
+            vm.getWorkoutData()
+        })
+        .onChange(of: vm.selectedWorkout) { oldValue, newValue in
+            vm.calculateTime()
+            vm.getWorkoutData()
         }
         
     }

@@ -10,7 +10,7 @@ import HealthKit
 
 struct WorkoutCell: View {
 //    var workoutType: WorkoutType
-    var workoutModel: WorkoutModel
+    var workoutModel: HKWorkoutModel
     var body: some View {
         HStack {
             Image(systemName: workoutModel.type == .outdoorRun ? "figure.run": "figure.walk")
@@ -51,7 +51,7 @@ struct WorkoutCell: View {
         VStack {
 
             List {
-                WorkoutCell(workoutModel: WorkoutModel(workout: HKWorkout(activityType: .archery, start: Date(), end: Date().advanced(by: 10)), date: Date(), distance: 0.0, avgPulse: 10, type: .outdoorRun))
+                WorkoutCell(workoutModel: HKWorkoutModel(workout: HKWorkout(activityType: .archery, start: Date(), end: Date().advanced(by: 10)), date: Date(), distance: 0.0, avgPulse: 10, type: .outdoorRun))
             }
         }
     }
