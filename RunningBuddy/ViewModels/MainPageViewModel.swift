@@ -13,7 +13,7 @@ class MainPageViewModel: ObservableObject {
     @Published var maxActivity: Int = 1000
     @Published var currentActivity: Int = 0
     @Published var workoutArray: [HKWorkout] = []
-    @Published var workModelArray: [WorkoutModel] = []
+    @Published var workModelArray: [HKWorkoutModel] = []
     var healtKitManager = HealthKitManager.shared
     var store = HealthKitManager.shared.healthStore
     let startDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
@@ -66,7 +66,7 @@ class MainPageViewModel: ObservableObject {
             return
         }
         let res = await healtKitManager.getWorkouts(startDate: start, endDate: endDate)
-        var modelArray: [WorkoutModel] = []
+        var modelArray: [HKWorkoutModel] = []
         for i in res {
             print(String(i.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)) ?? 0))
             let date = i.startDate
@@ -74,7 +74,7 @@ class MainPageViewModel: ObservableObject {
                 print("no data")
                 return
             }
-            let newWorkout = WorkoutModel(workout: i, date: date, distance: distance, avgPulse: pulse, type: .outdoorRun)
+            let newWorkout = HKWorkoutModel(workout: i, date: date, distance: distance, avgPulse: pulse, type: .outdoorRun)
             modelArray.append(newWorkout)
             
         }

@@ -5,13 +5,30 @@
 //  Created by Alexander Kozharin on 08.05.25.
 //
 
-import Foundation
-import HealthKit
+import SwiftUI
 
-struct WorkoutModel {
-    var workout: HKWorkout
-    var date: Date
-    var distance: Double
-    var avgPulse: Int
-    var type: WorkoutType
+struct Workout: Hashable {
+    var difficulty: WorkoutDifficulty
+    var start: Activity
+    var core: [Activity]
+    var coreRepeats: Int?
+    var end: Activity
+
+}
+
+struct WorkoutDifficulty: Hashable {
+    let level: String
+    let image: String
+    let color: Color
+}
+
+struct Activity: Hashable {
+    var time: Double
+    var type: ActivityType
+    var repeats: Int?
+}
+
+enum ActivityType: String {
+    case walking = "Walk"
+    case running = "Run"
 }
