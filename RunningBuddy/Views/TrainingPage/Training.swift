@@ -22,65 +22,71 @@ struct Training: View {
             Spacer()
             Text("Running")
                 .font(.system(size: 40, weight: .semibold))
-            Text("0:59")
+            //FIXME: while animation is running the numers are moving horisontally
+            Text("\(vm.timerDisplay)")
+                .contentTransition(.numericText())
                 .font(.system(size: 96, weight: .semibold))
+                .frame(minWidth: 200, maxWidth: .infinity, alignment: .center)
+                .onReceive(vm.timer) { input in
+                    guard vm.isActive else {return}
+                    withAnimation {
+                        vm.getTimeDifference(from: vm.now, to: vm.plusSecond)
+                    }
+                }
             Button {
-                print("stop")
+                vm.isPlayPausePressed.toggle()
+                if vm.isPlayPausePressed {
+                    print("play")
+                    vm.startTimer()
+                } else {
+                    print("stop")
+                    vm.stopTimer()
+                }
+                
+                
             } label: {
                 Circle()
                     .foregroundStyle(.black)
                     .overlay {
-                        Image(systemName: "play.fill")
+                        vm.image
                             .resizable()
                             .scaledToFit()
-                            .padding(.leading)
+                        
                             .frame(minWidth: 40, maxWidth: 60)
                             .foregroundStyle(.white)
-                            
+                        
                     }
             }
             .frame(minWidth: 40, maxWidth: 140)
             Spacer()
-            Grid(alignment: .center) {
+            Grid(alignment: .leading) {
                 GridRow {
-                    VStack(alignment: .leading) {
-                        Text("Speed")
-                            .font(.system(size: 24))
-                            .foregroundStyle(.blue)
-                        Text("7.2 km/h")
-                            .font(.system(size: 36))
-                    }
+                    TrainingDetail(title: "Speed", metric: .constant(7.2), unitOfMeasurement: "km/h")
                     Spacer()
-                    VStack(alignment: .leading) {
-                        Text("Speed")
-                            .font(.system(size: 24))
-                            .foregroundStyle(.blue)
-                        Text("7.2 km/h")
-                            .font(.system(size: 36))
-                    }
+                    TrainingDetail(title: "Pace", metric: .constant(7.2), unitOfMeasurement: "min/h")
                 }
                 Spacer()
                 GridRow {
-                    VStack(alignment: .leading) {
-                        Text("Speed")
-                            .font(.system(size: 24))
-                            .foregroundStyle(.blue)
-                        Text("7.2 km/h")
-                            .font(.system(size: 36))
-                    }
+                    TrainingDetail(title: "Time remaining", metric: .constant(7.2), unitOfMeasurement: "min")
                     Spacer()
-                    VStack(alignment: .leading) {
-                        Text("Speed")
-                            .font(.system(size: 24))
-                            .foregroundStyle(.blue)
-                        Text("7.2 km/h")
-                            .font(.system(size: 36))
-                    }
+                    TrainingDetail(title: "Total Distance", metric: .constant(7.2), unitOfMeasurement: "km")
                 }
             }
             .padding(.bottom)
         }
+        .onAppear {
+            vm.workout = workout
+            vm.stopTimer()
+        }
+        .onChange(of: vm.schenePhase, { oldValue, newValue in
+            if vm.schenePhase == .active {
+                vm.isActive = true
+            } else {
+                vm.isActive = false
+            }
+        })
         .navigationTitle("\(workout.difficulty.level) Workout")
+        .navigationBarTitleDisplayMode(.large)
     }
 }
 
@@ -96,7 +102,7 @@ struct Training: View {
                                 ], coreRepeats: 1,
                                 end: Activity(time: 5, type: .walking))
         )
-
+        
     }
 }
 
