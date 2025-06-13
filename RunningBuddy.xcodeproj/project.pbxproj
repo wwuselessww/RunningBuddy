@@ -40,6 +40,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A26826CB2DFC3DAF00DD5A95 /* Exceptions for "RunningBuddy" folder in "RunningBuddy" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = A2C595D72DBC06FE00E4289B /* RunningBuddy */;
+		};
 		A2C596052DBC0AD500E4289B /* Exceptions for "RunningBuddy" folder in "RunningBuddy watch app Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -53,6 +60,7 @@
 		A2C595DA2DBC06FE00E4289B /* RunningBuddy */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				A26826CB2DFC3DAF00DD5A95 /* Exceptions for "RunningBuddy" folder in "RunningBuddy" target */,
 				A2C596052DBC0AD500E4289B /* Exceptions for "RunningBuddy" folder in "RunningBuddy watch app Watch App" target */,
 			);
 			path = RunningBuddy;
@@ -363,9 +371,12 @@
 				DEVELOPMENT_TEAM = VFG5U3NL5K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RunningBuddy/Info.plist;
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We want to read data";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "For tracking workouts and speed";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "For tracking workouts and speed";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -400,9 +411,12 @@
 				DEVELOPMENT_TEAM = VFG5U3NL5K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RunningBuddy/Info.plist;
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We want to read data";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "For tracking workouts and speed";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "For tracking workouts and speed";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

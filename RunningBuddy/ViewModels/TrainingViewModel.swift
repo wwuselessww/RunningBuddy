@@ -8,10 +8,9 @@
 import SwiftUI
 
 class TrainingViewModel: ObservableObject {
-    @Environment(\.scenePhase) var schenePhase
+    
     
     @Published var workout: Workout?
-//    @Published var timerRemainig: Int = 1000
     @Published var isActive: Bool = true
     @Published var timerDisplay: String = "0:00"
     @Published var isPlayPausePressed: Bool = false
@@ -43,4 +42,5 @@ class TrainingViewModel: ObservableObject {
         print(interval.minuteSecond)
         timerDisplay = interval.minuteSecond
     }
+    
 }
