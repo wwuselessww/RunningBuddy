@@ -9,14 +9,15 @@ import SwiftUI
 
 struct TrainingDetail: View {
     var title: String
-    @Binding var metric: Double
+    @Binding var metric: String
     var unitOfMeasurement: String
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
                 .font(.system(size: 24))
                 .foregroundStyle(.blue)
-            Text("\(String(format: "%0.1f", metric)) \(unitOfMeasurement)")
+//            Text("\(String(format: "%0.1f", metric)) \(unitOfMeasurement)")
+            Text("\(metric) \(unitOfMeasurement)")
                 .contentTransition(.numericText())
                 .font(.system(size: 36))
         }
@@ -25,6 +26,6 @@ struct TrainingDetail: View {
 }
 
 #Preview {
-    TrainingDetail(title: "Speed", metric: .constant(7.2), unitOfMeasurement: "km/h")
+    TrainingDetail(title: "Speed", metric: .constant("sl"), unitOfMeasurement: "km/h")
 }
 

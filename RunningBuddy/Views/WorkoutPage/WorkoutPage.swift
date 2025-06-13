@@ -30,7 +30,7 @@ struct WorkoutPage: View {
                     WorkoutDetails {
                         AnyView(
                             WorkoutSection(repeats: 0, {
-                                Text("^[\(Int(startingBlock.time)) minutes](inflect: true) \(startingBlock.type.rawValue)")
+                                Text("^[\(Int(startingBlock.time / 60)) minutes](inflect: true) \(startingBlock.type.rawValue)")
                                     .contentTransition(.numericText())
                                     
                             })
@@ -40,7 +40,7 @@ struct WorkoutPage: View {
                             WorkoutSection(repeats: vm.numberOfRepeats, {
                                 VStack(alignment: .leading) {
                                     ForEach(vm.mainBlock, id: \.self) { section in
-                                        Text("^[\(Int(section.time)) minutes](inflect: true) \(section.type.rawValue)")
+                                        Text("^[\(Int(section.time / 60)) minutes](inflect: true) \(section.type.rawValue)")
                                     }
                                 }
                             })
@@ -49,7 +49,7 @@ struct WorkoutPage: View {
                     } finishView: {
                         AnyView(
                             WorkoutSection(repeats: 0, {
-                                Text("^[\(Int(endBlock.time)) minutes](inflect: true) \(endBlock.type.rawValue)")
+                                Text("^[\(Int(endBlock.time / 60)) minutes](inflect: true) \(endBlock.type.rawValue)")
                             })
                         )
                     }
@@ -63,7 +63,7 @@ struct WorkoutPage: View {
             NavigationLink {
                 Training(workout: vm.selectedWorkout)
             } label: {
-                Text("Start \(vm.time) Min Workout")
+                Text("Start \(vm.time / 60) Min Workout")
                     .foregroundStyle(.white)
                     .padding()
                     .background {

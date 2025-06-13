@@ -39,6 +39,8 @@ struct Training: View {
                     guard vm.isActive else {return}
                     withAnimation {
                         vm.timerDisplay -= 1
+                        vm.getSpeed()
+                        vm.getRemaingTime()
                     }
                 }
             HStack(alignment: .center) {
@@ -78,15 +80,15 @@ struct Training: View {
             Spacer()
             Grid(alignment: .leading) {
                 GridRow {
-                    TrainingDetail(title: "Speed", metric: .constant(vm.speed), unitOfMeasurement: "km/h")
+                    TrainingDetail(title: "Speed", metric: .constant(String(format: "%0.1f", vm.speed)), unitOfMeasurement: "km/h")
                     Spacer()
-                    TrainingDetail(title: "Pace", metric: .constant(7.2), unitOfMeasurement: "min/h")
+                    TrainingDetail(title: "Pace", metric: .constant("7.2"), unitOfMeasurement: "min/h")
                 }
                 Spacer()
                 GridRow {
-                    TrainingDetail(title: "Time remaining", metric: .constant(7.2), unitOfMeasurement: "min")
+                    TrainingDetail(title: "Time remaining", metric: .constant(vm.timeString(from: vm.remainingTime)), unitOfMeasurement: "min")
                     Spacer()
-                    TrainingDetail(title: "Total Distance", metric: .constant(7.2), unitOfMeasurement: "km")
+                    TrainingDetail(title: "Total Distance", metric: .constant("7.2"), unitOfMeasurement: "km")
                 }
             }
             .padding(.bottom)
@@ -106,7 +108,7 @@ struct Training: View {
         })
         .onChange(of: vm.locationManager.speed, { oldValue, newValue in
             print("keke")
-            vm.getSpeed()
+//            vm.getSpeed()
         })
         .navigationTitle("\(workout.difficulty.level) Workout")
         .navigationBarTitleDisplayMode(.large)

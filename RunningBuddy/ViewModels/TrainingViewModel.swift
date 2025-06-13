@@ -24,7 +24,8 @@ class TrainingViewModel: ObservableObject {
     var locationManager: LocationManager = LocationManager()
     
     @Published var speed: Double = 0
-    @Published var totalTime: Int = 0
+    @Published var remainingTime: Int = 0
+    var totalTime: Int = 0
     var calendar = Calendar.current
     
     
@@ -52,10 +53,17 @@ class TrainingViewModel: ObservableObject {
     
     func getTotalTime() {
         var time: Int = 0
-        for activity in activities {
-            time += activity.time
+        for index in 0..<activities.count {
+            if index >= currentAcitivityIndex {
+                time += activities[index].time
+            }
         }
+        print("total time \(time / 60)")
         totalTime = time
+    }
+    
+    func getRemaingTime() {
+       remainingTime = totalTime - timerDisplay
     }
     
     func createActivitiesArray() {
