@@ -10,7 +10,7 @@ import SwiftUI
 struct Training: View {
     @StateObject var vm = TrainingViewModel()
     @Environment(\.scenePhase) var schenePhase
-    @ObservedObject var locationManager: LocationManager = LocationManager()
+//    @ObservedObject var locationManager: LocationManager = LocationManager()
     var workout: Workout
     var body: some View {
         VStack {
@@ -39,11 +39,11 @@ struct Training: View {
                 if vm.isPlayPausePressed {
                     print("play")
                     vm.startTimer()
-                    locationManager.startTracking()
+                    vm.locationManager.startTracking()
                 } else {
                     print("stop")
                     vm.stopTimer()
-                    locationManager.stopTracking()
+                    vm.locationManager.stopTracking()
                 }
                 
                 
@@ -64,7 +64,7 @@ struct Training: View {
             Spacer()
             Grid(alignment: .leading) {
                 GridRow {
-                    TrainingDetail(title: "Speed", metric: .constant(locationManager.speed), unitOfMeasurement: "km/h")
+                    TrainingDetail(title: "Speed", metric: .constant(vm.speed), unitOfMeasurement: "km/h")
                     Spacer()
                     TrainingDetail(title: "Pace", metric: .constant(7.2), unitOfMeasurement: "min/h")
                 }
@@ -87,6 +87,10 @@ struct Training: View {
             } else {
                 vm.isActive = false
             }
+        })
+        .onChange(of: vm.locationManager.speed, { oldValue, newValue in
+            print("keke")
+            vm.getSpeed()
         })
         .navigationTitle("\(workout.difficulty.level) Workout")
         .navigationBarTitleDisplayMode(.large)

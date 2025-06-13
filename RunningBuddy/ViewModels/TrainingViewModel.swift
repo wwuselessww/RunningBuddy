@@ -16,7 +16,8 @@ class TrainingViewModel: ObservableObject {
     @Published var isPlayPausePressed: Bool = false
     @Published var now: Date = Date.now
     @Published var plusSecond: Date = Date.now
-    
+    var locationManager: LocationManager = LocationManager()
+    @Published var speed: Double = 0
     var calendar = Calendar.current
     
    
@@ -41,6 +42,12 @@ class TrainingViewModel: ObservableObject {
         var interval = from.distance(to: plusSecond)
         print(interval.minuteSecond)
         timerDisplay = interval.minuteSecond
+    }
+    
+    func getSpeed() {
+        withAnimation {
+            speed = locationManager.speed
+        }
     }
     
 }

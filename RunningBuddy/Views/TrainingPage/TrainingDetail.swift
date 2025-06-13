@@ -17,6 +17,7 @@ struct TrainingDetail: View {
                 .font(.system(size: 24))
                 .foregroundStyle(.blue)
             Text("\(String(format: "%0.1f", metric)) \(unitOfMeasurement)")
+                .contentTransition(.numericText())
                 .font(.system(size: 36))
         }
         .fontWeight(.semibold)
