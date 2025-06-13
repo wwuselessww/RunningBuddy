@@ -1,35 +1,32 @@
 import SwiftUI
 
 struct TestView: View {
-    @State var viewFrames: [CGRect] = [.zero, .zero, .zero]
+    @State var timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
+    @State var isPlaying: Bool = false
+    @State var displayTime: Int = 60
     var body: some View {
         VStack {
-            HStack {
-                Text("From")
-                    .track(index: 0)
-                Spacer()
-            }
-            Spacer()
-            Text("center")
-                .track(index: 1)
-            Spacer()
-            HStack {
-                Spacer()
-                Text("hedsre")
-                    .track(index: 2)
-            }
-        }
-        
-        .onPreferenceChange(UpdateArray.self) { preferences in
-                    for pref in preferences {
-                        if viewFrames.indices.contains(pref.index) {
-                            viewFrames[pref.index] = pref.frame
-                        }
-                    }
+            Text(timeString(from: displayTime))
+                .onReceive(timer) { output in
+                    displayTime -= 1
                 }
-        .onAppear {
-            print(viewFrames)
+            Button {
+                isPlaying.toggle()
+                if isPlaying {
+                    timer.upstream.connect().cancel()
+                } else {
+                    timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
+                }
+            } label: {
+                Text("play/pause")
+            }
+
         }
+    }
+    func timeString(from seconds: Int) -> String {
+        let minutes = seconds / 60
+        let newSeconds = seconds % 60
+        return String(format: "%02d:%02d", minutes, newSeconds)
     }
 }
 

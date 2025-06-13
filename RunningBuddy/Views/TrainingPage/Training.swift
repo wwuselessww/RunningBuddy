@@ -10,57 +10,71 @@ import SwiftUI
 struct Training: View {
     @StateObject var vm = TrainingViewModel()
     @Environment(\.scenePhase) var schenePhase
-//    @ObservedObject var locationManager: LocationManager = LocationManager()
     var workout: Workout
     var body: some View {
         VStack {
             HStack {
-                ForEach(0..<10, id: \.self) { part in
+                ForEach(Array(vm.activities.enumerated()), id: \.offset) { index, part in
                     Circle()
-                        .frame(width: 29)
+                        .overlay(content: {
+                            Image(systemName: part.type == .running ? "figure.run" : "figure.walk")
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(.white)
+                                .padding(.all, 5)
+                        })
+                        .frame(minWidth: 29, maxWidth: 40, minHeight: 29, maxHeight: 40)
                 }
             }
+            .padding(.horizontal)
             Spacer()
             Text("Running")
                 .font(.system(size: 40, weight: .semibold))
             //FIXME: while animation is running the numers are moving horisontally
-            Text("\(vm.timerDisplay)")
+            Text(vm.timeString(from: vm.timerDisplay))
                 .contentTransition(.numericText())
                 .font(.system(size: 96, weight: .semibold))
                 .frame(minWidth: 200, maxWidth: .infinity, alignment: .center)
                 .onReceive(vm.timer) { input in
                     guard vm.isActive else {return}
                     withAnimation {
-                        vm.getTimeDifference(from: vm.now, to: vm.plusSecond)
+                        vm.timerDisplay -= 1
                     }
                 }
-            Button {
-                vm.isPlayPausePressed.toggle()
-                if vm.isPlayPausePressed {
-                    print("play")
-                    vm.startTimer()
-                    vm.locationManager.startTracking()
-                } else {
-                    print("stop")
-                    vm.stopTimer()
-                    vm.locationManager.stopTracking()
-                }
-                
-                
-            } label: {
-                Circle()
-                    .foregroundStyle(.black)
-                    .overlay {
-                        vm.image
-                            .resizable()
-                            .scaledToFit()
-                        
-                            .frame(minWidth: 40, maxWidth: 60)
-                            .foregroundStyle(.white)
-                        
+            HStack(alignment: .center) {
+                Spacer()
+                Button {
+                    vm.isPlayPausePressed.toggle()
+                    if vm.isPlayPausePressed {
+                        print("play")
+                        vm.startTimer()
+                        vm.locationManager.startTracking()
+                    } else {
+                        print("stop")
+                        vm.stopTimer()
+                        vm.locationManager.stopTracking()
                     }
+                } label: {
+                    Circle()
+                        .foregroundStyle(.black)
+                        .overlay {
+                            vm.image
+                                .resizable()
+                                .scaledToFit()
+                            
+                                .frame(minWidth: 40, maxWidth: 60)
+                                .foregroundStyle(.white)
+                            
+                        }
+                }
+                .frame(minWidth: 40, maxWidth: 140)
+                HoldToSkipButton(onHold: {
+                    print("holded")
+                }, onHoldEnded: {
+                    print("hold ended")
+                })
+                
             }
-            .frame(minWidth: 40, maxWidth: 140)
             Spacer()
             Grid(alignment: .leading) {
                 GridRow {
@@ -79,7 +93,9 @@ struct Training: View {
         }
         .onAppear {
             vm.workout = workout
+            vm.createActivitiesArray()
             vm.stopTimer()
+            vm.getTotalTime()
         }
         .onChange(of: schenePhase, { oldValue, newValue in
             if schenePhase == .active {
@@ -100,14 +116,14 @@ struct Training: View {
 #Preview {
     NavigationStack {
         Training(workout: .init(difficulty: .init(level: "Easy", image: "🥰", color: .blue),
-                                start: Activity(time: 5, type: .walking, repeats: 0),
+                                start: Activity(time: 5*60, type: .walking, repeats: 0),
                                 core: [
-                                    Activity(time: 1, type: .running),
-                                    Activity(time: 2, type: .walking),
-                                    Activity(time: 6, type: .running),
-                                    Activity(time: 2, type: .walking),
+                                    Activity(time: 1*60, type: .running),
+                                    Activity(time: 2*60, type: .walking),
+                                    Activity(time: 6*60, type: .running),
+                                    Activity(time: 2*60, type: .walking),
                                 ], coreRepeats: 1,
-                                end: Activity(time: 5, type: .walking))
+                                end: Activity(time: 5*60, type: .walking))
         )
         
     }

@@ -10,11 +10,11 @@ import Foundation
 extension TimeInterval {
     func stringFromTimeInterval (start: Date, end: Date) -> String {
         let endingDate = end
-        let timeInterval = TimeInterval(self)
+//        let timeInterval = TimeInterval(self)
         let startingDate = start
         let calendar = Calendar.current
         
-        var componentsNow = calendar.dateComponents([.hour, .minute, .second], from: startingDate, to: endingDate)
+        let componentsNow = calendar.dateComponents([.hour, .minute, .second], from: startingDate, to: endingDate)
         if let hour = componentsNow.hour, let minute = componentsNow.minute, let seconds = componentsNow.second {
             return "\(hour):\(minute):\(seconds)"
         } else {
