@@ -17,18 +17,20 @@ struct Training: View {
                 ForEach(Array(vm.activities.enumerated()), id: \.offset) { index, part in
                     Circle()
                         .overlay(content: {
-                            Image(systemName: part.type == .running ? "figure.run" : "figure.walk")
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(.white)
-                                .padding(.all, 5)
+                            if let currentActivity = vm.currentAcitivity {
+                                Image(systemName: part.type == .running ? "figure.run" : "figure.walk")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundStyle(part.id == currentActivity.id ? .white : .gray)
+                                    .padding(.all, 5)
+                            }
                         })
                         .frame(minWidth: 29, maxWidth: 40, minHeight: 29, maxHeight: 40)
                 }
             }
             .padding(.horizontal)
             Spacer()
-            Text("Running")
+            Text(vm.currentAcitivity?.type.rawValue ?? "No activity")
                 .font(.system(size: 40, weight: .semibold))
             //FIXME: while animation is running the numers are moving horisontally
             Text(vm.timeString(from: vm.timerDisplay))
@@ -39,8 +41,8 @@ struct Training: View {
                     guard vm.isActive else {return}
                     withAnimation {
                         vm.timerDisplay -= 1
+                        vm.totalTime -= 1
                         vm.getSpeed()
-                        vm.getRemaingTime()
                     }
                 }
             HStack(alignment: .center) {
@@ -71,9 +73,9 @@ struct Training: View {
                 }
                 .frame(minWidth: 40, maxWidth: 140)
                 HoldToSkipButton(onHold: {
-                    print("holded")
+                    
                 }, onHoldEnded: {
-                    print("hold ended")
+                    vm.skipHolded()
                 })
                 
             }
@@ -86,7 +88,7 @@ struct Training: View {
                 }
                 Spacer()
                 GridRow {
-                    TrainingDetail(title: "Time remaining", metric: .constant(vm.timeString(from: vm.remainingTime)), unitOfMeasurement: "min")
+                    TrainingDetail(title: "Time remaining", metric: .constant(vm.timeString(from: vm.totalTime)), unitOfMeasurement: "min")
                     Spacer()
                     TrainingDetail(title: "Total Distance", metric: .constant("7.2"), unitOfMeasurement: "km")
                 }
@@ -96,6 +98,8 @@ struct Training: View {
         .onAppear {
             vm.workout = workout
             vm.createActivitiesArray()
+            vm.currentAcitivityIndex = 0
+            vm.currentAcitivity = vm.activities.first
             vm.stopTimer()
             vm.getTotalTime()
         }
@@ -105,10 +109,6 @@ struct Training: View {
             } else {
                 vm.isActive = false
             }
-        })
-        .onChange(of: vm.locationManager.speed, { oldValue, newValue in
-            print("keke")
-//            vm.getSpeed()
         })
         .navigationTitle("\(workout.difficulty.level) Workout")
         .navigationBarTitleDisplayMode(.large)

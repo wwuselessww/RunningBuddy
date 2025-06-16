@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+@MainActor
 class TrainingViewModel: ObservableObject {
     
     
@@ -14,9 +14,6 @@ class TrainingViewModel: ObservableObject {
     @Published var isActive: Bool = true
     @Published var timerDisplay: Int = 300
     @Published var isPlayPausePressed: Bool = false
-    
-//    @Published var now: Date = Date.now
-//    @Published var plusSecond: Date = Date.now
     @Published var activities: [Activity] = []
     @Published var currentAcitivity: Activity?
     @Published var currentAcitivityIndex: Int = 0
@@ -24,7 +21,6 @@ class TrainingViewModel: ObservableObject {
     var locationManager: LocationManager = LocationManager()
     
     @Published var speed: Double = 0
-    @Published var remainingTime: Int = 0
     var totalTime: Int = 0
     var calendar = Calendar.current
     
@@ -61,40 +57,66 @@ class TrainingViewModel: ObservableObject {
         print("total time \(time / 60)")
         totalTime = time
     }
-    
-    func getRemaingTime() {
-       remainingTime = totalTime - timerDisplay
-    }
+
     
     func createActivitiesArray() {
-        guard let workout = workout else {
+        guard var workout = workout else {
             print("no workout?")
             return
         }
         let repeats = workout.coreRepeats ?? 0
         var tempArray: [Activity] = []
+        workout.start.id = UUID()
         tempArray.append(workout.start)
-        for _ in 0...repeats {
+        for i in 0...repeats {
+            print("repeat \(i)")
             for activity in workout.core {
-                tempArray.append(activity)
+                var tempActivity = activity
+                tempActivity.id = UUID()
+                tempArray.append(tempActivity)
             }
         }
+        workout.end.id = UUID()
         tempArray.append(workout.end)
+        
         activities = tempArray
-        print(tempArray.count)
+        currentAcitivityIndex = 0
+        print(tempArray)
+        
     }
+
     func selectActivity() {
-        guard let workout = workout else {
+        guard workout != nil else {
             print("no workout?")
             return
         }
-        currentAcitivity = activities[currentAcitivityIndex]
+        let tempActivity = activities[currentAcitivityIndex]
+        withAnimation {
+            timerDisplay = tempActivity.time
+            
+        }
+        currentAcitivity = tempActivity
     }
     
     func timeString(from seconds: Int) -> String {
         let minutes = seconds / 60
         let newSeconds = seconds % 60
         return String(format: "%02d:%02d", minutes, newSeconds)
+    }
+    
+    func nextActivity() {
+        if currentAcitivityIndex < activities.count - 1 {
+            currentAcitivityIndex += 1
+        } else {
+            //MARK: catch if ended
+            currentAcitivityIndex = 0
+        }
+        selectActivity()
+    }
+    
+    func skipHolded() {
+        totalTime -= timerDisplay
+        nextActivity()
     }
     
     

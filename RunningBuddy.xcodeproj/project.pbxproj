@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A29AE6772E003FC2005B5AEC /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A29AE6762E003FC2005B5AEC /* SwiftUI.framework */; };
 		A2C595FD2DBC0A9900E4289B /* RunningBuddy watch app Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = A2C595F32DBC0A9700E4289B /* RunningBuddy watch app Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A29AE6762E003FC2005B5AEC /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		A2C595D82DBC06FE00E4289B /* RunningBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunningBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2C595F32DBC0A9700E4289B /* RunningBuddy watch app Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RunningBuddy watch app Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -78,6 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A29AE6772E003FC2005B5AEC /* SwiftUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,11 +94,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A29AE6752E003FC2005B5AEC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A29AE6762E003FC2005B5AEC /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A2C595CF2DBC06FE00E4289B = {
 			isa = PBXGroup;
 			children = (
 				A2C595DA2DBC06FE00E4289B /* RunningBuddy */,
 				A2C595F42DBC0A9700E4289B /* RunningBuddy watch app Watch App */,
+				A29AE6752E003FC2005B5AEC /* Frameworks */,
 				A2C595D92DBC06FE00E4289B /* Products */,
 			);
 			sourceTree = "<group>";
