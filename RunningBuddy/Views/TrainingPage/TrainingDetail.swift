@@ -7,18 +7,36 @@
 
 import SwiftUI
 
-struct TrainingDetail: View {
+struct TrainingDetail<Content: View>: View {
     var title: String
-    @Binding var metric: String
+//    @Binding var metric: String
     var unitOfMeasurement: String
+    var isTime: Bool = false
+    var content: Content
+    
+    init(title: String, unitOfMeasurement: String, isTime: Bool = false, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.unitOfMeasurement = unitOfMeasurement
+        self.content = content()
+        self.isTime = isTime
+    }
+    
+    
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
                 .font(.system(size: 24))
                 .foregroundStyle(.blue)
-//            Text("\(String(format: "%0.1f", metric)) \(unitOfMeasurement)")
-            Text("\(metric) \(unitOfMeasurement)")
-                .contentTransition(.numericText())
+            HStack {
+                content
+                    .contentTransition(.numericText())
+                //FIXME: MUST BE REWORKED
+                    .frame(minWidth: 10, maxWidth: isTime ? 100 : 70, alignment: .leading)
+
+                Text("\(unitOfMeasurement)")
+                    
+            }
                 .font(.system(size: 36))
         }
         .fontWeight(.semibold)
@@ -26,6 +44,14 @@ struct TrainingDetail: View {
 }
 
 #Preview {
-    TrainingDetail(title: "Speed", metric: .constant("sl"), unitOfMeasurement: "km/h")
+    @Previewable @State var speed: Int = 10
+    var timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
+    TrainingDetail(title: "Speed", unitOfMeasurement: "km/h", isTime: false) {
+        Text("\(speed)")
+    }
+        .onReceive(timer) { new in
+            print("kek")
+            speed = Int.random(in: 0...100)
+        }
 }
 

@@ -43,6 +43,7 @@ struct Training: View {
                         vm.timerDisplay -= 1
                         vm.totalTime -= 1
                         vm.getSpeed()
+                        vm.getPace()
                     }
                 }
             HStack(alignment: .center) {
@@ -82,15 +83,23 @@ struct Training: View {
             Spacer()
             Grid(alignment: .leading) {
                 GridRow {
-                    TrainingDetail(title: "Speed", metric: .constant(String(format: "%0.1f", vm.speed)), unitOfMeasurement: "km/h")
+                    TrainingDetail(title: "Speed", unitOfMeasurement: "km/h") {
+                        Text(String(format: "%0.1f", vm.speed))
+                    }
                     Spacer()
-                    TrainingDetail(title: "Pace", metric: .constant("7.2"), unitOfMeasurement: "min/h")
+                    TrainingDetail(title: "Pace", unitOfMeasurement: "min/km") {
+                        Text(String(format: "%0.1f", vm.pace))
+                    }
                 }
                 Spacer()
                 GridRow {
-                    TrainingDetail(title: "Time remaining", metric: .constant(vm.timeString(from: vm.totalTime)), unitOfMeasurement: "min")
+                    TrainingDetail(title: "Time remaining", unitOfMeasurement: "min", isTime: true) {
+                        Text(vm.timeString(from: vm.totalTime))
+                    }
                     Spacer()
-                    TrainingDetail(title: "Total Distance", metric: .constant("7.2"), unitOfMeasurement: "km")
+                    TrainingDetail(title: "Total Distance",unitOfMeasurement: "km") {
+                        Text("7.2")
+                    }
                 }
             }
             .padding(.bottom)

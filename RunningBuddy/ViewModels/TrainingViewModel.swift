@@ -21,7 +21,8 @@ class TrainingViewModel: ObservableObject {
     var locationManager: LocationManager = LocationManager()
     
     @Published var speed: Double = 0
-    var totalTime: Int = 0
+    @Published var pace: Double = 0
+    /*@Published */var totalTime: Int = 0
     var calendar = Calendar.current
     
     
@@ -45,6 +46,9 @@ class TrainingViewModel: ObservableObject {
         withAnimation {
             speed = locationManager.speed
         }
+    }
+    func getPace() {
+        pace = 60 / speed
     }
     
     func getTotalTime() {
