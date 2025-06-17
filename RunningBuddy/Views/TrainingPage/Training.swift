@@ -12,6 +12,7 @@ struct Training: View {
     @Environment(\.scenePhase) var schenePhase
     @Environment(\.dismiss) var dismiss
     var workout: Workout
+    @Binding var path: NavigationPath
     var body: some View {
         VStack {
             HStack {
@@ -131,7 +132,7 @@ struct Training: View {
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
-                    
+                    path.removeLast()
                 } label: {
                     Text(Image(systemName: "chevron.left")) +
                     Text("Back")
@@ -143,6 +144,7 @@ struct Training: View {
 }
 
 #Preview {
+    @Previewable @State var path = NavigationPath()
     NavigationStack {
         Training(workout: .init(difficulty: .init(level: "Easy", image: "🥰", color: .blue),
                                 start: Activity(time: 5*60, type: .walking, repeats: 0),
@@ -152,7 +154,7 @@ struct Training: View {
                                     Activity(time: 6*60, type: .running),
                                     Activity(time: 2*60, type: .walking),
                                 ], coreRepeats: 1,
-                                end: Activity(time: 5*60, type: .walking))
+                                end: Activity(time: 5*60, type: .walking)), path: $path
         )
         
     }

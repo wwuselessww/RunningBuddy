@@ -8,7 +8,7 @@
 import Foundation
 import HealthKit
 
-struct HKWorkoutModel {
+struct HKWorkoutModel: Hashable {
     var workout: HKWorkout
     var date: Date
     var distance: Double

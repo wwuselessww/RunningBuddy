@@ -13,38 +13,41 @@ struct MainPage: View {
     @ObservedObject var vm = MainPageViewModel()
     @State var authenticated: Bool = false
     @State var trigger: Bool = false
+    @State private var path = NavigationPath()
     var body: some View {
-        VStack {
-            Header(distance: $vm.totalMonthDistance)
-            ActivityBar(maxActivity: $vm.maxActivity, closedActivity: $vm.currentActivity)
-                .padding(.bottom, 20)
-            HStack {
-                Text("Workouts")
-                    .font(.system(size: 24))
-                Spacer()
-            }
-            ScrollView {
-                ForEach(0..<vm.workoutArray.count, id: \.self) { index in
-                    NavigationLink {
-                        WorkoutInfo(workoutModel: $vm.workModelArray[index])
-                    } label: {
-                        WorkoutCell(workoutModel: vm.workModelArray[index])
+        NavigationStack(path: $path) {
+            VStack{
+                Header(distance: $vm.totalMonthDistance)
+                ActivityBar(maxActivity: $vm.maxActivity, closedActivity: $vm.currentActivity)
+                    .padding(.bottom, 20)
+                HStack {
+                    Text("Workouts")
+                        .font(.system(size: 24))
+                    Spacer()
+                }
+                ScrollView {
+                    ForEach(0..<vm.workoutArray.count, id: \.self) { index in
+                        NavigationLink (value: vm.workModelArray[index]) {
+                            WorkoutCell(workoutModel: vm.workModelArray[index])
+                        }
+                        .navigationDestination(for: HKWorkoutModel.self, destination: { workout in
+                            WorkoutInfo(workoutModel: workout)
+                        })
                     }
-
+                    
+                }
+                .scrollIndicators(.hidden)
+                
+                Button {
+                    vm.currentActivity += 100
+                    print(vm.currentActivity)
+                } label: {
+                    Text("Add")
                 }
                 
-            }
-            .scrollIndicators(.hidden)
-            
-            Button {
-                vm.currentActivity += 100
-                print(vm.currentActivity)
-            } label: {
-                Text("Add")
-            }
-            
-            Spacer()
-        }
+                Spacer()
+            }}
+        
         .padding(.horizontal, 10)
         .healthDataAccessRequest(store: vm.healtKitManager.healthStore, readTypes: vm.healtKitManager.activityTypes, trigger: trigger) { result in
             switch result {
@@ -61,7 +64,7 @@ struct MainPage: View {
         }
     }
 }
-     
+
 #Preview {
     MainPage()
 }
