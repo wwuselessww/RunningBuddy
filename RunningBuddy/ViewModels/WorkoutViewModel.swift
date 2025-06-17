@@ -57,19 +57,6 @@ class WorkoutViewModel: ObservableObject {
     ]
     
     func calculateTime(_ workout: Workout) {
-//        var temp: Double = 0
-//        var core: Int = 0
-//        print("workout.start.time", workout.start.time)
-//        temp += Double(workout.start.time)
-//        for i in workout.core {
-//            core += Int(workout.end.time)
-//            print("core", i.time)
-//        }
-//        core *= workout.coreRepeats ?? 1
-//        temp += Double(core)
-//        print("workout.end.time",  workout.end.time)
-//        temp += Double(workout.end.time)
-//        print("result", temp)
         var temp: Int = 0
         temp += workout.start.time
         let repeats = workout.coreRepeats ?? 0

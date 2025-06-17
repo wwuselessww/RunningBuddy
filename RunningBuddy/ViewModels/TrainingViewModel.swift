@@ -50,6 +50,9 @@ class TrainingViewModel: ObservableObject {
     }
     func getPace() {
         pace = 60 / speed
+        if pace.isInfinite {
+            pace = 0
+        }
     }
     
     func getTotalTime() {
