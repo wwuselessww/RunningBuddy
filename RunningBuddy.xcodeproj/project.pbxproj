@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A29AE6772E003FC2005B5AEC /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A29AE6762E003FC2005B5AEC /* SwiftUI.framework */; };
 		A2C595FD2DBC0A9900E4289B /* RunningBuddy watch app Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = A2C595F32DBC0A9700E4289B /* RunningBuddy watch app Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -35,11 +36,19 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A29AE6762E003FC2005B5AEC /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		A2C595D82DBC06FE00E4289B /* RunningBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunningBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A2C595F32DBC0A9700E4289B /* RunningBuddy watch app Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RunningBuddy watch app Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		A26826CB2DFC3DAF00DD5A95 /* Exceptions for "RunningBuddy" folder in "RunningBuddy" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = A2C595D72DBC06FE00E4289B /* RunningBuddy */;
+		};
 		A2C596052DBC0AD500E4289B /* Exceptions for "RunningBuddy" folder in "RunningBuddy watch app Watch App" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -53,6 +62,7 @@
 		A2C595DA2DBC06FE00E4289B /* RunningBuddy */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				A26826CB2DFC3DAF00DD5A95 /* Exceptions for "RunningBuddy" folder in "RunningBuddy" target */,
 				A2C596052DBC0AD500E4289B /* Exceptions for "RunningBuddy" folder in "RunningBuddy watch app Watch App" target */,
 			);
 			path = RunningBuddy;
@@ -70,6 +80,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A29AE6772E003FC2005B5AEC /* SwiftUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -83,11 +94,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A29AE6752E003FC2005B5AEC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A29AE6762E003FC2005B5AEC /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		A2C595CF2DBC06FE00E4289B = {
 			isa = PBXGroup;
 			children = (
 				A2C595DA2DBC06FE00E4289B /* RunningBuddy */,
 				A2C595F42DBC0A9700E4289B /* RunningBuddy watch app Watch App */,
+				A29AE6752E003FC2005B5AEC /* Frameworks */,
 				A2C595D92DBC06FE00E4289B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -363,9 +383,12 @@
 				DEVELOPMENT_TEAM = VFG5U3NL5K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RunningBuddy/Info.plist;
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We want to read data";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "For tracking workouts and speed";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "For tracking workouts and speed";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -400,9 +423,12 @@
 				DEVELOPMENT_TEAM = VFG5U3NL5K;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = RunningBuddy/Info.plist;
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We want to read data";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "For tracking workouts and speed";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "For tracking workouts and speed";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -23,7 +23,8 @@ struct WorkoutDifficulty: Hashable {
 }
 
 struct Activity: Hashable {
-    var time: Double
+    var id:UUID?
+    var time: Int
     var type: ActivityType
     var repeats: Int?
 }

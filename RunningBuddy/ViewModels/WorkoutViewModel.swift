@@ -19,14 +19,14 @@ class WorkoutViewModel: ObservableObject {
     }
     var workoutArray: [Workout] = [
         .init(difficulty: .init(level: "Easy", image: "🥰", color: .blue),
-              start: Activity(time: 5, type: .walking, repeats: 0),
+              start: Activity(time: 5*60, type: .walking, repeats: 0),
               core: [
-                Activity(time: 1, type: .running),
-                Activity(time: 2, type: .walking),
-                Activity(time: 6, type: .running),
-                Activity(time: 2, type: .walking),
+                Activity(time: 1*60, type: .running),
+                Activity(time: 2*60, type: .walking),
+                Activity(time: 6*60, type: .running),
+                Activity(time: 2*60, type: .walking),
               ], coreRepeats: 1,
-              end: Activity(time: 5, type: .walking)),
+              end: Activity(time: 5*60, type: .walking)),
         .init(difficulty: .init(level: "Medium", image: "🫡", color: .yellow),
               start: Activity(time: 5, type: .walking, repeats: 0),
               core: [
@@ -57,21 +57,34 @@ class WorkoutViewModel: ObservableObject {
     ]
     
     func calculateTime(_ workout: Workout) {
-        var temp: Double = 0
-        var core: Int = 0
-        print("workout.start.time", workout.start.time)
+//        var temp: Double = 0
+//        var core: Int = 0
+//        print("workout.start.time", workout.start.time)
+//        temp += Double(workout.start.time)
+//        for i in workout.core {
+//            core += Int(workout.end.time)
+//            print("core", i.time)
+//        }
+//        core *= workout.coreRepeats ?? 1
+//        temp += Double(core)
+//        print("workout.end.time",  workout.end.time)
+//        temp += Double(workout.end.time)
+//        print("result", temp)
+        var temp: Int = 0
         temp += workout.start.time
-        for i in workout.core {
-            core += Int(workout.end.time)
-            print("core", i.time)
+        let repeats = workout.coreRepeats ?? 0
+        print("repeats \(repeats)")
+        print(temp)
+        for _ in 0...repeats{
+            for i in workout.core {
+                temp += i.time
+                print(temp)
+            }
         }
-        core *= workout.coreRepeats ?? 1
-        temp += Double(core)
-        print("workout.end.time",  workout.end.time)
         temp += workout.end.time
-        print("result", temp)
+        print(temp)
         withAnimation {
-            time = Int(temp)
+            time = temp
         }
         
     }
