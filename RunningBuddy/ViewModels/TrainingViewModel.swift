@@ -19,10 +19,11 @@ class TrainingViewModel: ObservableObject {
     @Published var currentAcitivityIndex: Int = 0
     @Published var isActivityInProgress: Bool = false
     var locationManager: LocationManager = LocationManager()
-    
+    @Published var showAlert: Bool = false
+    @Published var alertText: String = ""
     @Published var speed: Double = 0
     @Published var pace: Double = 0
-    /*@Published */var totalTime: Int = 0
+    var totalTime: Int = 0
     var calendar = Calendar.current
     
     
@@ -113,7 +114,8 @@ class TrainingViewModel: ObservableObject {
             currentAcitivityIndex += 1
         } else {
             //MARK: catch if ended
-            currentAcitivityIndex = 0
+//            currentAcitivityIndex = 0
+            stopActivity()
         }
         selectActivity()
     }
@@ -121,6 +123,19 @@ class TrainingViewModel: ObservableObject {
     func skipHolded() {
         totalTime -= timerDisplay
         nextActivity()
+    }
+    
+    func stopActivity() {
+        timer.upstream.connect().cancel()
+        showAlert = true
+        alertText = "Workout finished!"
+    }
+    
+    //MARK: alerts
+    
+    func backPressed() {
+        showAlert = true
+        alertText = "End Workout"
     }
     
     

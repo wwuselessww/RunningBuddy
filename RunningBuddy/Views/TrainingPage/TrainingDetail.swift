@@ -32,7 +32,7 @@ struct TrainingDetail<Content: View>: View {
                 content
                     .contentTransition(.numericText())
                 //FIXME: MUST BE REWORKED
-                    .frame(minWidth: 10, maxWidth: isTime ? 100 : 70, alignment: .leading)
+                    .frame(minWidth: 10, maxWidth: isTime ? 100 : 60, alignment: .leading)
 
                 Text("\(unitOfMeasurement)")
                     

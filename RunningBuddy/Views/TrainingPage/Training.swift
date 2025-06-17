@@ -10,6 +10,7 @@ import SwiftUI
 struct Training: View {
     @StateObject var vm = TrainingViewModel()
     @Environment(\.scenePhase) var schenePhase
+    @Environment(\.dismiss) var dismiss
     var workout: Workout
     var body: some View {
         VStack {
@@ -104,6 +105,11 @@ struct Training: View {
             }
             .padding(.bottom)
         }
+        .alert(vm.alertText, isPresented: $vm.showAlert, actions: {
+            Button("ok", role: .cancel) {
+                
+            }
+        })
         .onAppear {
             vm.workout = workout
             vm.createActivitiesArray()
@@ -121,6 +127,18 @@ struct Training: View {
         })
         .navigationTitle("\(workout.difficulty.level) Workout")
         .navigationBarTitleDisplayMode(.large)
+        .navigationBarBackButtonHidden()
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    
+                } label: {
+                    Text(Image(systemName: "chevron.left")) +
+                    Text("Back")
+                }
+
+            }
+        }
     }
 }
 
