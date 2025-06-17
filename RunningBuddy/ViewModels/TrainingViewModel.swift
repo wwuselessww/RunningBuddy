@@ -18,18 +18,21 @@ class TrainingViewModel: ObservableObject {
     @Published var currentAcitivity: Activity?
     @Published var currentAcitivityIndex: Int = 0
     @Published var isActivityInProgress: Bool = false
-    var locationManager: LocationManager = LocationManager()
+    
     @Published var showAlert: Bool = false
     @Published var alertText: String = ""
     @Published var speed: Double = 0
     @Published var pace: Double = 0
+    @Published var distance: Double = 0
+    @Published var canProceed: Bool = false
+    var locationManager: LocationManager = LocationManager()
+    var workoutManager = WorkoutManager()
     var totalTime: Int = 0
     var calendar = Calendar.current
-    
-    
-    
+    var firstStart: Bool = true
     var image: Image = Image(systemName: "play.fill")
     var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
     
     func stopTimer() {
         timer.upstream.connect().cancel()
@@ -41,12 +44,17 @@ class TrainingViewModel: ObservableObject {
         timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
         image = Image(systemName: "pause.fill")
         isActivityInProgress = true
+        if firstStart {
+            firstStart = false
+            //MARK: start workout
+        }
     }
     
     func getSpeed() {
         withAnimation {
             speed = locationManager.speed
         }
+        recordLocation()
     }
     func getPace() {
         pace = 60 / speed
@@ -132,6 +140,7 @@ class TrainingViewModel: ObservableObject {
         timer.upstream.connect().cancel()
         showAlert = true
         alertText = "Workout finished!"
+        canProceed = true
     }
     
     //MARK: alerts
@@ -140,7 +149,18 @@ class TrainingViewModel: ObservableObject {
         showAlert = true
         alertText = "End Workout"
     }
-    
+    func recordLocation() {
+        guard let location = locationManager.currentLocation else {
+            print("no lcoation")
+            return
+        }
+        workoutManager.recordLocation(location)
+        workoutManager.getTottalDistance()
+        print("DISTANCE \(workoutManager.distance.description)")
+        withAnimation {
+            distance = Double(workoutManager.distance / 1000)
+        }
+    }
     
     
 }

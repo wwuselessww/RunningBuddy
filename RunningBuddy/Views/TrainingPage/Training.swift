@@ -100,10 +100,13 @@ struct Training: View {
                     }
                     Spacer()
                     TrainingDetail(title: "Total Distance",unitOfMeasurement: "km") {
-                        Text("7.2")
+                        Text(String(format: "%0.1f", vm.distance))
                     }
                 }
             }
+            .navigationDestination(isPresented: $vm.canProceed, destination: {
+                ProgressPage()
+            })
             .padding(.bottom)
         }
         .alert(vm.alertText, isPresented: $vm.showAlert, actions: {
