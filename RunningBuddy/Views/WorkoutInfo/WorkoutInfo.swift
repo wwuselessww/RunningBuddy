@@ -13,7 +13,7 @@ import HealthKit
 struct WorkoutInfo: View {
     
     @StateObject var vm = WorkoutInfoViewModel()
-    @Binding var workoutModel: HKWorkoutModel
+    var workoutModel: HKWorkoutModel
     
     var body: some View {
         
