@@ -104,10 +104,12 @@ struct Training: View {
                     }
                 }
             }
-            .navigationDestination(isPresented: $vm.canProceed, destination: {
-                ProgressPage()
-            })
             .padding(.bottom)
+            .padding(.horizontal)
+            .navigationDestination(isPresented: $vm.canProceed, destination: {
+                FinishWorkout()
+            })
+            
         }
         .alert(vm.alertText, isPresented: $vm.showAlert, actions: {
             Button("ok", role: .cancel) {

@@ -24,11 +24,13 @@ class HealthKitManager {
         HKSampleType.activitySummaryType()
     ]
     
-    func ensuresHealthKitSetup()  {
+    func ensuresHealthKitSetup() -> Bool  {
         if HKHealthStore.isHealthDataAvailable() {
             print("health kit is available")
+            return true
         } else {
             print("health kit is not available")
+            return false
         }
     }
     
@@ -230,6 +232,10 @@ class HealthKitManager {
 
             healthStore.execute(query)
         }
+    }
+    
+    func startHWorkout() {
+        
     }
     
     

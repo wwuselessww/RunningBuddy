@@ -7,10 +7,12 @@
 
 import Foundation
 import CoreLocation
+import HealthKit
 
 class WorkoutManager: ObservableObject {
     var locationArray: [CLLocation] = []
     @Published var distance: CLLocationDistance = 0
+
     func recordLocation(_ location: CLLocation) {
         locationArray.append(location)
     }
@@ -27,3 +29,6 @@ class WorkoutManager: ObservableObject {
         distance = temp
     }
 }
+
+
+

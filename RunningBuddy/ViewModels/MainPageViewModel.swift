@@ -14,6 +14,8 @@ class MainPageViewModel: ObservableObject {
     @Published var currentActivity: Int = 0
     @Published var workoutArray: [HKWorkout] = []
     @Published var workModelArray: [HKWorkoutModel] = []
+    @Published var didTapOnWorkout: Bool = false
+    @Published var currentIndex: Int = 0
     var healtKitManager = HealthKitManager.shared
     var store = HealthKitManager.shared.healthStore
     let startDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
