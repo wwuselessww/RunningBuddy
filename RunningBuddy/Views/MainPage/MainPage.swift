@@ -43,14 +43,6 @@ struct MainPage: View {
                     
                 }
                 .scrollIndicators(.hidden)
-                
-                Button {
-                    vm.currentActivity += 100
-                    print(vm.currentActivity)
-                } label: {
-                    Text("Add")
-                }
-                
                 Spacer()
             }}
         

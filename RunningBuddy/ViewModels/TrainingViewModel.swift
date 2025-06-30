@@ -25,6 +25,7 @@ class TrainingViewModel: ObservableObject {
     @Published var pace: Double = 0
     @Published var distance: Double = 0
     @Published var canProceed: Bool = false
+    @Published var workoutResult: WorkoutResultsModel?
     var locationManager: LocationManager = LocationManager()
     var workoutManager = WorkoutManager()
     var totalTime: Int = 0
@@ -32,6 +33,8 @@ class TrainingViewModel: ObservableObject {
     var firstStart: Bool = true
     var image: Image = Image(systemName: "play.fill")
     var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
+    @Published var duration: Int = 0
     
     
     func stopTimer() {
@@ -124,8 +127,6 @@ class TrainingViewModel: ObservableObject {
         if currentAcitivityIndex < activities.count - 1 {
             currentAcitivityIndex += 1
         } else {
-            //MARK: catch if ended
-//            currentAcitivityIndex = 0
             stopActivity()
         }
         selectActivity()
@@ -140,6 +141,17 @@ class TrainingViewModel: ObservableObject {
         timer.upstream.connect().cancel()
         showAlert = true
         alertText = "Workout finished!"
+        // MARK: create workout result array
+        workoutResult = WorkoutResultsModel(
+            pace: pace,
+            distance: distance,
+            duration: duration,
+            path: workoutManager.locationArray,
+            calories: nil,
+            avgHeartRate: nil,
+            maxHeartRate: nil
+            )
+        
         canProceed = true
     }
     

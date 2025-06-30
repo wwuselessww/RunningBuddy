@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A232164E2E12961D009786C5 /* Glur in Frameworks */ = {isa = PBXBuildFile; productRef = A232164D2E12961D009786C5 /* Glur */; };
 		A29AE6772E003FC2005B5AEC /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A29AE6762E003FC2005B5AEC /* SwiftUI.framework */; };
 		A2C595FD2DBC0A9900E4289B /* RunningBuddy watch app Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = A2C595F32DBC0A9700E4289B /* RunningBuddy watch app Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -80,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A232164E2E12961D009786C5 /* Glur in Frameworks */,
 				A29AE6772E003FC2005B5AEC /* SwiftUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -143,6 +145,7 @@
 			);
 			name = RunningBuddy;
 			packageProductDependencies = (
+				A232164D2E12961D009786C5 /* Glur */,
 			);
 			productName = RunningBuddy;
 			productReference = A2C595D82DBC06FE00E4289B /* RunningBuddy.app */;
@@ -197,6 +200,9 @@
 			);
 			mainGroup = A2C595CF2DBC06FE00E4289B;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A232164C2E12961D009786C5 /* XCRemoteSwiftPackageReference "Glur" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A2C595D92DBC06FE00E4289B /* Products */;
 			projectDirPath = "";
@@ -541,6 +547,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A232164C2E12961D009786C5 /* XCRemoteSwiftPackageReference "Glur" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/joogps/Glur.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A232164D2E12961D009786C5 /* Glur */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A232164C2E12961D009786C5 /* XCRemoteSwiftPackageReference "Glur" */;
+			productName = Glur;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = A2C595D02DBC06FE00E4289B /* Project object */;
 }

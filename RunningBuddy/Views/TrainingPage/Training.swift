@@ -46,6 +46,7 @@ struct Training: View {
                         vm.totalTime -= 1
                         vm.getSpeed()
                         vm.getPace()
+                        vm.duration += 1
                     }
                 }
             HStack(alignment: .center) {
@@ -107,7 +108,7 @@ struct Training: View {
             .padding(.bottom)
             .padding(.horizontal)
             .navigationDestination(isPresented: $vm.canProceed, destination: {
-                FinishWorkout()
+                FinishWorkout(isRecordedByWatch: false, workout: vm.workoutResult)
             })
             
         }
