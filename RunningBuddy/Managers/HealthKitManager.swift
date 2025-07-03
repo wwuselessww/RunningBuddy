@@ -12,7 +12,7 @@ import CoreLocation
 class HealthKitManager {
     static var shared = HealthKitManager()
     var healthStore = HKHealthStore()
-    
+    var isAuthorized: Bool = false
     let activityTypes: Set = [
         HKQuantityType.workoutType(),
         HKQuantityType(.activeEnergyBurned),
@@ -24,11 +24,15 @@ class HealthKitManager {
         HKSampleType.activitySummaryType()
     ]
     
-    func ensuresHealthKitSetup()  {
+    func ensuresHealthKitSetup() -> Bool  {
         if HKHealthStore.isHealthDataAvailable() {
             print("health kit is available")
+            isAuthorized = true
+            return true
         } else {
             print("health kit is not available")
+            isAuthorized = false
+            return false
         }
     }
     
@@ -38,7 +42,6 @@ class HealthKitManager {
                 let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
                 let query = HKStatisticsQuery(quantityType: type, quantitySamplePredicate: predicate) { _, result, error in
                     if let error = error {
-                        
                         continuation.resume(throwing: error)
                     } else {
                         let result = result?.sumQuantity()?.doubleValue(for: resultType) ?? -1.0
@@ -57,8 +60,8 @@ class HealthKitManager {
         }
     }
     
-    func getWorkouts(startDate: Date, endDate: Date) async -> [HKWorkout] {
-        let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate)
+    func getWorkouts(from: Date, to: Date) async -> [HKWorkout] {
+        let predicate = HKQuery.predicateForSamples(withStart: from, end: to)
         do {
             let data: [HKWorkout] = try await withCheckedThrowingContinuation { continuation in
                 let query = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [.init(keyPath: \HKSample.startDate, ascending: false)]) { query, sample, error in
@@ -80,52 +83,38 @@ class HealthKitManager {
             return []
         }
     }
-    
-    func getAvgPulseFor(workout: HKWorkout) async -> Int? {
+        
+    func getBPMFor(workout: HKWorkout, type: StatisticType, options: HKStatisticsOptions) async -> Int? {
         let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate)
         do {
-            let heartRate: Double = try await withCheckedThrowingContinuation { continuation in
-                let query = HKStatisticsQuery(quantityType: HKQuantityType(.heartRate), quantitySamplePredicate: predicate, options: .discreteAverage) { query, stats, error in
+            let rate: Double = try await withCheckedThrowingContinuation { continuation in
+                let query = HKStatisticsQuery(quantityType: HKQuantityType(.heartRate), quantitySamplePredicate: predicate, options: options) { _, stats, error in
                     if let error = error {
                         continuation.resume(throwing: error)
                     }
-                    let bpm = stats?.averageQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
-                    continuation.resume(returning: bpm)
+                    switch type {
+                    case .avg:
+                        let bpm = stats?.averageQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
+                        continuation.resume(returning: bpm)
+                    case .min:
+                        let bpm = stats?.minimumQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
+                        continuation.resume(returning: bpm)
+                    case .max:
+                        let bpm = stats?.maximumQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
+                        continuation.resume(returning: bpm)
+                    }
                 }
                 healthStore.execute(query)
-                
             }
-            return Int(heartRate)
+            return Int(rate)
         } catch {
-            print("***AVG ERROR, \(error)")
+            print("BPM ERROR \(error)")
             return nil
         }
     }
     
-    func getMaxPulseFor(workout: HKWorkout) async -> Int? {
-        let predicate = HKQuery.predicateForSamples(withStart: workout.startDate, end: workout.endDate)
-        do {
-            let heartRate: Double = try await withCheckedThrowingContinuation { continuation in
-                let query = HKStatisticsQuery(quantityType: HKQuantityType(.heartRate), quantitySamplePredicate: predicate, options: .discreteMax) { _, stats, error in
-                    if let error = error {
-                        continuation.resume(throwing: error)
-                    }
-                    let maxBpm = stats?.maximumQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
-                    print(maxBpm)
-                    continuation.resume(returning: maxBpm)
-                }
-                healthStore.execute(query)
-            }
-            return Int(heartRate)
-            
-        } catch {
-            print("***MAX ERROR, \(error)")
-            return nil
-        }
-    }
-    
-    func getPace(workout: HKWorkout) async -> Double? {
-        let durationInMinutes = workout.duration / 60 // seconds to minutes
+    func getPaceFor(workout: HKWorkout) async -> Double? {
+        let durationInMinutes = workout.duration / 60
         guard let distance = workout.totalDistance?.doubleValue(for: .meter()) else {
             return nil
         }
@@ -133,7 +122,7 @@ class HealthKitManager {
         guard distanceInKm > 0 else {
             return nil
         }
-        let pace = durationInMinutes / distanceInKm // minutes per km
+        let pace = durationInMinutes / distanceInKm
         return pace
     }
     
@@ -194,19 +183,19 @@ class HealthKitManager {
             
             let predicate = HKQuery.predicateForObjects(from: workout)
             let query = HKSampleQuery(sampleType: HKQuantityType(.heartRate), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
-
+                
                 guard error == nil else {
                     print(error?.localizedDescription ?? "Unknown error")
                     continuation.resume(returning: zonesArray) // return empty/default if failed
                     return
                 }
-
+                
                 guard let zones = samples as? [HKQuantitySample] else {
                     continuation.resume(returning: zonesArray)
                     return
                 }
                 
-               
+                
                 for sample in zones {
                     let res = sample.quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute()))
                     let duration = sample.endDate.timeIntervalSince(prevDateSample ?? sample.startDate)
@@ -227,10 +216,9 @@ class HealthKitManager {
                 print(zonesArray)
                 continuation.resume(returning: zonesArray)
             }
-
+            
             healthStore.execute(query)
         }
     }
-    
-    
 }
+

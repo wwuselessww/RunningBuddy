@@ -14,6 +14,9 @@ class MainPageViewModel: ObservableObject {
     @Published var currentActivity: Int = 0
     @Published var workoutArray: [HKWorkout] = []
     @Published var workModelArray: [HKWorkoutModel] = []
+    @Published var didTapOnWorkout: Bool = false
+    @Published var currentIndex: Int = 0
+    
     var healtKitManager = HealthKitManager.shared
     var store = HealthKitManager.shared.healthStore
     let startDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
@@ -32,7 +35,7 @@ class MainPageViewModel: ObservableObject {
                     await self.getWorkouts()
                 }
             } else {
-                print(error?.localizedDescription)
+                print(error)
             }
         }
     }
@@ -65,12 +68,11 @@ class MainPageViewModel: ObservableObject {
             print("no start date?")
             return
         }
-        let res = await healtKitManager.getWorkouts(startDate: start, endDate: endDate)
+        let res = await healtKitManager.getWorkouts(from: start, to: endDate)
         var modelArray: [HKWorkoutModel] = []
         for i in res {
-            print(String(i.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)) ?? 0))
             let date = i.startDate
-            guard  let distance = i.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)), let pulse = await healtKitManager.getAvgPulseFor(workout: i) else {
+            guard  let distance = i.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)), let pulse = await healtKitManager.getBPMFor(workout: i, type: .avg, options: .discreteAverage) else {
                 print("no data")
                 return
             }
@@ -78,7 +80,6 @@ class MainPageViewModel: ObservableObject {
             modelArray.append(newWorkout)
             
         }
-        print(modelArray)
         await MainActor.run {
             workoutArray = res
             workModelArray = modelArray

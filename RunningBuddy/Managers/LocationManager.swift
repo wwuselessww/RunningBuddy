@@ -10,7 +10,7 @@ import CoreLocation
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
-    
+    var currentLocation: CLLocation?
     @Published var speed: Double = 0.0
     
     override init() {
@@ -24,7 +24,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        print(location.speed)
+        currentLocation = location
         if location.speed >= 0 {
             speed = location.speed
         } else {
@@ -39,4 +39,5 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func stopTracking() {
         locationManager.stopUpdatingLocation()
     }
+    
 }

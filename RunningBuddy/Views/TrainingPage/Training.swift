@@ -46,6 +46,7 @@ struct Training: View {
                         vm.totalTime -= 1
                         vm.getSpeed()
                         vm.getPace()
+                        vm.duration += 1
                     }
                 }
             HStack(alignment: .center) {
@@ -100,11 +101,16 @@ struct Training: View {
                     }
                     Spacer()
                     TrainingDetail(title: "Total Distance",unitOfMeasurement: "km") {
-                        Text("7.2")
+                        Text(String(format: "%0.1f", vm.distance))
                     }
                 }
             }
             .padding(.bottom)
+            .padding(.horizontal)
+            .navigationDestination(isPresented: $vm.canProceed, destination: {
+                FinishWorkout(isRecordedByWatch: false, workout: vm.workoutResult)
+            })
+            
         }
         .alert(vm.alertText, isPresented: $vm.showAlert, actions: {
             Button("ok", role: .cancel) {

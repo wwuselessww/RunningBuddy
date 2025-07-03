@@ -32,7 +32,7 @@ struct TrainingDetail<Content: View>: View {
                 content
                     .contentTransition(.numericText())
                 //FIXME: MUST BE REWORKED
-                    .frame(minWidth: 10, maxWidth: isTime ? 100 : 60, alignment: .leading)
+                    .frame(alignment: .leading)
 
                 Text("\(unitOfMeasurement)")
                     
@@ -46,9 +46,40 @@ struct TrainingDetail<Content: View>: View {
 #Preview {
     @Previewable @State var speed: Int = 10
     var timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
-    TrainingDetail(title: "Speed", unitOfMeasurement: "km/h", isTime: false) {
-        Text("\(speed)")
+    VStack {
+        Spacer(minLength: 600)
+        Grid(alignment: .leading, horizontalSpacing: 20, verticalSpacing: 20) {
+            GridRow {
+                Spacer()
+                TrainingDetail(title: "Speed", unitOfMeasurement: "km/h", isTime: true) {
+                    Text("\(Double(speed).timeString())")
+                }
+                .gridCellAnchor(.leading)
+                TrainingDetail(title: "Speed", unitOfMeasurement: "km/h", isTime: false) {
+                    Text("\(speed)")
+                }
+                Spacer()
+            }
+            GridRow {
+                Spacer()
+                TrainingDetail(title: "Speed", unitOfMeasurement: "km/h", isTime: false) {
+                    Text("\(speed)")
+                }
+                TrainingDetail(title: "Speed", unitOfMeasurement: "km/h", isTime: false) {
+                    Text("\(speed)")
+                }
+                Spacer()
+            }
+            Spacer()
+        }
+        .frame(minWidth: 100, maxWidth: .infinity)
+        .background(content: {
+            Color.red.ignoresSafeArea()
+        })
+        
     }
+        
+    
         .onReceive(timer) { new in
             print("kek")
             speed = Int.random(in: 0...100)

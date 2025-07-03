@@ -9,7 +9,6 @@ import SwiftUI
 import HealthKit
 
 struct WorkoutCell: View {
-//    var workoutType: WorkoutType
     var workoutModel: HKWorkoutModel
     var body: some View {
         HStack {

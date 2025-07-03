@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        //        NavigationView {
         if #available(iOS 18, *) {
             TabView {
                 Tab("home", systemImage: "house", role: .none) {
@@ -50,8 +49,6 @@ struct ContentView: View {
                 print("Healt1")
             }
         }
-        //        }
-        
     }
 }
 
