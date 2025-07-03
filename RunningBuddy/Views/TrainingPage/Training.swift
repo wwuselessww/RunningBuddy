@@ -13,105 +13,61 @@ struct Training: View {
     @Environment(\.dismiss) var dismiss
     var workout: Workout
     @Binding var path: NavigationPath
+    
     var body: some View {
-        VStack {
-            HStack {
-                ForEach(Array(vm.activities.enumerated()), id: \.offset) { index, part in
-                    Circle()
-                        .overlay(content: {
-                            if let currentActivity = vm.currentAcitivity {
-                                Image(systemName: part.type == .running ? "figure.run" : "figure.walk")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundStyle(part.id == currentActivity.id ? .white : .gray)
-                                    .padding(.all, 5)
-                            }
-                        })
-                        .frame(minWidth: 29, maxWidth: 40, minHeight: 29, maxHeight: 40)
+        HStack {
+            VStack(spacing: .zero) {
+                HStack {
+                    StatDisplay(title: "Time remaining", value: Double(vm.totalTime).timeString(), unit: "min")
+                    StatDisplay(title: "Distance", value: String(format: "%0.2f", vm.distance), unit: "km")
                 }
-            }
-            .padding(.horizontal)
-            Spacer()
-            Text(vm.currentAcitivity?.type.rawValue ?? "No activity")
-                .font(.system(size: 40, weight: .semibold))
-            //FIXME: while animation is running the numers are moving horisontally
-            Text(vm.timeString(from: vm.timerDisplay))
-                .contentTransition(.numericText())
-                .font(.system(size: 96, weight: .semibold))
-                .frame(minWidth: 200, maxWidth: .infinity, alignment: .center)
-                .onReceive(vm.timer) { input in
-                    guard vm.isActive else {return}
-                    withAnimation {
-                        vm.timerDisplay -= 1
-                        vm.totalTime -= 1
-                        vm.getSpeed()
-                        vm.getPace()
-                        vm.duration += 1
-                    }
+                HStack {
+                    StatDisplay(title: "Pace", value: String(format: "%0.1f", vm.pace), unit: "km")
+                    StatDisplay(title: "Speed", value: String(format: "%0.1f", vm.speed), unit: "km/h")
                 }
-            HStack(alignment: .center) {
-                Spacer()
+                StatDisplay(title: "Current objective time", value: "00:00", unit: "min")
+                Text("Walk")
+                    .font(Font.system(size: 54, weight: .bold, design: .default))
+                    .bold()
+                Text("next will be running")
+                    .foregroundStyle(.gray)
+//                    .padding(.bottom)
                 Button {
-                    vm.isPlayPausePressed.toggle()
-                    if vm.isPlayPausePressed {
-                        print("play")
-                        vm.startTimer()
-                        vm.locationManager.startTracking()
-                    } else {
-                        print("stop")
-                        vm.stopTimer()
-                        vm.locationManager.stopTracking()
-                    }
+                    vm.isPaused.toggle()
                 } label: {
-                    Circle()
+                    vm.image
+                        .resizable()
+                        .scaledToFit()
                         .foregroundStyle(.black)
-                        .overlay {
-                            vm.image
-                                .resizable()
-                                .scaledToFit()
-                            
-                                .frame(minWidth: 40, maxWidth: 60)
-                                .foregroundStyle(.white)
-                            
-                        }
-                }
-                .frame(minWidth: 40, maxWidth: 140)
-                HoldToSkipButton(onHold: {
-                    
-                }, onHoldEnded: {
-                    vm.skipHolded()
-                })
-                
-            }
-            Spacer()
-            Grid(alignment: .leading) {
-                GridRow {
-                    TrainingDetail(title: "Speed", unitOfMeasurement: "km/h") {
-                        Text(String(format: "%0.1f", vm.speed))
-                    }
-                    Spacer()
-                    TrainingDetail(title: "Pace", unitOfMeasurement: "min/km") {
-                        Text(String(format: "%0.1f", vm.pace))
-                    }
+                        .frame(minWidth: 44, maxWidth: 88, minHeight: 44, maxHeight: 88)
                 }
                 Spacer()
-                GridRow {
-                    TrainingDetail(title: "Time remaining", unitOfMeasurement: "min", isTime: true) {
-                        Text(vm.timeString(from: vm.totalTime))
-                    }
-                    Spacer()
-                    TrainingDetail(title: "Total Distance",unitOfMeasurement: "km") {
-                        Text(String(format: "%0.1f", vm.distance))
-                    }
-                }
             }
-            .padding(.bottom)
-            .padding(.horizontal)
-            .navigationDestination(isPresented: $vm.canProceed, destination: {
-                FinishWorkout(isRecordedByWatch: false, workout: vm.workoutResult)
-            })
-            
+            if vm.isActivityInProgress {
+                VStack {
+                    Spacer()
+                    Text("10%")
+                        .font(.caption)
+                    Rectangle()
+                        .cornerRadius(10)
+                        .frame(width: 30, height: 400)
+                    
+                }
+                .ignoresSafeArea()
+            }
         }
+        .toolbar(.hidden, for: .tabBar)
+        .toolbar(.hidden, for: .navigationBar)
+        .onReceive(vm.timer, perform: { value in
+            guard vm.isActive else { return }
+            withAnimation {
+                vm.timerDisplay -= 1
+                vm.totalTime -= 1
+                vm.getSpeed()
+                vm.getPace()
+            }
+        })
+        
         .alert(vm.alertText, isPresented: $vm.showAlert, actions: {
             Button("ok", role: .cancel) {
                 
@@ -132,20 +88,6 @@ struct Training: View {
                 vm.isActive = false
             }
         })
-        .navigationTitle("\(workout.difficulty.level) Workout")
-        .navigationBarTitleDisplayMode(.large)
-        .navigationBarBackButtonHidden()
-        .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button {
-                    path.removeLast()
-                } label: {
-                    Text(Image(systemName: "chevron.left")) +
-                    Text("Back")
-                }
-
-            }
-        }
     }
 }
 
@@ -162,7 +104,6 @@ struct Training: View {
                                 ], coreRepeats: 1,
                                 end: Activity(time: 5*60, type: .walking)), path: $path
         )
-        
     }
 }
 

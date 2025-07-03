@@ -13,7 +13,15 @@ class TrainingViewModel: ObservableObject {
     @Published var workout: Workout?
     @Published var isActive: Bool = true
     @Published var timerDisplay: Int = 300
-    @Published var isPlayPausePressed: Bool = false
+    @Published var isPaused: Bool = false {
+        didSet {
+            if isPaused == true {
+                startTimer()
+            } else {
+                stopTimer()
+            }
+        }
+    }
     @Published var activities: [Activity] = []
     @Published var currentAcitivity: Activity?
     @Published var currentAcitivityIndex: Int = 0
@@ -31,7 +39,7 @@ class TrainingViewModel: ObservableObject {
     var totalTime: Int = 0
     var calendar = Calendar.current
     var firstStart: Bool = true
-    var image: Image = Image(systemName: "play.fill")
+    var image: Image = Image(systemName: "play.circle.fill")
     var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @Published var duration: Int = 0
@@ -39,14 +47,19 @@ class TrainingViewModel: ObservableObject {
     
     func stopTimer() {
         timer.upstream.connect().cancel()
-        image = Image(systemName: "play.fill")
-        isActivityInProgress = false
+        image = Image(systemName: "play.circle.fill")
+        withAnimation {
+            isActivityInProgress = false
+        }
     }
     
     func startTimer() {
         timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-        image = Image(systemName: "pause.fill")
-        isActivityInProgress = true
+        image = Image(systemName: "pause.circle.fill")
+        locationManager.startTracking()
+        withAnimation {
+            isActivityInProgress = true
+        }
         if firstStart {
             firstStart = false
             //MARK: start workout
@@ -139,6 +152,7 @@ class TrainingViewModel: ObservableObject {
     
     func stopActivity() {
         timer.upstream.connect().cancel()
+        locationManager.stopTracking()
         showAlert = true
         alertText = "Workout finished!"
         // MARK: create workout result array
@@ -163,7 +177,7 @@ class TrainingViewModel: ObservableObject {
     }
     func recordLocation() {
         guard let location = locationManager.currentLocation else {
-            print("no lcoation")
+            print("no location")
             return
         }
         workoutManager.recordLocation(location)

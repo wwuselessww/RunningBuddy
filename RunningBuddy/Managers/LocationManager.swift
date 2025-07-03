@@ -27,6 +27,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         currentLocation = location
         if location.speed >= 0 {
             speed = location.speed
+            print(speed)
         } else {
             speed = 0.0
         }
