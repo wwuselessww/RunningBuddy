@@ -12,6 +12,7 @@ struct Training: View {
     @Environment(\.scenePhase) var schenePhase
     @Environment(\.dismiss) var dismiss
     var workout: Workout
+    var height = UIScreen.main.bounds.height
     @Binding var path: NavigationPath
     
     var body: some View {
@@ -25,32 +26,61 @@ struct Training: View {
                     StatDisplay(title: "Pace", value: String(format: "%0.1f", vm.pace), unit: "km")
                     StatDisplay(title: "Speed", value: String(format: "%0.1f", vm.speed), unit: "km/h")
                 }
-                StatDisplay(title: "Current objective time", value: "00:00", unit: "min")
+                StatDisplay(title: "Current objective time", value: Double(vm.timerDisplay).timeString(), unit: "min")
                 Text("Walk")
-                    .font(Font.system(size: 54, weight: .bold, design: .default))
+                    .font(Font.system(size: 44, weight: .bold, design: .default))
                     .bold()
                 Text("next will be running")
                     .foregroundStyle(.gray)
-//                    .padding(.bottom)
-                Button {
-                    vm.isPaused.toggle()
-                } label: {
-                    vm.image
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.black)
-                        .frame(minWidth: 44, maxWidth: 88, minHeight: 44, maxHeight: 88)
+                Spacer()
+                HStack {
+                    if !vm.isPaused {
+                        Button {
+                            print("exit")
+                            vm.backPressed()
+                        } label: {
+                            Text("End")
+                                .foregroundStyle(.white)
+                                .font(.callout)
+                                .fontWeight(.semibold)
+                                .circleButtonStyle(color: .red)
+                        }
+                    }
+                    Button {
+                        withAnimation {
+                            vm.isPaused.toggle()
+                        }
+                        
+                    } label: {
+                        vm.image
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(.black)
+                            .frame(minWidth: 44, maxWidth: 88, minHeight: 44, maxHeight: 88)
+                    }
+                    if !vm.isPaused {
+                        Button {
+                            print("skip")
+                            vm.skipHolded()
+                        } label: {
+                            Text("Skip")
+                                .foregroundStyle(.white)
+                                .font(.callout)
+                                .fontWeight(.semibold)
+                                .circleButtonStyle(color: .blue)
+                        }
+                    }
                 }
                 Spacer()
             }
-            if vm.isActivityInProgress {
+            if !vm.firstStart {
                 VStack {
                     Spacer()
-                    Text("10%")
+                    Text("\(vm.progressText)%")
                         .font(.caption)
                     Rectangle()
                         .cornerRadius(10)
-                        .frame(width: 30, height: 400)
+                        .frame(width: 30, height: vm.progressBarHeight)
                     
                 }
                 .ignoresSafeArea()
@@ -61,16 +91,28 @@ struct Training: View {
         .onReceive(vm.timer, perform: { value in
             guard vm.isActive else { return }
             withAnimation {
-                vm.timerDisplay -= 1
-                vm.totalTime -= 1
+                vm.checkActivity()
                 vm.getSpeed()
                 vm.getPace()
+                vm.calculateProgress()
+                vm.timerDisplay -= 1
+                vm.totalTime -= 1
             }
         })
-        
+        .onChange(of: vm.canProceed, { oldValue, newValue in
+            print("navigating")
+            path.append(vm.workoutResult)
+        })
+        .navigationDestination(for: WorkoutResultsModel.self, destination: { workout in
+            FinishWorkout(isRecordedByWatch: false, workout: workout)
+        })
         .alert(vm.alertText, isPresented: $vm.showAlert, actions: {
             Button("ok", role: .cancel) {
-                
+                if vm.canProceed {
+                    path.append("KKE")
+                } else {
+                    path.removeLast()
+                }
             }
         })
         .onAppear {
@@ -80,6 +122,7 @@ struct Training: View {
             vm.currentAcitivity = vm.activities.first
             vm.stopTimer()
             vm.getTotalTime()
+            vm.screenHeight = height
         }
         .onChange(of: schenePhase, { oldValue, newValue in
             if schenePhase == .active {
@@ -97,9 +140,9 @@ struct Training: View {
         Training(workout: .init(difficulty: .init(level: "Easy", image: "🥰", color: .blue),
                                 start: Activity(time: 5*60, type: .walking, repeats: 0),
                                 core: [
-                                    Activity(time: 1*60, type: .running),
-                                    Activity(time: 2*60, type: .walking),
-                                    Activity(time: 6*60, type: .running),
+                                    Activity(time: 1*10, type: .running),
+                                    Activity(time: 1*10, type: .walking),
+                                    Activity(time: 1*10, type: .running),
                                     Activity(time: 2*60, type: .walking),
                                 ], coreRepeats: 1,
                                 end: Activity(time: 5*60, type: .walking)), path: $path

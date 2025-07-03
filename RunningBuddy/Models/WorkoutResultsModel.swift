@@ -8,7 +8,7 @@
 import Foundation
 import CoreLocation
 
-struct WorkoutResultsModel {
+struct WorkoutResultsModel: Hashable {
     let pace: Double
     let distance: Double
     let duration: Int

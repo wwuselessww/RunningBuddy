@@ -29,21 +29,24 @@ class TrainingViewModel: ObservableObject {
     
     @Published var showAlert: Bool = false
     @Published var alertText: String = ""
+    
     @Published var speed: Double = 0
     @Published var pace: Double = 0
     @Published var distance: Double = 0
+    @Published var duration: Int = 0
+    
     @Published var canProceed: Bool = false
     @Published var workoutResult: WorkoutResultsModel?
+    @Published var firstStart: Bool = true
+    @Published var progressBarHeight: CGFloat = 0
+    @Published var progressText: Int = 0
+    
     var locationManager: LocationManager = LocationManager()
     var workoutManager = WorkoutManager()
     var totalTime: Int = 0
-    var calendar = Calendar.current
-    var firstStart: Bool = true
     var image: Image = Image(systemName: "play.circle.fill")
     var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
-    @Published var duration: Int = 0
-    
+    var screenHeight: CGFloat = 0
     
     func stopTimer() {
         timer.upstream.connect().cancel()
@@ -148,6 +151,7 @@ class TrainingViewModel: ObservableObject {
     func skipHolded() {
         totalTime -= timerDisplay
         nextActivity()
+        calculateProgress()
     }
     
     func stopActivity() {
@@ -169,6 +173,22 @@ class TrainingViewModel: ObservableObject {
         canProceed = true
     }
     
+    func calculateProgress() {
+       
+        withAnimation {
+            progressBarHeight = Double(currentAcitivityIndex) / Double(activities.count) * screenHeight
+            progressText = Int(Double(currentAcitivityIndex) / Double(activities.count) * 100)
+        }
+        print("progressBarHeight\(progressBarHeight)")
+        print("progressText\(progressText)")
+    }
+    
+    func checkActivity() {
+        if timerDisplay == 0 {
+            nextActivity()
+        }
+    }
+    
     //MARK: alerts
     
     func backPressed() {
@@ -187,6 +207,10 @@ class TrainingViewModel: ObservableObject {
             distance = Double(workoutManager.distance / 1000)
         }
     }
+    
+   
+    
+    
     
     
 }
