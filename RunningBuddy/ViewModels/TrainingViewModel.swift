@@ -144,7 +144,11 @@ class TrainingViewModel: ObservableObject {
     }
     
     func skipHolded() {
-        totalTime -= timerDisplay
+        let timeCheck = totalTime - timerDisplay
+        if timeCheck > 0 {
+            totalTime -= timerDisplay
+        }
+        
         nextActivity()
         calculateProgress()
     }

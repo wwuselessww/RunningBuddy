@@ -27,7 +27,7 @@ struct Training: View {
                     StatDisplay(title: "Speed", value: String(format: "%0.1f", vm.speed), unit: "km/h")
                 }
                 StatDisplay(title: "Current objective time", value: Double(vm.timerDisplay).timeString(), unit: "min")
-                Text("Walk")
+                Text(vm.currentAcitivity?.type.rawValue ?? "Walk")
                     .font(Font.system(size: 44, weight: .bold, design: .default))
                     .bold()
                 Text("next will be running")
