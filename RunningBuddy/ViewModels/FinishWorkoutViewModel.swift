@@ -12,22 +12,23 @@ class FinishWorkoutViewModel: ObservableObject {
     @Published var paceString = ""
     @Published var timeString = ""
     @Published var distanceString = ""
-    
+    @Published var dateString: String = ""
     func formatResultData() {
         guard let result = result else { return }
         
         paceString = String(format: "%0.1f", result.pace)
         timeString = Double(result.duration).timeString()
         distanceString = String(format: "%0.1f", result.distance)
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "EEEE dd MMMM yyyy"
+        dateString = dateFormatter.string(from: Date.now)
         print("paceString: \(paceString)")
         print("timeString: \(timeString)")
         print("timeString_result: \(result.duration)")
         print("distanceString: \(distanceString)")
     }
     
-    func timeString(from seconds: Int) -> String {
-        let minutes = seconds / 60
-        let newSeconds = seconds % 60
-        return String(format: "%02d:%02d", minutes, newSeconds)
+    func saveWorkout() {
+        //FIXME: handle saving 
     }
 }

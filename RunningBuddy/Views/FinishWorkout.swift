@@ -11,6 +11,12 @@ struct FinishWorkout: View {
     var isRecordedByWatch: Bool
     var workout: WorkoutResultsModel?
     @StateObject var vm = FinishWorkoutViewModel()
+    
+    init(isRecordedByWatch: Bool = false, workout: WorkoutResultsModel?) {
+        self.isRecordedByWatch = isRecordedByWatch
+        self.workout = workout
+    }
+    
     var body: some View {
        if let workout = self.workout {
            ZStack(alignment: .leading) {
@@ -20,7 +26,7 @@ struct FinishWorkout: View {
                .ignoresSafeArea(.all)
                    VStack(alignment: .leading) {
                        Spacer()
-                       Text("Saturday 3 may 2025")
+                       Text(vm.dateString)
                            .font(.title)
                            .fontWeight(.semibold)
                            HStack {
@@ -62,6 +68,7 @@ struct FinishWorkout: View {
                ToolbarItem(id: "Finish workout", placement: .topBarTrailing) {
                    Button {
                        print("Finish")
+                       vm.saveWorkout()
                    } label: {
                        HStack {
                            Text("Finish")
@@ -82,6 +89,6 @@ struct FinishWorkout: View {
 
 #Preview {
     NavigationStack {
-        FinishWorkout(isRecordedByWatch: true, workout: .init(pace: 10, distance: 10, duration: 0, path: [], calories: 10, avgHeartRate: 10, maxHeartRate: 10))
+        FinishWorkout(isRecordedByWatch: false, workout: .init(pace: 10, distance: 10, duration: 0, path: [], calories: 10, avgHeartRate: 10, maxHeartRate: 10))
     }
 }

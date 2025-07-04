@@ -76,31 +76,28 @@ struct Training: View {
             if !vm.firstStart {
                 VStack {
                     Spacer()
-                    Text("\(vm.progressText)%")
-                        .font(.caption)
-                    Rectangle()
-                        .cornerRadius(10)
-                        .frame(width: 30, height: vm.progressBarHeight)
-                    
+                    VStack {
+                        Spacer()
+                        Text("\(vm.progressText)%")
+                            .font(.caption)
+                        Rectangle()
+                            .cornerRadius(10)
+                        
+                        
+                    }
+                    .ignoresSafeArea()
+                    .frame(width: 30, height: vm.progressBarHeight)
                 }
-                .ignoresSafeArea()
             }
         }
         .toolbar(.hidden, for: .tabBar)
         .toolbar(.hidden, for: .navigationBar)
         .onReceive(vm.timer, perform: { value in
             guard vm.isActive else { return }
-            withAnimation {
-                vm.checkActivity()
-                vm.getSpeed()
-                vm.getPace()
-                vm.calculateProgress()
-                vm.timerDisplay -= 1
-                vm.totalTime -= 1
-            }
+            vm.handleTimerOnRecive()
         })
         .navigationDestination(for: WorkoutResultsModel.self, destination: { workout in
-            FinishWorkout(isRecordedByWatch: false, workout: workout)
+            FinishWorkout(workout: workout)
         })
         .alert(vm.alertText, isPresented: $vm.showAlert, actions: {
             Button("Ok", role: .cancel) {
@@ -112,7 +109,7 @@ struct Training: View {
                 }
             }
             Button("Cancel", role: .destructive) {
-                vm.showAlert = falsex
+                vm.handleCancel()
             }
         })
         .onAppear {

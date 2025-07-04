@@ -133,12 +133,6 @@ class TrainingViewModel: ObservableObject {
         currentAcitivity = tempActivity
     }
     
-    func timeString(from seconds: Int) -> String {
-        let minutes = seconds / 60
-        let newSeconds = seconds % 60
-        return String(format: "%02d:%02d", minutes, newSeconds)
-    }
-    
     func nextActivity() {
         if currentAcitivityIndex < activities.count - 1 {
             currentAcitivityIndex += 1
@@ -190,6 +184,18 @@ class TrainingViewModel: ObservableObject {
         }
     }
     
+    func handleTimerOnRecive() {
+        withAnimation {
+            checkActivity()
+            getSpeed()
+            getPace()
+            calculateProgress()
+            timerDisplay -= 1
+            totalTime -= 1
+            duration += 1
+        }
+    }
+    
     //MARK: alerts
     
     func backPressed() {
@@ -207,6 +213,9 @@ class TrainingViewModel: ObservableObject {
         withAnimation {
             distance = Double(workoutManager.distance / 1000)
         }
+    }
+    func handleCancel() {
+        showAlert = false
     }
     
    
