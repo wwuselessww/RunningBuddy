@@ -22,10 +22,6 @@ class FinishWorkoutViewModel: ObservableObject {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEEE dd MMMM yyyy"
         dateString = dateFormatter.string(from: Date.now)
-        print("paceString: \(paceString)")
-        print("timeString: \(timeString)")
-        print("timeString_result: \(result.duration)")
-        print("distanceString: \(distanceString)")
     }
     
     func saveWorkout() {
