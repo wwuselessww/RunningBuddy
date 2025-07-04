@@ -146,6 +146,7 @@ class TrainingViewModel: ObservableObject {
             stopActivity()
         }
         selectActivity()
+        //MARK: check for time in minus 
     }
     
     func skipHolded() {

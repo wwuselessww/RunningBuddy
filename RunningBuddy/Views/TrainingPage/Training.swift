@@ -99,20 +99,20 @@ struct Training: View {
                 vm.totalTime -= 1
             }
         })
-        .onChange(of: vm.canProceed, { oldValue, newValue in
-            print("navigating")
-            path.append(vm.workoutResult)
-        })
         .navigationDestination(for: WorkoutResultsModel.self, destination: { workout in
             FinishWorkout(isRecordedByWatch: false, workout: workout)
         })
         .alert(vm.alertText, isPresented: $vm.showAlert, actions: {
-            Button("ok", role: .cancel) {
+            Button("Ok", role: .cancel) {
                 if vm.canProceed {
-                    path.append("KKE")
+                    guard let workoutResult = vm.workoutResult else {return}
+                    path.append(workoutResult)
                 } else {
                     path.removeLast()
                 }
+            }
+            Button("Cancel", role: .destructive) {
+                vm.showAlert = falsex
             }
         })
         .onAppear {
