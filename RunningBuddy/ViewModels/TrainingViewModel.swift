@@ -13,40 +13,67 @@ class TrainingViewModel: ObservableObject {
     @Published var workout: Workout?
     @Published var isActive: Bool = true
     @Published var timerDisplay: Int = 300
-    @Published var isPlayPausePressed: Bool = false
+    @Published var isPaused: Bool = false {
+        didSet {
+            if isPaused == true {
+                startTimer()
+            } else {
+                stopTimer()
+            }
+        }
+    }
     @Published var activities: [Activity] = []
     @Published var currentAcitivity: Activity?
     @Published var currentAcitivityIndex: Int = 0
     @Published var isActivityInProgress: Bool = false
-    var locationManager: LocationManager = LocationManager()
+    
     @Published var showAlert: Bool = false
     @Published var alertText: String = ""
+    
     @Published var speed: Double = 0
     @Published var pace: Double = 0
+    @Published var distance: Double = 0
+    @Published var duration: Int = 0
+    
+    @Published var canProceed: Bool = false
+    @Published var workoutResult: WorkoutResultsModel?
+    @Published var firstStart: Bool = true
+    @Published var progressBarHeight: CGFloat = 0
+    @Published var progressText: Int = 0
+    
+    var locationManager: LocationManager = LocationManager()
+    var workoutManager = WorkoutManager()
     var totalTime: Int = 0
-    var calendar = Calendar.current
-    
-    
-    
-    var image: Image = Image(systemName: "play.fill")
+    var image: Image = Image(systemName: "play.circle.fill")
     var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    var screenHeight: CGFloat = 0
     
     func stopTimer() {
         timer.upstream.connect().cancel()
-        image = Image(systemName: "play.fill")
-        isActivityInProgress = false
+        image = Image(systemName: "play.circle.fill")
+        withAnimation {
+            isActivityInProgress = false
+        }
     }
     
     func startTimer() {
         timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-        image = Image(systemName: "pause.fill")
-        isActivityInProgress = true
+        image = Image(systemName: "pause.circle.fill")
+        locationManager.startTracking()
+        withAnimation {
+            isActivityInProgress = true
+        }
+        if firstStart {
+            firstStart = false
+            //MARK: start workout
+        }
     }
     
     func getSpeed() {
         withAnimation {
             speed = locationManager.speed
         }
+        recordLocation()
     }
     func getPace() {
         pace = 60 / speed
@@ -106,32 +133,71 @@ class TrainingViewModel: ObservableObject {
         currentAcitivity = tempActivity
     }
     
-    func timeString(from seconds: Int) -> String {
-        let minutes = seconds / 60
-        let newSeconds = seconds % 60
-        return String(format: "%02d:%02d", minutes, newSeconds)
-    }
-    
     func nextActivity() {
         if currentAcitivityIndex < activities.count - 1 {
             currentAcitivityIndex += 1
         } else {
-            //MARK: catch if ended
-//            currentAcitivityIndex = 0
             stopActivity()
         }
         selectActivity()
+        //MARK: check for time in minus 
     }
     
     func skipHolded() {
-        totalTime -= timerDisplay
+        let timeCheck = totalTime - timerDisplay
+        if timeCheck > 0 {
+            totalTime -= timerDisplay
+        }
+        
         nextActivity()
+        calculateProgress()
     }
     
     func stopActivity() {
         timer.upstream.connect().cancel()
+        locationManager.stopTracking()
         showAlert = true
         alertText = "Workout finished!"
+        // MARK: create workout result array
+        workoutResult = WorkoutResultsModel(
+            pace: pace,
+            distance: distance,
+            duration: duration,
+            path: workoutManager.locationArray,
+            calories: nil,
+            avgHeartRate: nil,
+            maxHeartRate: nil
+            )
+        
+        canProceed = true
+    }
+    
+    func calculateProgress() {
+       
+        withAnimation {
+            progressBarHeight = Double(currentAcitivityIndex) / Double(activities.count) * screenHeight
+            progressText = Int(Double(currentAcitivityIndex) / Double(activities.count) * 100)
+        }
+        print("progressBarHeight\(progressBarHeight)")
+        print("progressText\(progressText)")
+    }
+    
+    func checkActivity() {
+        if timerDisplay == 0 {
+            nextActivity()
+        }
+    }
+    
+    func handleTimerOnRecive() {
+        withAnimation {
+            checkActivity()
+            getSpeed()
+            getPace()
+            calculateProgress()
+            timerDisplay -= 1
+            totalTime -= 1
+            duration += 1
+        }
     }
     
     //MARK: alerts
@@ -140,6 +206,24 @@ class TrainingViewModel: ObservableObject {
         showAlert = true
         alertText = "End Workout"
     }
+    func recordLocation() {
+        guard let location = locationManager.currentLocation else {
+            print("no location")
+            return
+        }
+        workoutManager.recordLocation(location)
+        workoutManager.getTottalDistance()
+        print("DISTANCE \(workoutManager.distance.description)")
+        withAnimation {
+            distance = Double(workoutManager.distance / 1000)
+        }
+    }
+    func handleCancel() {
+        showAlert = false
+    }
+    
+   
+    
     
     
     

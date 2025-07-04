@@ -50,11 +50,11 @@ class WorkoutInfoViewModel: ObservableObject {
         } else {
             print("00:00:00")
         }
-        let maxHearthRate = await healthKitManager.getMaxPulseFor(workout: workout) ?? 0
+        let maxHearthRate = await healthKitManager.getBPMFor(workout: workout, type: .max, options: .discreteMax) ?? 0
         print("maxHearthRate \(maxHearthRate)")
         maxHearthRateString = String(maxHearthRate)
         //MARK: sus calculations
-        let pace = await healthKitManager.getPace(workout: workout) ?? 0
+        let pace = await healthKitManager.getPaceFor(workout: workout) ?? 0
         paceString = String(format: "%0.2f", pace)
         //MARK: end of sus calculations
         

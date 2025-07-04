@@ -27,24 +27,22 @@ struct MainPage: View {
                 }
                 ScrollView {
                     ForEach(0..<vm.workoutArray.count, id: \.self) { index in
-                        NavigationLink (value: vm.workModelArray[index]) {
+                        Button {
+                            vm.didTapOnWorkout = true
+                            vm.currentIndex = index
+                            print("vm.currentActivity", vm.currentActivity)
+                        } label: {
                             WorkoutCell(workoutModel: vm.workModelArray[index])
                         }
-                        .navigationDestination(for: HKWorkoutModel.self, destination: { workout in
-                            WorkoutInfo(workoutModel: workout)
-                        })
+                        .sheet(isPresented: $vm.didTapOnWorkout) {
+                            WorkoutInfo(workoutModel: vm.workModelArray[vm.currentIndex])
+                                .presentationDragIndicator(.visible)
+                        }
+                        
                     }
                     
                 }
                 .scrollIndicators(.hidden)
-                
-                Button {
-                    vm.currentActivity += 100
-                    print(vm.currentActivity)
-                } label: {
-                    Text("Add")
-                }
-                
                 Spacer()
             }}
         
