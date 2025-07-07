@@ -30,7 +30,7 @@ struct MainPage: View {
                                 vm.currentIndex = index
                                 print("vm.currentActivity", vm.currentActivity)
                             } label: {
-                                WorkoutCell(workoutModel: vm.workModelArray[index])
+                                WorkoutCell(healthKitModel: vm.workModelArray[index])
                             }
                             .sheet(isPresented: $vm.didTapOnWorkout) {
                                 WorkoutInfo(workoutModel: vm.workModelArray[vm.currentIndex])
@@ -38,9 +38,11 @@ struct MainPage: View {
                             }
                         }
                     }
-                    Section(header: Text("Source: iPhone")) {
-                        ForEach(workouts) { workout in
-                            Text(workout.duration.description)
+                    if !workouts.isEmpty {
+                        Section(header: Text("Source: iPhone")) {
+                            ForEach(workouts) { workout in
+                                WorkoutCell(workout: workout)
+                            }
                         }
                     }
                 }
@@ -65,7 +67,9 @@ struct MainPage: View {
 }
 
 #Preview {
-    MainPage()
+    NavigationStack {
+        MainPage()
+    }
 }
 
 
