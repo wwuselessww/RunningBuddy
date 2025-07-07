@@ -6,13 +6,24 @@
 //
 
 import SwiftUI
+import CoreData
 
 class FinishWorkoutViewModel: ObservableObject {
     @Published var result: WorkoutResultsModel?
+    @Published var workout: Workout
     @Published var paceString = ""
     @Published var timeString = ""
     @Published var distanceString = ""
     @Published var dateString: String = ""
+    private let context: NSManagedObjectContext
+    var resultWorkout: WorkoutResultsModel?
+    var workoutProvider = WorkoutProvider.shared
+    
+    init(provider: WorkoutProvider, workout: Workout? = nil) {
+        self.context = provider.newContext
+        self.workout = Workout(context: self.context)
+    }
+    
     func formatResultData() {
         guard let result = result else { return }
         
@@ -24,7 +35,16 @@ class FinishWorkoutViewModel: ObservableObject {
         dateString = dateFormatter.string(from: Date.now)
     }
     
-    func saveWorkout() {
-        //FIXME: handle saving 
+    func saveWorkout() throws  {
+        //FIXME: handle saving
+        guard let result = result else { return }
+        workout.avgBPM = Int16(result.avgHeartRate ?? 0)
+        workout.distance = result.distance
+        workout.duration = Int64(result.duration)
+        workout.maxBPM = Int16(result.maxHeartRate ?? 0)
+        workout.pace = result.pace
+        if context.hasChanges {
+            try context.save()
+        }
     }
 }

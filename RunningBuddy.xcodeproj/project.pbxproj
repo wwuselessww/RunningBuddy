@@ -54,6 +54,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Connectivity.swift,
+				CoreData/Workout.swift,
+				CoreData/WorkoutProvider.swift,
+				CoreData/WorkoutsDataModel.xcdatamodeld,
 			);
 			target = A2C595F22DBC0A9700E4289B /* RunningBuddy watch app Watch App */;
 		};

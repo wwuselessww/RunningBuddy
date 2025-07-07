@@ -10,6 +10,7 @@ import SwiftUI
 struct WorkoutPage: View {
     @StateObject var vm = WorkoutViewModel()
     @State private var path = NavigationPath()
+    @Environment(\.managedObjectContext) var context
     var body: some View {
         NavigationStack(path: $path)  {
             VStack {
@@ -69,7 +70,7 @@ struct WorkoutPage: View {
                         }
                         .contentTransition(.numericText())
                 }
-                .navigationDestination(for: Workout.self, destination: { workout in
+                .navigationDestination(for: WorkoutModel.self, destination: { workout in
                     Training(workout: workout, path: $path)
                 })
             }

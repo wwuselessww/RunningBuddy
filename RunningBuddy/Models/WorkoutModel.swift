@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct Workout: Hashable {
+struct WorkoutModel: Hashable {
     var difficulty: WorkoutDifficulty
     var start: Activity
     var core: [Activity]

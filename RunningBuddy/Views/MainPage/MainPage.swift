@@ -14,6 +14,7 @@ struct MainPage: View {
     @State var authenticated: Bool = false
     @State var trigger: Bool = false
     @State private var path = NavigationPath()
+    @FetchRequest(fetchRequest: Workout.all()) private var workouts
     var body: some View {
         NavigationStack(path: $path) {
             VStack{
@@ -25,24 +26,34 @@ struct MainPage: View {
                         .font(.system(size: 24))
                     Spacer()
                 }
-                ScrollView {
-                    ForEach(0..<vm.workoutArray.count, id: \.self) { index in
-                        Button {
-                            vm.didTapOnWorkout = true
-                            vm.currentIndex = index
-                            print("vm.currentActivity", vm.currentActivity)
-                        } label: {
-                            WorkoutCell(workoutModel: vm.workModelArray[index])
+                VStack (alignment: .leading) {
+                    ScrollView {
+                        Section(header: Text("Source: Apple watch")) {
+                            ForEach(0..<vm.workoutArray.count, id: \.self) { index in
+                                Button {
+                                    vm.didTapOnWorkout = true
+                                    vm.currentIndex = index
+                                    print("vm.currentActivity", vm.currentActivity)
+                                } label: {
+                                    WorkoutCell(workoutModel: vm.workModelArray[index])
+                                }
+                                .sheet(isPresented: $vm.didTapOnWorkout) {
+                                    WorkoutInfo(workoutModel: vm.workModelArray[vm.currentIndex])
+                                        .presentationDragIndicator(.visible)
+                                }
+                                
+                            }
                         }
-                        .sheet(isPresented: $vm.didTapOnWorkout) {
-                            WorkoutInfo(workoutModel: vm.workModelArray[vm.currentIndex])
-                                .presentationDragIndicator(.visible)
+                        Section(header: Text("Source: iPhone")) {
+                            ForEach(workouts) { workout in
+                                Text(workout.duration.description)
+                                
+                            }
                         }
                         
                     }
-                    
+                    .scrollIndicators(.hidden)
                 }
-                .scrollIndicators(.hidden)
                 Spacer()
             }}
         

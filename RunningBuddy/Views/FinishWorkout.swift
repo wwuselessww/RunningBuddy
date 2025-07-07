@@ -10,11 +10,17 @@ import MapKit
 struct FinishWorkout: View {
     var isRecordedByWatch: Bool
     var workout: WorkoutResultsModel?
-    @StateObject var vm = FinishWorkoutViewModel()
-    
-    init(isRecordedByWatch: Bool = false, workout: WorkoutResultsModel?) {
+    @ObservedObject var vm: FinishWorkoutViewModel
+    @Binding var path: NavigationPath
+    init(isRecordedByWatch: Bool = false, workout: WorkoutResultsModel?, path: Binding<NavigationPath>) {
+        self._path = path
         self.isRecordedByWatch = isRecordedByWatch
         self.workout = workout
+        print("workout", workout)
+        print("self.workout", self.workout)
+        self.vm = .init(provider: .shared)
+        self.vm.result = workout
+        vm.formatResultData()
     }
     
     var body: some View {
@@ -58,17 +64,19 @@ struct FinishWorkout: View {
                    }
                .allowsHitTesting(false)
            }
-           .onAppear {
-               vm.result = workout
-               vm.formatResultData()
-           }
            .toolbar(.hidden, for: .tabBar)
            .navigationTitle("Outdoor Run")
            .toolbar {
                ToolbarItem(id: "Finish workout", placement: .topBarTrailing) {
                    Button {
                        print("Finish")
-                       vm.saveWorkout()
+                       do {
+                           try vm.saveWorkout()
+                           print("saved")
+                           path = NavigationPath()
+                       } catch {
+                           print(error)
+                       }
                    } label: {
                        HStack {
                            Text("Finish")
@@ -88,7 +96,8 @@ struct FinishWorkout: View {
 }
 
 #Preview {
+    @Previewable @State var path = NavigationPath()
     NavigationStack {
-        FinishWorkout(isRecordedByWatch: false, workout: .init(pace: 10, distance: 10, duration: 0, path: [], calories: 10, avgHeartRate: 10, maxHeartRate: 10))
+        FinishWorkout(isRecordedByWatch: false, workout: .init(pace: 10, distance: 10, duration: 0, path: [], calories: 10, avgHeartRate: 10, maxHeartRate: 10), path: $path)
     }
 }
