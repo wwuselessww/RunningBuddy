@@ -21,43 +21,33 @@ struct MainPage: View {
                 Header(distance: $vm.totalMonthDistance)
                 ActivityBar(maxActivity: $vm.maxActivity, closedActivity: $vm.currentActivity)
                     .padding(.bottom, 20)
-                HStack {
-                    Text("Workouts")
-                        .font(.system(size: 24))
-                    Spacer()
-                }
-                VStack (alignment: .leading) {
-                    ScrollView {
-                        Section(header: Text("Source: Apple watch")) {
-                            ForEach(0..<vm.workoutArray.count, id: \.self) { index in
-                                Button {
-                                    vm.didTapOnWorkout = true
-                                    vm.currentIndex = index
-                                    print("vm.currentActivity", vm.currentActivity)
-                                } label: {
-                                    WorkoutCell(workoutModel: vm.workModelArray[index])
-                                }
-                                .sheet(isPresented: $vm.didTapOnWorkout) {
-                                    WorkoutInfo(workoutModel: vm.workModelArray[vm.currentIndex])
-                                        .presentationDragIndicator(.visible)
-                                }
-                                
+                    .padding(.horizontal, 10)
+                List {
+                    Section(header: Text("from Apple watch")) {
+                        ForEach(0..<vm.workoutArray.count, id: \.self) { index in
+                            Button {
+                                vm.didTapOnWorkout = true
+                                vm.currentIndex = index
+                                print("vm.currentActivity", vm.currentActivity)
+                            } label: {
+                                WorkoutCell(workoutModel: vm.workModelArray[index])
+                            }
+                            .sheet(isPresented: $vm.didTapOnWorkout) {
+                                WorkoutInfo(workoutModel: vm.workModelArray[vm.currentIndex])
+                                    .presentationDragIndicator(.visible)
                             }
                         }
-                        Section(header: Text("Source: iPhone")) {
-                            ForEach(workouts) { workout in
-                                Text(workout.duration.description)
-                                
-                            }
-                        }
-                        
                     }
-                    .scrollIndicators(.hidden)
+                    Section(header: Text("Source: iPhone")) {
+                        ForEach(workouts) { workout in
+                            Text(workout.duration.description)
+                        }
+                    }
                 }
-                Spacer()
-            }}
-        
-        .padding(.horizontal, 10)
+                .scrollContentBackground(.hidden)
+                .listStyle(.insetGrouped)
+            }
+        }
         .healthDataAccessRequest(store: vm.healtKitManager.healthStore, readTypes: vm.healtKitManager.activityTypes, trigger: trigger) { result in
             switch result {
             case .success(_):
