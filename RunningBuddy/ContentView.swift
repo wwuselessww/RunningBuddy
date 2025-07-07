@@ -21,6 +21,7 @@ struct ContentView: View {
                     ProgressPage()
                 }
             }
+            .environment(\.managedObjectContext, WorkoutProvider.shared.viewContext)
             .onAppear {
                 HealthKitManager.shared.ensuresHealthKitSetup()
                 print("healt 2")
