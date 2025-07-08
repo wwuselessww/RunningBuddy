@@ -8,6 +8,7 @@
 import SwiftUI
 import HealthKit
 
+@MainActor
 class MainPageViewModel: ObservableObject {
     @Published var totalMonthDistance: Double = 10
     @Published var maxActivity: Int = 1000
@@ -17,12 +18,14 @@ class MainPageViewModel: ObservableObject {
     @Published var didTapOnWorkout: Bool = false
     @Published var currentIndex: Int = 0
     
+    @Published var phoneRecordedWorkouts: [Workout] = []
+    
     var healtKitManager = HealthKitManager.shared
     var store = HealthKitManager.shared.healthStore
     let startDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
     let endDate = Date()
     
-    
+    @MainActor
     func getActivity() {
         let stepCounter = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
         let workoutType = HKObjectType.workoutType()
@@ -33,12 +36,37 @@ class MainPageViewModel: ObservableObject {
                     await self.getSteps()
                     await self.getCallories()
                     await self.getWorkouts()
+                    await self.createWorkoutsArray()
                 }
+                
             } else {
                 print(error)
             }
         }
     }
+    @MainActor
+    func createWorkoutsArray() async {
+        var tempArray: [HKWorkoutModel] = []
+        for workout in phoneRecordedWorkouts {
+            let workoutModel: HKWorkoutModel = .init(
+                workout: nil,
+                date: workout.creationDate,
+                distance: workout.distance,
+                avgPulse: nil,
+                type: .outdoorRun
+            )
+            tempArray.append(workoutModel)
+            
+            await MainActor.run {
+                workModelArray += tempArray
+                workModelArray.sort { $0.date > $1.date }
+            }
+            
+            
+        }
+        
+    }
+    
     @MainActor
     private func getSteps() async {
         guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startDate, endDate: endDate, sample: HKQuantityType(.distanceWalkingRunning), resultType: .meterUnit(with: .kilo)) else {
@@ -51,15 +79,15 @@ class MainPageViewModel: ObservableObject {
     
     @MainActor
     private func getCallories() async {
-            guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startDate, endDate: endDate, sample: HKQuantityType(.activeEnergyBurned), resultType: .largeCalorie()) else {
-                print("kek")
-                return
-            }
-            
-            await MainActor.run {
-                currentActivity = Int(res)
-                print("res res \(res)")
-            }
+        guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startDate, endDate: endDate, sample: HKQuantityType(.activeEnergyBurned), resultType: .largeCalorie()) else {
+            print("kek")
+            return
+        }
+        
+        await MainActor.run {
+            currentActivity = Int(res)
+            print("res res \(res)")
+        }
     }
     
     @MainActor

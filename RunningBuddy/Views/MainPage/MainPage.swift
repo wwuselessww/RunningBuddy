@@ -23,31 +23,24 @@ struct MainPage: View {
                     .padding(.bottom, 20)
                     .padding(.horizontal, 10)
                 List {
-                    Section(header: Text("from Apple watch")) {
-                        ForEach(0..<vm.workoutArray.count, id: \.self) { index in
-                            Button {
-                                vm.didTapOnWorkout = true
-                                vm.currentIndex = index
-                                print("vm.currentActivity", vm.currentActivity)
-                            } label: {
-                                WorkoutCell(healthKitModel: vm.workModelArray[index])
-                            }
-                            .sheet(isPresented: $vm.didTapOnWorkout) {
-                                WorkoutInfo(workoutModel: vm.workModelArray[vm.currentIndex])
-                                    .presentationDragIndicator(.visible)
-                            }
-                        }
-                    }
-                    if !workouts.isEmpty {
-                        Section(header: Text("Source: iPhone")) {
-                            ForEach(workouts) { workout in
-                                WorkoutCell(workout: workout)
+                    if !vm.workModelArray.isEmpty {
+                        Section(header: Text("Workouts")) {
+                            ForEach(0..<vm.workModelArray.count, id: \.self) { index in
+                                Button {
+                                    vm.didTapOnWorkout = true
+                                    vm.currentIndex = index
+                                    print("vm.currentActivity", vm.currentActivity)
+                                } label: {
+                                    WorkoutCell(healthKitModel: vm.workModelArray[index])
+                                }
+                                .sheet(isPresented: $vm.didTapOnWorkout) {
+                                    WorkoutInfo(workoutModel: vm.workModelArray[vm.currentIndex])
+                                        .presentationDragIndicator(.visible)
+                                }
                             }
                         }
                     }
                 }
-                .scrollContentBackground(.hidden)
-                .listStyle(.insetGrouped)
             }
         }
         .healthDataAccessRequest(store: vm.healtKitManager.healthStore, readTypes: vm.healtKitManager.activityTypes, trigger: trigger) { result in
@@ -61,6 +54,7 @@ struct MainPage: View {
         }
         .onAppear {
             trigger.toggle()
+            vm.phoneRecordedWorkouts = Array(workouts)
             vm.getActivity()
         }
     }

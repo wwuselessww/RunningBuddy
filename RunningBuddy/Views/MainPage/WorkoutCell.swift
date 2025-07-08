@@ -10,69 +10,76 @@ import HealthKit
 
 struct WorkoutCell: View {
     var workoutModel: HKWorkoutModel?
-    var workout: Workout?
-    
-    init(healthKitModel: HKWorkoutModel? = nil, workout: Workout? = nil) {
+    init(healthKitModel: HKWorkoutModel? = nil) {
         self.workoutModel = healthKitModel
-        self.workout = workout
     }
+    
+    @Environment(\.sizeCategory) var sizeCategory
     
     var body: some View {
         if let healkitModel = workoutModel {
-            HStack {
-                Image(systemName: healkitModel.type == .outdoorRun ? "figure.run": "figure.walk")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(minWidth: 40, maxWidth: 60, minHeight: 40, maxHeight: 60)
-                VStack(alignment: .leading) {
-                    Text("Outdoor Run")
-                        .font(.system(size: 24))
-                        .fontDesign(.rounded)
-                    Text("\(String(format: "%.1f", healkitModel.distance))km")
-                        .font(.system(size: 24))
-                        .fontDesign(.rounded)
+            if !sizeCategory.isAccessibilityCategory {
+                HStack {
+                    Image(systemName: healkitModel.type == .outdoorRun ? "figure.run": "figure.walk")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(minWidth: 40, maxWidth: 60, minHeight: 40, maxHeight: 60)
+                    VStack(alignment: .leading) {
+                        Text("Outdoor Run")
+                            .font(.title)
+                            .fontDesign(.rounded)
+                        Text("\(String(format: "%.1f", healkitModel.distance))km")
+                            .font(.title)
+                            .fontDesign(.rounded)
+                    }
+                    Spacer()
+                    VStack(alignment: .leading) {
+                        if let bpm = healkitModel.avgPulse {
+                            Text("Avg")
+                                .font(.title3)
+                                .fontDesign(.rounded)
+                            + Text(Image(systemName: "heart"))
+                                .font(.title3)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.red)
+                            + Text ("\(bpm)")
+                                .font(.title3)
+                                .fontDesign(.rounded)
+                        }
+                        Text("\(healkitModel.date.formateToString())")
+                            .font(.title3)
+                            .fontDesign(.rounded)
+                    }
                 }
-                Spacer()
+                .foregroundStyle(Color.label)
+            } else {
                 VStack(alignment: .trailing) {
-                    Text("Avg")
-                        .font(.system(size: 20))
+                    Text(healkitModel.type.rawValue)
+                        .font(.title)
+                        .fontDesign(.rounded) +
+                    Text(" \(String(format: "%.1f", healkitModel.distance))km")
+                        .font(.title)
                         .fontDesign(.rounded)
-                    + Text(Image(systemName: "heart"))
-                        .font(.system(size: 20))
-                        .fontDesign(.rounded)
-                        .foregroundStyle(.red)
-                    + Text ("\(healkitModel.avgPulse)")
-                        .font(.system(size: 20))
-                        .fontDesign(.rounded)
-                    Text("\(healkitModel.date.formateToString())")
-                        .font(.system(size: 20))
-                        .fontDesign(.rounded)
+                    VStack(alignment: .trailing) {
+                        if let bpm = healkitModel.avgPulse {
+                            Text("Avg")
+                                .font(.title3)
+                                .fontDesign(.rounded)
+                            + Text(Image(systemName: "heart"))
+                                .font(.title3)
+                                .fontDesign(.rounded)
+                                .foregroundStyle(.red)
+                            + Text ("\(bpm)")
+                                .font(.title3)
+                                .fontDesign(.rounded)
+                        }
+                        Text("\(healkitModel.date.formateToString())")
+                            .font(.title3)
+                            .fontDesign(.rounded)
+                    }
+                }
                 }
             }
-            .foregroundStyle(Color.label)
-        } else if let workout = workout {
-            HStack {
-                Image(systemName: "figure.run")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(minWidth: 40, maxWidth: 60, minHeight: 40, maxHeight: 60)
-                VStack(alignment: .leading) {
-                    Text("Outdoor Run")
-                        .font(.system(size: 24))
-                        .fontDesign(.rounded)
-                    Text("\(String(format: "%.1f", workout.distance))km")
-                        .font(.system(size: 24))
-                        .fontDesign(.rounded)
-                }
-                Spacer()
-                VStack(alignment: .trailing) {
-                    Text("\(workout.creationDate.formateToString())")
-                        .font(.system(size: 20))
-                        .fontDesign(.rounded)
-                }
-            }
-            .foregroundStyle(.primary)
-        }
     }
 }
 

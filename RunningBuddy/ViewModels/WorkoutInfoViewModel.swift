@@ -36,10 +36,10 @@ class WorkoutInfoViewModel: ObservableObject {
     @MainActor
     func getWorkoutData() async {
         guard let model = workoutModel else {return}
-        let workout = model.workout
-        timeString = model.workout.duration.description
+        guard let workout = model.workout else {return}
+        timeString = model.workout?.duration.description ?? "NO TIME SHIT"
         distanceString = String(format: "%0.2f", model.distance)
-        avgHearthRateString = String(model.avgPulse)
+        avgHearthRateString = String(model.avgPulse ?? 0)
         
         let calendar = Calendar.current
         let componentsNow = calendar.dateComponents([.hour, .minute, .second], from: workout.startDate, to: workout.endDate)
