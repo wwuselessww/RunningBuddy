@@ -41,6 +41,7 @@ struct MainPage: View {
                         }
                     }
                 }
+                .scrollContentBackground(.hidden)
             }
         }
         .healthDataAccessRequest(store: vm.healtKitManager.healthStore, readTypes: vm.healtKitManager.activityTypes, trigger: trigger) { result in

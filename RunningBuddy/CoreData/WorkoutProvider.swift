@@ -5,7 +5,7 @@
 //  Created by Alexander Kozharin on 07.07.25.
 //
 
-import Foundation
+import SwiftUI
 import CoreData
 
 final class WorkoutProvider {
@@ -21,7 +21,13 @@ final class WorkoutProvider {
     }
     
     private init() {
+        
+        ValueTransformer.setValueTransformer(DoubleArrayTransformer(), forName: NSValueTransformerName("DoubleArrayTransformer"))
+        
         persistentContainer = NSPersistentContainer(name: "WorkoutsDataModel")
+        if EnvironmentValues.isPreview {
+            persistentContainer.persistentStoreDescriptions.first?.url = .init(filePath: "/dev/null")
+        }
         persistentContainer.viewContext.automaticallyMergesChangesFromParent = true
         persistentContainer.loadPersistentStores { _, error in
             if let error {
@@ -31,9 +37,10 @@ final class WorkoutProvider {
         }
     }
     
-    func test() {
-        print("kek")
+}
+
+extension EnvironmentValues {
+    static var isPreview: Bool {
+        return ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
     }
-    
-    
 }

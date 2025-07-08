@@ -7,6 +7,7 @@
 
 import SwiftUI
 import HealthKit
+import CoreLocation
 
 @MainActor
 class MainPageViewModel: ObservableObject {
@@ -48,21 +49,30 @@ class MainPageViewModel: ObservableObject {
     func createWorkoutsArray() async {
         var tempArray: [HKWorkoutModel] = []
         for workout in phoneRecordedWorkouts {
+            var path: [CLLocationCoordinate2D] = []
+            if let latitudes = workout.latitudes, let longitudes = workout.longitudes {
+                var tempPath: CLLocationCoordinate2D
+                for cordIndex in 0..<latitudes.count {
+                    tempPath = .init(latitude: latitudes[cordIndex], longitude: longitudes[cordIndex])
+                    path.append(tempPath)
+                }
+            } else {
+                print("no data coordinates")
+            }
+            print("path \(path)")
             let workoutModel: HKWorkoutModel = .init(
                 workout: nil,
                 date: workout.creationDate,
                 distance: workout.distance,
                 avgPulse: nil,
-                type: .outdoorRun
+                type: .outdoorRun,
+                path: path
             )
             tempArray.append(workoutModel)
-            
-            await MainActor.run {
-                workModelArray += tempArray
-                workModelArray.sort { $0.date > $1.date }
-            }
-            
-            
+        }
+        await MainActor.run {
+            workModelArray += tempArray
+            workModelArray.sort { $0.date > $1.date }
         }
         
     }

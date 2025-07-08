@@ -34,6 +34,7 @@ struct WorkoutInfo: View {
                                         .padding(.horizontal)
                                 }
                             } else {
+                                //FIXME: make that coordinates should also be from coredata
                                 Map {
                                     let coords = vm.locationsArray.map{$0.coordinate}
                                     MapPolyline(coordinates: coords)

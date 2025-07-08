@@ -26,7 +26,6 @@ class FinishWorkoutViewModel: ObservableObject {
     
     func formatResultData() {
         guard let result = result else { return }
-        
         paceString = String(format: "%0.1f", result.pace)
         timeString = Double(result.duration).timeString()
         distanceString = String(format: "%0.1f", result.distance)
@@ -43,6 +42,10 @@ class FinishWorkoutViewModel: ObservableObject {
         workout.duration = Int64(result.duration)
         workout.maxBPM = Int16(result.maxHeartRate ?? 0)
         workout.pace = result.pace
+        let longitudes = result.path.map { $0.coordinate.longitude }
+        let latitudes = result.path.map { $0.coordinate.latitude }
+        workout.latitudes = latitudes as [Double]
+        workout.longitudes = longitudes as [Double]
         if context.hasChanges {
             try context.save()
         }
