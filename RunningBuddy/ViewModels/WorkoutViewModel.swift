@@ -14,10 +14,10 @@ class WorkoutViewModel: ObservableObject {
     @Published var startingBlock: Activity?
     @Published var mainBlock: [Activity] = []
     @Published var endBlock: Activity?
-    var selectedWorkout: Workout {
+    var selectedWorkout: WorkoutModel {
         workoutArray.indices.contains(selectedIndex) ? workoutArray[selectedIndex] : workoutArray.first!
     }
-    var workoutArray: [Workout] = [
+    var workoutArray: [WorkoutModel] = [
         .init(difficulty: .init(level: "Easy", image: "🥰", color: .blue),
               start: Activity(time: 5*60, type: .walking, repeats: 0),
               core: [
@@ -56,16 +56,13 @@ class WorkoutViewModel: ObservableObject {
               end: Activity(time: 5, type: .walking)),
     ]
     
-    func calculateTime(_ workout: Workout) {
+    func calculateTime(_ workout: WorkoutModel) {
         var temp: Int = 0
         temp += workout.start.time
         let repeats = workout.coreRepeats ?? 0
-        print("repeats \(repeats)")
-        print(temp)
         for _ in 0...repeats{
             for i in workout.core {
                 temp += i.time
-                print(temp)
             }
         }
         temp += workout.end.time
@@ -76,7 +73,7 @@ class WorkoutViewModel: ObservableObject {
         
     }
     
-    func getWorkoutData(_ workout: Workout) {
+    func getWorkoutData(_ workout: WorkoutModel) {
         withAnimation {
             numberOfRepeats = workout.coreRepeats ?? 0
             startingBlock = workout.start

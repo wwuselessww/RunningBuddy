@@ -16,13 +16,5 @@ class WorkOutDetailsViewModel: ObservableObject {
         }
         return temp
     }
-//    func getPoints() {
-//        print("viewFrames", viewFrames)
-//        for frame in viewFrames {
-//            pointArray.append(CGPoint(x: frame.midX, y: frame.midY))
-//        }
-//        print(pointArray)
-//        print("hehe")
-//    }
     
 }

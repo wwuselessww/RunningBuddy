@@ -9,18 +9,7 @@
 /* Begin PBXBuildFile section */
 		A232164E2E12961D009786C5 /* Glur in Frameworks */ = {isa = PBXBuildFile; productRef = A232164D2E12961D009786C5 /* Glur */; };
 		A29AE6772E003FC2005B5AEC /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A29AE6762E003FC2005B5AEC /* SwiftUI.framework */; };
-		A2C595FD2DBC0A9900E4289B /* RunningBuddy watch app Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = A2C595F32DBC0A9700E4289B /* RunningBuddy watch app Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		A2C595FB2DBC0A9900E4289B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A2C595D02DBC06FE00E4289B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A2C595F22DBC0A9700E4289B;
-			remoteInfo = "RunningBuddy watch app Watch App";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		A2C596012DBC0A9900E4289B /* Embed Watch Content */ = {
@@ -29,7 +18,6 @@
 			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
 			dstSubfolderSpec = 16;
 			files = (
-				A2C595FD2DBC0A9900E4289B /* RunningBuddy watch app Watch App.app in Embed Watch Content */,
 			);
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -39,7 +27,6 @@
 /* Begin PBXFileReference section */
 		A29AE6762E003FC2005B5AEC /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		A2C595D82DBC06FE00E4289B /* RunningBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RunningBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A2C595F32DBC0A9700E4289B /* RunningBuddy watch app Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "RunningBuddy watch app Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -50,13 +37,6 @@
 			);
 			target = A2C595D72DBC06FE00E4289B /* RunningBuddy */;
 		};
-		A2C596052DBC0AD500E4289B /* Exceptions for "RunningBuddy" folder in "RunningBuddy watch app Watch App" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Connectivity.swift,
-			);
-			target = A2C595F22DBC0A9700E4289B /* RunningBuddy watch app Watch App */;
-		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -64,7 +44,6 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				A26826CB2DFC3DAF00DD5A95 /* Exceptions for "RunningBuddy" folder in "RunningBuddy" target */,
-				A2C596052DBC0AD500E4289B /* Exceptions for "RunningBuddy" folder in "RunningBuddy watch app Watch App" target */,
 			);
 			path = RunningBuddy;
 			sourceTree = "<group>";
@@ -83,13 +62,6 @@
 			files = (
 				A232164E2E12961D009786C5 /* Glur in Frameworks */,
 				A29AE6772E003FC2005B5AEC /* SwiftUI.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A2C595F02DBC0A9700E4289B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,7 +90,6 @@
 			isa = PBXGroup;
 			children = (
 				A2C595D82DBC06FE00E4289B /* RunningBuddy.app */,
-				A2C595F32DBC0A9700E4289B /* RunningBuddy watch app Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -138,7 +109,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				A2C595FC2DBC0A9900E4289B /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				A2C595DA2DBC06FE00E4289B /* RunningBuddy */,
@@ -149,28 +119,6 @@
 			);
 			productName = RunningBuddy;
 			productReference = A2C595D82DBC06FE00E4289B /* RunningBuddy.app */;
-			productType = "com.apple.product-type.application";
-		};
-		A2C595F22DBC0A9700E4289B /* RunningBuddy watch app Watch App */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = A2C595FE2DBC0A9900E4289B /* Build configuration list for PBXNativeTarget "RunningBuddy watch app Watch App" */;
-			buildPhases = (
-				A2C595EF2DBC0A9700E4289B /* Sources */,
-				A2C595F02DBC0A9700E4289B /* Frameworks */,
-				A2C595F12DBC0A9700E4289B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				A2C595F42DBC0A9700E4289B /* RunningBuddy watch app Watch App */,
-			);
-			name = "RunningBuddy watch app Watch App";
-			packageProductDependencies = (
-			);
-			productName = "RunningBuddy watch app Watch App";
-			productReference = A2C595F32DBC0A9700E4289B /* RunningBuddy watch app Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -184,9 +132,6 @@
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					A2C595D72DBC06FE00E4289B = {
-						CreatedOnToolsVersion = 16.3;
-					};
-					A2C595F22DBC0A9700E4289B = {
 						CreatedOnToolsVersion = 16.3;
 					};
 				};
@@ -209,20 +154,12 @@
 			projectRoot = "";
 			targets = (
 				A2C595D72DBC06FE00E4289B /* RunningBuddy */,
-				A2C595F22DBC0A9700E4289B /* RunningBuddy watch app Watch App */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		A2C595D62DBC06FE00E4289B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A2C595F12DBC0A9700E4289B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -239,22 +176,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A2C595EF2DBC0A9700E4289B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		A2C595FC2DBC0A9900E4289B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A2C595F22DBC0A9700E4289B /* RunningBuddy watch app Watch App */;
-			targetProxy = A2C595FB2DBC0A9900E4289B /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		A2C595E12DBC070000E4289B /* Debug */ = {
@@ -458,64 +380,6 @@
 			};
 			name = Release;
 		};
-		A2C595FF2DBC0A9900E4289B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = VFG5U3NL5K;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "RunningBuddy watch app";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = alex.RunningBuddy;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = alex.RunningBuddy.watchkitapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.4;
-			};
-			name = Debug;
-		};
-		A2C596002DBC0A9900E4289B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = VFG5U3NL5K;
-				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "RunningBuddy watch app";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = alex.RunningBuddy;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = alex.RunningBuddy.watchkitapp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = watchos;
-				SKIP_INSTALL = YES;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 4;
-				WATCHOS_DEPLOYMENT_TARGET = 11.4;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -533,15 +397,6 @@
 			buildConfigurations = (
 				A2C595E42DBC070000E4289B /* Debug */,
 				A2C595E52DBC070000E4289B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		A2C595FE2DBC0A9900E4289B /* Build configuration list for PBXNativeTarget "RunningBuddy watch app Watch App" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A2C595FF2DBC0A9900E4289B /* Debug */,
-				A2C596002DBC0A9900E4289B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

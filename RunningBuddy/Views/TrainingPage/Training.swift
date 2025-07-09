@@ -11,7 +11,7 @@ struct Training: View {
     @StateObject var vm = TrainingViewModel()
     @Environment(\.scenePhase) var schenePhase
     @Environment(\.dismiss) var dismiss
-    var workout: Workout
+    var workout: WorkoutModel
     var height = UIScreen.main.bounds.height
     @Binding var path: NavigationPath
     
@@ -97,7 +97,7 @@ struct Training: View {
             vm.handleTimerOnRecive()
         })
         .navigationDestination(for: WorkoutResultsModel.self, destination: { workout in
-            FinishWorkout(workout: workout)
+            FinishWorkout(workout: workout, path: $path)
         })
         .alert(vm.alertText, isPresented: $vm.showAlert, actions: {
             Button("Ok", role: .cancel) {

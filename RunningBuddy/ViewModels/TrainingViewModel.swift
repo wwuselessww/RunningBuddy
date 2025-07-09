@@ -10,7 +10,7 @@ import SwiftUI
 class TrainingViewModel: ObservableObject {
     
     
-    @Published var workout: Workout?
+    @Published var workout: WorkoutModel?
     @Published var isActive: Bool = true
     @Published var timerDisplay: Int = 300
     @Published var isPaused: Bool = false {
@@ -40,6 +40,7 @@ class TrainingViewModel: ObservableObject {
     @Published var firstStart: Bool = true
     @Published var progressBarHeight: CGFloat = 0
     @Published var progressText: Int = 0
+    var paceArray: [Double] = []
     
     var locationManager: LocationManager = LocationManager()
     var workoutManager = WorkoutManager()
@@ -77,6 +78,7 @@ class TrainingViewModel: ObservableObject {
     }
     func getPace() {
         pace = 60 / speed
+        paceArray.append(pace)
         if pace.isInfinite {
             pace = 0
         }
@@ -158,9 +160,14 @@ class TrainingViewModel: ObservableObject {
         locationManager.stopTracking()
         showAlert = true
         alertText = "Workout finished!"
-        // MARK: create workout result array
+        var paceCounter = 0.0
+        for i in paceArray {
+            paceCounter += i
+        }
+       let avgPace = paceCounter / Double(paceArray.count)
+        //FIXME: pace should be avg not last recorded
         workoutResult = WorkoutResultsModel(
-            pace: pace,
+            pace: avgPace,
             distance: distance,
             duration: duration,
             path: workoutManager.locationArray,

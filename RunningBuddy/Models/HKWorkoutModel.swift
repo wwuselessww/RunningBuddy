@@ -7,11 +7,17 @@
 
 import Foundation
 import HealthKit
+import CoreLocation
 
-struct HKWorkoutModel: Hashable {
-    var workout: HKWorkout
+struct HKWorkoutModel {
+    var id = UUID()
+    var workout: HKWorkout?
     var date: Date
     var distance: Double
-    var avgPulse: Int
+    var avgPulse: Int?
     var type: WorkoutType
+    var path: [CLLocationCoordinate2D]?
+    var duration: Int?
+    var pace: Double?
+    var recordedByPhone: Bool = false
 }

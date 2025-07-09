@@ -27,9 +27,10 @@ struct ActivityBar: View {
     
     @Binding var maxActivity: Int
     @Binding var closedActivity: Int
+    var title: String
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Activity")
+            Text(title)
                 .font(Font.system(size: 24))
                 .fontDesign(.rounded)
             HStack( spacing: 7) {
@@ -53,7 +54,7 @@ struct ActivityBar: View {
 
 #Preview {
     @Previewable @State var currentActivity: Int = 0
-    ActivityBar(maxActivity: .constant(1000), closedActivity: $currentActivity)
+    ActivityBar(maxActivity: .constant(1000), closedActivity: $currentActivity, title: "Activity")
     
     Button {
         currentActivity += 100

@@ -7,9 +7,11 @@
 
 import SwiftUI
 import HealthKit
+import CoreLocation
 
+@MainActor
 class MainPageViewModel: ObservableObject {
-    @Published var totalMonthDistance: Double = 10
+    @Published var totalMonthDistance: Double = 0
     @Published var maxActivity: Int = 1000
     @Published var currentActivity: Int = 0
     @Published var workoutArray: [HKWorkout] = []
@@ -17,58 +19,111 @@ class MainPageViewModel: ObservableObject {
     @Published var didTapOnWorkout: Bool = false
     @Published var currentIndex: Int = 0
     
+    @Published var phoneRecordedWorkouts: [Workout] = []
+    
     var healtKitManager = HealthKitManager.shared
-    var store = HealthKitManager.shared.healthStore
-    let startDate = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
-    let endDate = Date()
+    private  var store = HealthKitManager.shared.healthStore
+    private let startOfTheDay = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
+    private let currentTime = Date()
+    
+    private let startOfTheMonth: Date = {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month], from: Date.now)
+        let result = calendar.date(from: components)
+        return result ?? Date.now
+    }()
     
     
+    
+    
+    
+    
+    @MainActor
     func getActivity() {
         let stepCounter = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
         let workoutType = HKObjectType.workoutType()
         store.requestAuthorization(toShare: [], read: [stepCounter, workoutType]) { isSuccess, error in
             if isSuccess {
-                print("working")
                 Task {
-                    await self.getSteps()
                     await self.getCallories()
                     await self.getWorkouts()
+                    await self.createWorkoutsArray()
+                    await self.getDistanceForCurrentMonth()
                 }
+                
             } else {
-                print(error)
+                print(error!)
             }
         }
     }
     @MainActor
-    private func getSteps() async {
-        guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startDate, endDate: endDate, sample: HKQuantityType(.distanceWalkingRunning), resultType: .meterUnit(with: .kilo)) else {
-            return
+    func createWorkoutsArray() async {
+        var tempArray: [HKWorkoutModel] = []
+        for workout in phoneRecordedWorkouts {
+            var path: [CLLocationCoordinate2D] = []
+            if let latitudes = workout.latitudes, let longitudes = workout.longitudes {
+                var tempPath: CLLocationCoordinate2D
+                for cordIndex in 0..<latitudes.count {
+                    tempPath = .init(latitude: latitudes[cordIndex], longitude: longitudes[cordIndex])
+                    path.append(tempPath)
+                }
+            } else {
+                print("no data coordinates")
+            }
+            print("path \(path)")
+            let workoutModel: HKWorkoutModel = .init(
+                workout: nil,
+                date: workout.creationDate,
+                distance: workout.distance,
+                avgPulse: nil,
+                type: .outdoorRun,
+                path: path,
+                duration: Int(workout.duration),
+                pace: workout.pace,
+                recordedByPhone: true
+            )
+            tempArray.append(workoutModel)
         }
         await MainActor.run {
-            totalMonthDistance = res
+            workModelArray += tempArray
+            workModelArray.sort { $0.date > $1.date }
+        }
+        
+    }
+    
+    @MainActor
+    private func getDistanceForCurrentMonth() async {
+        
+//        guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startOfTheMonth, endDate: currentTime, sample: HKQuantityType(.distanceWalkingRunning), resultType: .meterUnit(with: .kilo)) else {
+//            return
+//        }
+//        await MainActor.run {
+//            totalMonthDistance = res
+//        }
+        var tempDistance: Double = 0
+        for workout in workModelArray {
+            tempDistance += workout.distance
+        }
+        
+        await MainActor.run {
+            totalMonthDistance = tempDistance
         }
     }
     
     @MainActor
     private func getCallories() async {
-            guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startDate, endDate: endDate, sample: HKQuantityType(.activeEnergyBurned), resultType: .largeCalorie()) else {
-                print("kek")
-                return
-            }
-            
-            await MainActor.run {
-                currentActivity = Int(res)
-                print("res res \(res)")
-            }
+        guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startOfTheDay, endDate: currentTime, sample: HKQuantityType(.activeEnergyBurned), resultType: .largeCalorie()) else {
+            return
+        }
+        
+        await MainActor.run {
+            currentActivity = Int(res)
+        }
     }
     
     @MainActor
     func getWorkouts() async {
-        guard let start = Calendar.current.date(byAdding: .day, value: -14, to: Date()) else {
-            print("no start date?")
-            return
-        }
-        let res = await healtKitManager.getWorkouts(from: start, to: endDate)
+        let res = await healtKitManager.getWorkouts(from: startOfTheMonth, to: currentTime)
         var modelArray: [HKWorkoutModel] = []
         for i in res {
             let date = i.startDate
