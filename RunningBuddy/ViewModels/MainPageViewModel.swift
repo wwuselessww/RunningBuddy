@@ -66,7 +66,10 @@ class MainPageViewModel: ObservableObject {
                 distance: workout.distance,
                 avgPulse: nil,
                 type: .outdoorRun,
-                path: path
+                path: path,
+                duration: Int(workout.duration),
+                pace: workout.pace,
+                recordedByPhone: true
             )
             tempArray.append(workoutModel)
         }

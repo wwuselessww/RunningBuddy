@@ -36,30 +36,30 @@ class WorkoutInfoViewModel: ObservableObject {
     @MainActor
     func getWorkoutData() async {
         guard let model = workoutModel else {return}
-        guard let workout = model.workout else {return}
-        timeString = model.workout?.duration.description ?? "NO TIME SHIT"
-        distanceString = String(format: "%0.2f", model.distance)
-        avgHearthRateString = String(model.avgPulse ?? 0)
-        
-        let calendar = Calendar.current
-        let componentsNow = calendar.dateComponents([.hour, .minute, .second], from: workout.startDate, to: workout.endDate)
-        if let hour = componentsNow.hour, let minute = componentsNow.minute, let seconds = componentsNow.second {
-            print( "\(hour):\(minute):\(seconds)")
-            let resultTime = "\(hour):\(minute):\(seconds)"
-            timeString = resultTime.toSportFormat()
+        if let workout = model.workout {
+            timeString = model.workout?.duration.description ?? "NO TIME SHIT"
+//            distanceString = String(format: "%0.2f", model.distance)
+            avgHearthRateString = String(model.avgPulse ?? 0)
+            
+            let calendar = Calendar.current
+            let componentsNow = calendar.dateComponents([.hour, .minute, .second], from: workout.startDate, to: workout.endDate)
+            if let hour = componentsNow.hour, let minute = componentsNow.minute, let seconds = componentsNow.second {
+                let resultTime = "\(hour):\(minute):\(seconds)"
+                timeString = resultTime.toSportFormat()
+            }
+            let maxHearthRate = await healthKitManager.getBPMFor(workout: workout, type: .max, options: .discreteMax) ?? 0
+            maxHearthRateString = String(maxHearthRate)
+            //MARK: sus calculations
+            let pace = await healthKitManager.getPaceFor(workout: workout) ?? 0
+            paceString = String(format: "%0.2f", pace)
+            //MARK: end of sus calculations
+            let activeEnergy = await healthKitManager.getNumericFromHealthKit(startDate: workout.startDate, endDate: workout.endDate, sample: HKQuantityType(.activeEnergyBurned), resultType: HKUnit.largeCalorie())
+            activeEnergyString = String(format: "%0.0f", activeEnergy?.rounded() ?? 0)
         } else {
-            print("00:00:00")
+            timeString = Double(model.duration ?? 0).timeString()
+            paceString = String(format: "%0.2f", model.pace ?? 0)
         }
-        let maxHearthRate = await healthKitManager.getBPMFor(workout: workout, type: .max, options: .discreteMax) ?? 0
-        print("maxHearthRate \(maxHearthRate)")
-        maxHearthRateString = String(maxHearthRate)
-        //MARK: sus calculations
-        let pace = await healthKitManager.getPaceFor(workout: workout) ?? 0
-        paceString = String(format: "%0.2f", pace)
-        //MARK: end of sus calculations
-        
-        let activeEnergy = await healthKitManager.getNumericFromHealthKit(startDate: workout.startDate, endDate: workout.endDate, sample: HKQuantityType(.activeEnergyBurned), resultType: HKUnit.largeCalorie())
-        activeEnergyString = String(format: "%0.0f", activeEnergy?.rounded() ?? 0)
+        distanceString = String(format: "%0.2f", model.distance)
     }
     
     @MainActor
@@ -82,7 +82,6 @@ class WorkoutInfoViewModel: ObservableObject {
     }
     @MainActor
     func getZones() async {
-        print("zones1")
         guard let workout = workoutModel?.workout else {return}
         splitArray = await healthKitManager.getHeartZonesFor(workout)
     }
@@ -95,16 +94,11 @@ class WorkoutInfoViewModel: ObservableObject {
 
         for (calories, emoji) in sortedFoods {
             let count = remainingCalories / calories
-            print(count)
             if count > 0 {
                 result += String(repeating: emoji, count: count)
                 remainingCalories %= calories
-                print(remainingCalories %= calories)
-                
             }
         }
-
-        print("result", result)
         return result
     }
     

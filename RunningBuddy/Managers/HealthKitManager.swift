@@ -45,7 +45,6 @@ class HealthKitManager {
                         continuation.resume(throwing: error)
                     } else {
                         let result = result?.sumQuantity()?.doubleValue(for: resultType) ?? -1.0
-                        print("result numeric", result)
                         continuation.resume(returning: result)
                     }
                 }

@@ -17,4 +17,7 @@ struct HKWorkoutModel {
     var avgPulse: Int?
     var type: WorkoutType
     var path: [CLLocationCoordinate2D]?
+    var duration: Int?
+    var pace: Double?
+    var recordedByPhone: Bool = false
 }
