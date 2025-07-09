@@ -64,11 +64,21 @@ class WorkoutInfoViewModel: ObservableObject {
     
     @MainActor
     func getWorkoutPath() async {
-        guard let workout = workoutModel?.workout else {return}
-        locationsArray = await healthKitManager.getRouteFor(workout: workout) ?? []
-        withAnimation(Animation.easeInOut) {
-            isLoading = false
+        if let hWorkout = workoutModel?.workout {
+            locationsArray = await healthKitManager.getRouteFor(workout: hWorkout) ?? []
+            withAnimation(Animation.easeInOut) {
+                isLoading = false
+            }
+        } else if let path = workoutModel?.path {
+            for i in path {
+                let tempLocation = CLLocation(latitude: i.latitude, longitude: i.longitude)
+                locationsArray.append(tempLocation)
+            }
+            withAnimation(Animation.easeInOut) {
+                isLoading = false
+            }
         }
+        
     }
     @MainActor
     func getZones() async {
