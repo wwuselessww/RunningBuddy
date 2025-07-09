@@ -60,12 +60,9 @@ class WorkoutViewModel: ObservableObject {
         var temp: Int = 0
         temp += workout.start.time
         let repeats = workout.coreRepeats ?? 0
-        print("repeats \(repeats)")
-        print(temp)
         for _ in 0...repeats{
             for i in workout.core {
                 temp += i.time
-                print(temp)
             }
         }
         temp += workout.end.time
