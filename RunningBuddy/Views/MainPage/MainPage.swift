@@ -33,16 +33,17 @@ struct MainPage: View {
                                 } label: {
                                     WorkoutCell(healthKitModel: vm.workModelArray[index])
                                 }
-                                .sheet(isPresented: $vm.didTapOnWorkout) {
-                                    WorkoutInfo(workoutModel: vm.workModelArray[vm.currentIndex])
-                                        .presentationDragIndicator(.visible)
-                                }
+                                
                             }
                         }
                     }
                 }
                 .scrollContentBackground(.hidden)
             }
+        }
+        .sheet(isPresented: $vm.didTapOnWorkout) {
+            WorkoutInfo(workoutModel: vm.workModelArray[vm.currentIndex])
+                .presentationDragIndicator(.visible)
         }
         .healthDataAccessRequest(store: vm.healtKitManager.healthStore, readTypes: vm.healtKitManager.activityTypes, trigger: trigger) { result in
             switch result {

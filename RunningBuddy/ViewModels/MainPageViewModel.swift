@@ -41,7 +41,7 @@ class MainPageViewModel: ObservableObject {
                 }
                 
             } else {
-                print(error)
+                print(error!)
             }
         }
     }
