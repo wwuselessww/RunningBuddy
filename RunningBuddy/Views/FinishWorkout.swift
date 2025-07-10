@@ -64,6 +64,7 @@ struct FinishWorkout: View {
                    }
                .allowsHitTesting(false)
            }
+           .navigationBarBackButtonHidden()
            .toolbar(.hidden, for: .tabBar)
            .navigationTitle("Outdoor Run")
            .toolbar {
