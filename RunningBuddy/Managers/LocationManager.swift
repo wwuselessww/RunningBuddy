@@ -26,7 +26,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         guard let location = locations.last else { return }
         currentLocation = location
         if location.speed >= 0 {
-            speed = location.speed
+            speed = location.speed * 3.6
             print(speed)
         } else {
             speed = 0.0
@@ -42,3 +42,4 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
 }
+
