@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import CoreLocation
 
 class FinishWorkoutViewModel: ObservableObject {
     @Published var result: WorkoutResultsModel?
@@ -15,6 +16,7 @@ class FinishWorkoutViewModel: ObservableObject {
     @Published var timeString = ""
     @Published var distanceString = ""
     @Published var dateString: String = ""
+    @Published var path: [CLLocationCoordinate2D] = []
     private var safePace: Double {
         guard let pace = result?.pace, !pace.isInfinite else { return 0 }
         return pace
@@ -36,6 +38,12 @@ class FinishWorkoutViewModel: ObservableObject {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEEE dd MMMM yyyy"
         dateString = dateFormatter.string(from: Date.now)
+        createPath()
+    }
+    
+   private func createPath() {
+        guard let result = result else { return }
+        path = result.path.map{$0.coordinate}
     }
     
     func saveWorkout() throws  {
