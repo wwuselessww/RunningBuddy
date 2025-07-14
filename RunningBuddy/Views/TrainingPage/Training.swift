@@ -101,16 +101,18 @@ struct Training: View {
         })
         .alert(vm.alertText, isPresented: $vm.showAlert, actions: {
             Button("Ok", role: .cancel) {
-                if vm.canProceed {
-                    guard let workoutResult = vm.workoutResult else {return}
-                    path.append(workoutResult)
-                } else {
-                    path.removeLast()
+                vm.stopActivity()
+                guard let workoutResult = vm.workoutResult else {
+                    print("no result")
+                    return
                 }
+                path.append(workoutResult)
             }
             Button("Cancel", role: .destructive) {
                 vm.handleCancel()
             }
+        }, message: {
+                Text("If you want to end the workout press 'Ok' and what was recorded will be saved.")
         })
         .onAppear {
             vm.workout = workout

@@ -16,8 +16,6 @@ struct FinishWorkout: View {
         self._path = path
         self.isRecordedByWatch = isRecordedByWatch
         self.workout = workout
-        print("workout", workout)
-        print("self.workout", self.workout)
         self.vm = .init(provider: .shared)
         self.vm.result = workout
         vm.formatResultData()
@@ -27,7 +25,7 @@ struct FinishWorkout: View {
        if let workout = self.workout {
            ZStack(alignment: .leading) {
                Map{
-                   
+                   MapPolygon(coordinates: vm.path)
                }
                .ignoresSafeArea(.all)
                    VStack(alignment: .leading) {
@@ -64,6 +62,7 @@ struct FinishWorkout: View {
                    }
                .allowsHitTesting(false)
            }
+           .navigationBarBackButtonHidden()
            .toolbar(.hidden, for: .tabBar)
            .navigationTitle("Outdoor Run")
            .toolbar {
