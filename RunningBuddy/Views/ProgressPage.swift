@@ -8,11 +8,39 @@
 import SwiftUI
 
 struct ProgressPage: View {
+    @StateObject var vm = ProgressViewModel()
+    @State var navigationPath = NavigationPath()
     var body: some View {
-        Text("Progress page")
+        NavigationStack {
+            VStack(alignment: .leading) {
+                Text("For \(vm.callout)")
+                    .font(.callout)
+                Picker("Choise options to filter on",selection: $vm.selectedChip) {
+                    ForEach(vm.pickerOptions, id: \.self) { selection in
+                        Text(selection.rawValue)
+                    }
+                }
+                .pickerStyle(.segmented)
+//                ProgressGraph(title: "Steps Count", progress: .constant(2000), dateRange: <#T##Binding<Int>#>)
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Progress")
+            .onAppear {
+                Task {
+                    await vm.fetchWorkouts()
+                }
+                Task {
+                    await vm.changeCalloutText()
+                }
+            }
+            
+        }
     }
 }
 
 #Preview {
-    ProgressPage()
+    NavigationStack {
+        ProgressPage()
+    }
 }

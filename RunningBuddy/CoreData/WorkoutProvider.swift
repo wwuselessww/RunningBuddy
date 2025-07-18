@@ -37,6 +37,29 @@ final class WorkoutProvider {
         }
     }
     
+    
+    func fetchAllWorkouts() throws -> [Workout] {
+        let request = NSFetchRequest<Workout>(entityName: "Workout")
+        do {
+            return try viewContext.fetch(request)
+        } catch {
+            print("error fetching workouts: \(error)")
+            return []
+        }
+    }
+    
+    func fetchWorkouts(from: Date, to: Date) throws -> [Workout] {
+        let request = NSFetchRequest<Workout>(entityName: "Workout")
+        request.predicate = NSPredicate(format: "creationDate >= %@ AND creationDate <= %@", from as CVarArg, to as CVarArg)
+        
+        do {
+            return try viewContext.fetch(request)
+        } catch {
+            print("cant fetch in range because \(error)")
+            return []
+        }
+    }
+    
 }
 
 extension EnvironmentValues {
