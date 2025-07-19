@@ -16,13 +16,15 @@ final class ProgressViewModel: ObservableObject {
                 await fetchWorkoutsForSelectedOption()
                await changeCalloutText()
                 await getStepsForDuration()
+                await setStepsLabel()
             }
         }
     }
     @Published var pickerOptions: [ProgressPickerOption] = [.day, .week, .month, .year]
     @Published var workouts: [Workout] = []
     @Published var callout: String = ""
-    @Published var steps: [Int] = []
+    @Published var steps: [Double] = []
+    @Published var stepsCount: Int = 0
     
     var startDate: Date = Date()
     var endDate: Date = Date()
@@ -41,7 +43,6 @@ final class ProgressViewModel: ObservableObject {
         }
     }
     func fetchWorkoutsForSelectedOption() async {
-        
         let now = Date.now
         let calendar: Calendar = Calendar.current
         switch selectedChip {
@@ -65,7 +66,7 @@ final class ProgressViewModel: ObservableObject {
             print("error fetching workouts: \(error)")
         }
     }
-
+    @MainActor
     func changeCalloutText() async {
         let dateFormatter = DateFormatter()
         var textToshow: String = ""
@@ -83,16 +84,25 @@ final class ProgressViewModel: ObservableObject {
             let currentYear = dateFormatter.string(from: Date.now)
             textToshow = currentYear
         }
-        await MainActor.run {
             callout = textToshow
-        }
     }
     
     func getStepsForDuration() async {
-//       let count =  await healthKitManager.getNumericFromHealthKit(startDate: startDate, endDate: endDate, sample: HKQuantityType(.stepCount), resultType: .count())
-        let inteval = DateComponents(day: 1)
-        let countArray: [Double] = await healthKitManager.getNumericArray(startDate: startDate, endData: endDate, type: HKQuantityType(.stepCount), options: [.cumulativeSum], interval: inteval, resultType: .count())
-        print("res \(countArray)")
+        let interval = selectedChip == .day ? DateComponents(hour: 1) : DateComponents(day: 1)
+        let result = await healthKitManager.getNumericArray(startDate: startDate, endData: endDate, type: HKQuantityType(.stepCount), options: [.cumulativeSum], interval: interval, resultType: .count())
+        await MainActor.run {
+            steps = result
+        }
+    }
+    
+    func setStepsLabel() async {
+        let totalSteps = steps.reduce(0, +)
+        print("totalSteps \(totalSteps)")
+        await MainActor.run {
+            withAnimation {
+                stepsCount = Int(totalSteps)
+            }
+        }
     }
     
 }

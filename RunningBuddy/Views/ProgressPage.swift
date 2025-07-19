@@ -21,7 +21,7 @@ struct ProgressPage: View {
                     }
                 }
                 .pickerStyle(.segmented)
-//                ProgressGraph(title: "Steps Count", progress: .constant(2000), dateRange: <#T##Binding<Int>#>)
+                ProgressGraph(title: "Steps Count", progress: vm.stepsCount, data: vm.steps)
                 Spacer()
             }
             .padding()
@@ -29,9 +29,9 @@ struct ProgressPage: View {
             .onAppear {
                 Task {
                     await vm.fetchWorkouts()
-                }
-                Task {
                     await vm.changeCalloutText()
+                    await vm.getStepsForDuration()
+                    await vm.setStepsLabel()
                 }
             }
             
