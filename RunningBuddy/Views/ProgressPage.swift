@@ -21,7 +21,9 @@ struct ProgressPage: View {
                     }
                 }
                 .pickerStyle(.segmented)
-                ProgressGraph(title: "Steps Count", progress: vm.stepsCount, data: vm.steps)
+                ProgressGraph(title: "Steps Count", progress: vm.stepsCount, interval: vm.selectedChip, data: $vm.steps)
+                ProgressGraph(title: "Steps Count", progress: vm.stepsCount, barColor: .red, interval: vm.selectedChip, data: $vm.steps)
+                ProgressGraph(title: "Steps Count", progress: vm.stepsCount, barColor: .yellow, interval: vm.selectedChip, data: $vm.steps)
                 Spacer()
             }
             .padding()
@@ -30,7 +32,7 @@ struct ProgressPage: View {
                 Task {
                     await vm.fetchWorkouts()
                     await vm.changeCalloutText()
-                    await vm.getStepsForDuration()
+                    await vm.getStepsForDuration(selectedChip: vm.selectedChip)
                     await vm.setStepsLabel()
                 }
             }
@@ -38,9 +40,9 @@ struct ProgressPage: View {
         }
     }
 }
-
-#Preview {
-    NavigationStack {
-        ProgressPage()
-    }
-}
+//
+//#Preview {
+//    NavigationStack {
+//        ProgressPage()
+//    }
+//}

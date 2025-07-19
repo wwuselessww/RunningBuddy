@@ -65,10 +65,10 @@ class HealthKitManager {
         }
     }
     
-    func getNumericArray(startDate: Date, endData: Date, type: HKQuantityType, options: HKStatisticsOptions = [], interval: DateComponents, resultType: HKUnit) async -> [Double] {
+    func getStepsForPeriod(startDate: Date, endData: Date, type: HKQuantityType, options: HKStatisticsOptions = [], interval: DateComponents, resultType: HKUnit) async -> [ChartModel] {
         let today = Calendar.current.startOfDay(for: Date())
         do {
-            let data: [Double] = try await withCheckedThrowingContinuation { continuation in
+            let data: [ChartModel] = try await withCheckedThrowingContinuation { continuation in
                 let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endData)
                 let query = HKStatisticsCollectionQuery(quantityType: type, quantitySamplePredicate: predicate, options: options, anchorDate: today, intervalComponents: interval)
                 query.initialResultsHandler = { _, results, error in
@@ -76,11 +76,12 @@ class HealthKitManager {
                         print(error)
                         continuation.resume(throwing: error)
                     }
-                    var count:  [Double] = []
+                    var count:  [ChartModel] = []
                     
                     results?.enumerateStatistics(from: startDate, to: endData) { stat, _ in
+                        let date = stat.startDate
                         let unitToCount = stat.sumQuantity()?.doubleValue(for: resultType) ?? 0
-                        count.append(unitToCount)
+                        count.append(ChartModel(date: date, number: Int(unitToCount)))
                         
                     }
                     continuation.resume(returning: count)

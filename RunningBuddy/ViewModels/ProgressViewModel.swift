@@ -15,7 +15,7 @@ final class ProgressViewModel: ObservableObject {
             Task {
                 await fetchWorkoutsForSelectedOption()
                await changeCalloutText()
-                await getStepsForDuration()
+                await getStepsForDuration(selectedChip: selectedChip)
                 await setStepsLabel()
             }
         }
@@ -23,7 +23,7 @@ final class ProgressViewModel: ObservableObject {
     @Published var pickerOptions: [ProgressPickerOption] = [.day, .week, .month, .year]
     @Published var workouts: [Workout] = []
     @Published var callout: String = ""
-    @Published var steps: [Double] = []
+    @Published var steps: [ChartModel] = []
     @Published var stepsCount: Int = 0
     
     var startDate: Date = Date()
@@ -87,16 +87,41 @@ final class ProgressViewModel: ObservableObject {
             callout = textToshow
     }
     
-    func getStepsForDuration() async {
-        let interval = selectedChip == .day ? DateComponents(hour: 1) : DateComponents(day: 1)
-        let result = await healthKitManager.getNumericArray(startDate: startDate, endData: endDate, type: HKQuantityType(.stepCount), options: [.cumulativeSum], interval: interval, resultType: .count())
-        await MainActor.run {
-            steps = result
-        }
-    }
+    func getStepsForDuration(selectedChip: ProgressPickerOption) async {
+          let interval: DateComponents
+          switch selectedChip {
+          case .day:
+              interval = DateComponents(hour: 1)
+          case .week:
+              interval = DateComponents(day: 1)
+          case .month:
+              interval = DateComponents(day: 1)
+          case .year:
+              interval = DateComponents(month: 1)
+          }
+
+          // Heavy work off main thread
+          let data = await healthKitManager.getStepsForPeriod(
+              startDate: startDate,
+              endData: endDate,
+              type: HKQuantityType(.stepCount),
+              options: [.cumulativeSum],
+              interval: interval,
+              resultType: .count()
+          )
+
+//          let result = data.map { value in
+//              ChartModel(date: value.date, number: value.)
+//          }
+
+          // UI update on main thread
+          await MainActor.run {
+              self.steps = data
+          }
+      }
     
     func setStepsLabel() async {
-        let totalSteps = steps.reduce(0, +)
+        let totalSteps = steps.reduce(0, {$0 + $1.number})
         print("totalSteps \(totalSteps)")
         await MainActor.run {
             withAnimation {

@@ -1,35 +1,75 @@
+//
+//  ProgressGraph.swift
+//  RunningBuddy
+//
+//  Created by Alexander Kozharin on 14.07.25.
+//
+
 import SwiftUI
+import Charts
 
 struct TestView: View {
-    @State var timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
-    @State var isPlaying: Bool = false
-    @State var displayTime: Int = 60
+    var title: String
+    var progress: Int
+   @State var data: [ChartModel] = [
+//        .init(index: 0, number: 12),
+//        .init(index: 1, number: 122),
+//        .init(index: 2, number: 1),
+//        .init(index: 3, number: 200),
+//        .init(index: 4, number: 322),
+//        .init(index: 5, number: 82),
+        
+    ]
     var body: some View {
         VStack {
-            Text(timeString(from: displayTime))
-                .onReceive(timer) { output in
-                    displayTime -= 1
-                }
-            Button {
-                isPlaying.toggle()
-                if isPlaying {
-                    timer.upstream.connect().cancel()
-                } else {
-                    timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
-                }
-            } label: {
-                Text("play/pause")
+            VStack(alignment: .leading) {
+                Text(title)
+                    .font(.system(.body, design: .rounded))
+                Text(progress.description)
+                    .font(.system(.title2, design: .rounded))
+                    .fontWeight(.semibold)
+                    .contentTransition(.numericText() )
+                buildChart()
+               
+                
             }
-
+            .padding()
+            .background {
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Color(.systemBackground))
+                    .shadow(radius: 4)
+            }
+            .frame(width: 182, height: 182)
+            Button {
+                randomizeData()
+            } label: {
+                Text("Randomze data")
+            }
         }
     }
-    func timeString(from seconds: Int) -> String {
-        let minutes = seconds / 60
-        let newSeconds = seconds % 60
-        return String(format: "%02d:%02d", minutes, newSeconds)
+     func randomizeData() {
+        for index in data.indices {
+            let randomValue = Int.random(in: 0...300)
+            data[index].number = randomValue
+        }
     }
+    @ViewBuilder
+    func buildChart() -> some View {
+        Chart {
+            ForEach(data) { unit in
+                LineMark(x: .value("day", unit.date),
+                        y: .value("Steps", unit.number)
+                )
+            }
+        }
+        .animation(.snappy, value: data)
+        .chartYScale(domain: 0...400)
+    }
+    
+   
 }
 
+
 #Preview {
-    TestView()
+    TestView(title: "Step Count", progress: 2000)
 }
