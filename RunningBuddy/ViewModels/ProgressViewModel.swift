@@ -13,10 +13,14 @@ final class ProgressViewModel: ObservableObject {
     @Published var selectedChip: ProgressPickerOption = .day {
         didSet {
             Task {
-                await fetchWorkoutsForSelectedOption()
-               await changeCalloutText()
+                let fetched = await fetchWorkoutsForSelected(selectedChip)
+                            await MainActor.run {
+                                workouts = fetched
+                            }
+                await changeCalloutText()
                 await getStepsForDuration(selectedChip: selectedChip)
                 await setStepsLabel()
+                await getWorkoutDistanceForDuration(selectedChip: selectedChip)
             }
         }
     }
@@ -24,28 +28,26 @@ final class ProgressViewModel: ObservableObject {
     @Published var workouts: [Workout] = []
     @Published var callout: String = ""
     @Published var steps: [ChartModel] = []
+    @Published var distance: [ChartModel] = []
     @Published var stepsCount: Int = 0
+    @Published var distanceLabel: Int = 0
+    @Published var activites: [ActivityForGrid] = []
+    @Published var monthlyWorkouts: [Workout] = []
+    var activitiesMonth: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MMMM"
+        return formatter.string(from: Date())
+    }
     
     var startDate: Date = Date()
     var endDate: Date = Date()
     
     let healthKitManager = HealthKitManager.shared
-    
-    func fetchWorkouts() async {
-        do {
-            let temp = try  WorkoutProvider.shared.fetchAllWorkouts()
-            await MainActor.run {
-                workouts = temp
-            }
-            print(workouts.count)
-        } catch {
-            print("error fetching workouts: \(error)")
-        }
-    }
-    func fetchWorkoutsForSelectedOption() async {
+
+    func fetchWorkoutsForSelected(_ option: ProgressPickerOption) async -> [Workout] {
         let now = Date.now
         let calendar: Calendar = Calendar.current
-        switch selectedChip {
+        switch option {
         case .day:
             startDate = calendar.startOfDay(for: now)
         case .week:
@@ -59,11 +61,14 @@ final class ProgressViewModel: ObservableObject {
         do {
             let fetchedWorkouts = try  WorkoutProvider.shared.fetchWorkouts(from: startDate, to: endDate)
             print(fetchedWorkouts.count)
-            await MainActor.run {
-                workouts = fetchedWorkouts
-            }
+            return fetchedWorkouts
+//            await populateActivites()
+//            await MainActor.run {
+//                workouts = fetchedWorkouts
+//            }
         } catch {
             print("error fetching workouts: \(error)")
+            return []
         }
     }
     @MainActor
@@ -87,6 +92,61 @@ final class ProgressViewModel: ObservableObject {
             callout = textToshow
     }
     
+   private func getArrayOfDatesInCurrentMonth() -> [Date]?  {
+        let now = Date.now
+        let calendar = Calendar.current
+        guard let startOfMonth = calendar.dateInterval(of: .month, for: now)?.start else {
+            print("😰")
+            return nil
+        }
+        guard let daysInMonth = calendar.range(of: .day, in: .month, for: now) else {
+            print("😰1")
+            return nil
+        }
+        var result: [Date] = []
+        for day in daysInMonth {
+            guard let date = calendar.date(byAdding: DateComponents(day: day), to: startOfMonth) else {
+                print("😰2")
+                return nil
+            }
+            result.append(date)
+        }
+        return result
+    }
+    
+    func populateActivites() async {
+        print("kek")
+        await MainActor.run {
+            activites.removeAll()
+        }
+        guard let datesInCurrentMonth =  getArrayOfDatesInCurrentMonth() else {
+            print("No dates found")
+            return
+        }
+        let workoutsToFetch = await fetchWorkoutsForSelected(.month)
+        let fetchedDates = workoutsToFetch.map { $0.creationDate }
+        print("kqk1")
+        for date in datesInCurrentMonth {
+            for fetchedDate in fetchedDates {
+                if (date.startOfDay...date.endOfDay).contains(fetchedDate) {
+                    print("YEA")
+                    await MainActor.run {
+                        activites.append(.init(isRecorded: true, number: 1))
+                    }
+                    break
+                } else {
+                    print("no(")
+                    await MainActor.run {
+                        activites.append(.init(isRecorded: false, number: 1))
+                    }
+                    break
+                }
+            }
+        }
+    }
+    
+    
+    
     func getStepsForDuration(selectedChip: ProgressPickerOption) async {
           let interval: DateComponents
           switch selectedChip {
@@ -99,8 +159,6 @@ final class ProgressViewModel: ObservableObject {
           case .year:
               interval = DateComponents(month: 1)
           }
-
-          // Heavy work off main thread
           let data = await healthKitManager.getStepsForPeriod(
               startDate: startDate,
               endData: endDate,
@@ -109,16 +167,22 @@ final class ProgressViewModel: ObservableObject {
               interval: interval,
               resultType: .count()
           )
-
-//          let result = data.map { value in
-//              ChartModel(date: value.date, number: value.)
-//          }
-
-          // UI update on main thread
           await MainActor.run {
               self.steps = data
           }
       }
+    
+    func getWorkoutDistanceForDuration(selectedChip: ProgressPickerOption) async {
+        let distanceArray: [ChartModel] = workouts.map{ChartModel(date: $0.creationDate, number: Int($0.distance))}
+        let distanceLabel = distanceArray.reduce(0, {$0 + $1.number})
+        
+        await MainActor.run {
+            self.distance = distanceArray
+            self.distanceLabel = distanceLabel
+        }
+        
+        print("distanceArray \(distanceArray)")
+    }
     
     func setStepsLabel() async {
         let totalSteps = steps.reduce(0, {$0 + $1.number})
@@ -139,3 +203,4 @@ enum ProgressPickerOption: String {
     case month = "Month"
     case year = "Year"
 }
+//distanceArray [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0860846003425477, 9.412533233413049e-07, 0.0]

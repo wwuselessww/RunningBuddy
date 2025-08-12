@@ -56,7 +56,6 @@ struct ProgressGraph: View {
                
                 
             }
-            .padding()
             .frame(height: 182)
         }
     }
