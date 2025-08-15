@@ -93,21 +93,14 @@ class MainPageViewModel: ObservableObject {
     
     @MainActor
     private func getDistanceForCurrentMonth() async {
-        
-//        guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startOfTheMonth, endDate: currentTime, sample: HKQuantityType(.distanceWalkingRunning), resultType: .meterUnit(with: .kilo)) else {
-//            return
-//        }
-//        await MainActor.run {
-//            totalMonthDistance = res
-//        }
         var tempDistance: Double = 0
         for workout in workModelArray {
             tempDistance += workout.distance
         }
         
-        await MainActor.run {
+//        await MainActor.run {
             totalMonthDistance = tempDistance
-        }
+//        }
     }
     
     @MainActor
@@ -116,9 +109,9 @@ class MainPageViewModel: ObservableObject {
             return
         }
         
-        await MainActor.run {
+//        await MainActor.run {
             currentActivity = Int(res)
-        }
+//        }
     }
     
     @MainActor
@@ -131,6 +124,7 @@ class MainPageViewModel: ObservableObject {
                 print("no data")
                 return
             }
+            
             let newWorkout = HKWorkoutModel(workout: i, date: date, distance: distance, avgPulse: pulse, type: .outdoorRun)
             modelArray.append(newWorkout)
             

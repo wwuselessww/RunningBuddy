@@ -21,8 +21,13 @@ class HealthKitManager {
         HKQuantityType(.heartRate),
         HKSeriesType.workoutRoute(),
         HKSeriesType.workoutType(),
-        HKSampleType.activitySummaryType()
+        HKSampleType.activitySummaryType(),
+        HKQuantityType(.stepCount)
     ]
+    
+    private init() {
+        ensuresHealthKitSetup()
+    }
     
     func ensuresHealthKitSetup() -> Bool  {
         if HKHealthStore.isHealthDataAvailable() {
@@ -49,6 +54,7 @@ class HealthKitManager {
                     }
                 }
                 healthStore.execute(query)
+                
             }
             return data
             
@@ -56,6 +62,37 @@ class HealthKitManager {
             print(error)
             print("error fetching callories")
             return nil
+        }
+    }
+    
+    func getStepsForPeriod(startDate: Date, endData: Date, type: HKQuantityType, options: HKStatisticsOptions = [], interval: DateComponents, resultType: HKUnit) async -> [ChartModel] {
+        let today = Calendar.current.startOfDay(for: Date())
+        do {
+            let data: [ChartModel] = try await withCheckedThrowingContinuation { continuation in
+                let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endData)
+                let query = HKStatisticsCollectionQuery(quantityType: type, quantitySamplePredicate: predicate, options: options, anchorDate: today, intervalComponents: interval)
+                query.initialResultsHandler = { _, results, error in
+                    if let error = error {
+                        print(error)
+                        continuation.resume(throwing: error)
+                    }
+                    var count:  [ChartModel] = []
+                    
+                    results?.enumerateStatistics(from: startDate, to: endData) { stat, _ in
+                        let date = stat.startDate
+                        let unitToCount = stat.sumQuantity()?.doubleValue(for: resultType) ?? 0
+                        count.append(ChartModel(date: date, number: Int(unitToCount)))
+                        
+                    }
+                    continuation.resume(returning: count)
+                    
+                }
+                self.healthStore.execute(query)
+            }
+            return data
+        } catch {
+            print("getNumericArray ,\(error)")
+            return []
         }
     }
     
