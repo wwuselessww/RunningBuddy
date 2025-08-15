@@ -70,15 +70,8 @@ struct ProgressPage: View {
                     print("HERE !!!!!")
                 }
             }
-//            .onChange(of: vm.selectedChip) { oldValue, newValue in
-//                Task {
-//                    vm.workouts = await vm.fetchWorkoutsForSelected(newValue)
-//                }
-//            }
         }
     }
-    
-    //MARK: add activity like in github and km counter from coredata
 }
 
 #Preview {

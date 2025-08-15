@@ -44,7 +44,7 @@ struct WorkoutInfo: View {
                 }
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .ignoresSafeArea()
-                .frame(height: geo.size.height / 2)
+                .frame(height: workoutModel.recordedByPhone ? geo.size.height / 1.5 : geo.size.height / 2)
                 Group {
                     Text(vm.dateSting)
                         .font(.system(size: 24, weight: .bold))

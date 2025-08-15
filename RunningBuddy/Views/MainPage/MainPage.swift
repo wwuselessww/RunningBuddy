@@ -42,8 +42,16 @@ struct MainPage: View {
             }
         }
         .sheet(isPresented: $vm.didTapOnWorkout) {
-            WorkoutInfo(workoutModel: vm.workModelArray[vm.currentIndex])
-                .presentationDragIndicator(.visible)
+            let data = vm.workModelArray[vm.currentIndex]
+            if data.recordedByPhone {
+                WorkoutInfo(workoutModel: data)
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
+            } else {
+                WorkoutInfo(workoutModel: data)
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.visible)
+            }
         }
         .healthDataAccessRequest(store: vm.healtKitManager.healthStore, readTypes: vm.healtKitManager.activityTypes, trigger: trigger) { result in
             switch result {
