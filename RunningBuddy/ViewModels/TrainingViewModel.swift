@@ -22,8 +22,8 @@ class TrainingViewModel: ObservableObject {
             }
         }
     }
-    @Published var activities: [Activity] = []
-    @Published var currentAcitivity: Activity?
+    @Published var activities: [WorkoutActivity] = []
+    @Published var currentAcitivity: WorkoutActivity?
     @Published var currentAcitivityIndex: Int = 0
     @Published var isActivityInProgress: Bool = false
     
@@ -66,6 +66,7 @@ class TrainingViewModel: ObservableObject {
         }
         if firstStart {
             firstStart = false
+            startLiveActivity()
             //MARK: start workout
         }
     }
@@ -102,7 +103,7 @@ class TrainingViewModel: ObservableObject {
             return
         }
         let repeats = workout.coreRepeats ?? 0
-        var tempArray: [Activity] = []
+        var tempArray: [WorkoutActivity] = []
         workout.start.id = UUID()
         tempArray.append(workout.start)
         for i in 0...repeats {
@@ -177,6 +178,7 @@ class TrainingViewModel: ObservableObject {
             )
         
         canProceed = true
+        stopLiveActivity()
     }
     
     func calculateProgress() {
@@ -227,6 +229,16 @@ class TrainingViewModel: ObservableObject {
     }
     func handleCancel() {
         showAlert = false
+    }
+    
+    func startLiveActivity() {
+        LiveActivityManager.shared.startActivity()
+    }
+    
+    func stopLiveActivity() {
+        Task {
+            await LiveActivityManager.shared.stopActivity()
+        }
     }
     
    

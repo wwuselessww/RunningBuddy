@@ -11,45 +11,45 @@ class WorkoutViewModel: ObservableObject {
     @Published var selectedIndex: Int = 0
     @Published var time: Int = 0
     @Published var numberOfRepeats: Int = 0
-    @Published var startingBlock: Activity?
-    @Published var mainBlock: [Activity] = []
-    @Published var endBlock: Activity?
+    @Published var startingBlock: WorkoutActivity?
+    @Published var mainBlock: [WorkoutActivity] = []
+    @Published var endBlock: WorkoutActivity?
     var selectedWorkout: WorkoutModel {
         workoutArray.indices.contains(selectedIndex) ? workoutArray[selectedIndex] : workoutArray.first!
     }
     var workoutArray: [WorkoutModel] = [
         .init(difficulty: .init(level: "Easy", image: "🥰", color: .blue),
-              start: Activity(time: 5*60, type: .walking, repeats: 0),
+              start: WorkoutActivity(time: 5*60, type: .walking, repeats: 0),
               core: [
-                Activity(time: 1*60, type: .running),
-                Activity(time: 2*60, type: .walking),
-                Activity(time: 6*60, type: .running),
-                Activity(time: 2*60, type: .walking),
+                WorkoutActivity(time: 1*60, type: .running),
+                WorkoutActivity(time: 2*60, type: .walking),
+                WorkoutActivity(time: 6*60, type: .running),
+                WorkoutActivity(time: 2*60, type: .walking),
               ], coreRepeats: 1,
-              end: Activity(time: 5*60, type: .walking)),
+              end: WorkoutActivity(time: 5*60, type: .walking)),
         .init(difficulty: .init(level: "Medium", image: "🫡", color: .yellow),
-              start: Activity(time: 5*60, type: .walking, repeats: 0),
+              start: WorkoutActivity(time: 5*60, type: .walking, repeats: 0),
               core: [
-                Activity(time: 4*60, type: .running),
-                Activity(time: 2*60, type: .walking),
-                Activity(time: 6*60, type: .running),
-                Activity(time: 2*60, type: .walking),
+                WorkoutActivity(time: 4*60, type: .running),
+                WorkoutActivity(time: 2*60, type: .walking),
+                WorkoutActivity(time: 6*60, type: .running),
+                WorkoutActivity(time: 2*60, type: .walking),
               ], coreRepeats: 2,
-              end: Activity(time: 5*60, type: .running)),
+              end: WorkoutActivity(time: 5*60, type: .running)),
         .init(difficulty: .init(level: "Hard", image: "😔", color: .red),
-              start: Activity(time: 5*60, type: .walking, repeats: 0),
+              start: WorkoutActivity(time: 5*60, type: .walking, repeats: 0),
               core: [
-                Activity(time: 10*60, type: .running),
-                Activity(time: 3*60, type: .walking),
-                Activity(time: 10*60, type: .running),
+                WorkoutActivity(time: 10*60, type: .running),
+                WorkoutActivity(time: 3*60, type: .walking),
+                WorkoutActivity(time: 10*60, type: .running),
               ],
-              end: Activity(time: 5*60, type: .walking)),
+              end: WorkoutActivity(time: 5*60, type: .walking)),
         .init(difficulty: .init(level: "Free Run", image: "😌", color: .green),
-              start: Activity(time: 1*60, type: .walking, repeats: 0),
+              start: WorkoutActivity(time: 1*60, type: .walking, repeats: 0),
               core: [
-                Activity(time: 30*60, type: .running)
+                WorkoutActivity(time: 30*60, type: .running)
               ],
-              end: Activity(time: 5*60, type: .walking)),
+              end: WorkoutActivity(time: 5*60, type: .walking)),
     ]
     
     func calculateTime(_ workout: WorkoutModel) {

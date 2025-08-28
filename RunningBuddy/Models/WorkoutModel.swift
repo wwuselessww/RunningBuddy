@@ -9,10 +9,10 @@ import SwiftUI
 
 struct WorkoutModel: Hashable {
     var difficulty: WorkoutDifficulty
-    var start: Activity
-    var core: [Activity]
+    var start: WorkoutActivity
+    var core: [WorkoutActivity]
     var coreRepeats: Int?
-    var end: Activity
+    var end: WorkoutActivity
 
 }
 
@@ -22,7 +22,7 @@ struct WorkoutDifficulty: Hashable {
     let color: Color
 }
 
-struct Activity: Hashable {
+struct WorkoutActivity: Hashable {
     var id = UUID()
     var time: Int
     var type: ActivityType

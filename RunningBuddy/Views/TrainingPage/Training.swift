@@ -49,6 +49,7 @@ struct Training: View {
                     Button {
                         withAnimation {
                             vm.isPaused.toggle()
+//                            vm.startLiveActivity()
                         }
                         
                     } label: {
@@ -137,14 +138,14 @@ struct Training: View {
     @Previewable @State var path = NavigationPath()
     NavigationStack {
         Training(workout: .init(difficulty: .init(level: "Easy", image: "🥰", color: .blue),
-                                start: Activity(time: 5*60, type: .walking, repeats: 0),
+                                start: WorkoutActivity(time: 5*60, type: .walking, repeats: 0),
                                 core: [
-                                    Activity(time: 1*10, type: .running),
-                                    Activity(time: 1*10, type: .walking),
-                                    Activity(time: 1*10, type: .running),
-                                    Activity(time: 2*60, type: .walking),
+                                    WorkoutActivity(time: 1*10, type: .running),
+                                    WorkoutActivity(time: 1*10, type: .walking),
+                                    WorkoutActivity(time: 1*10, type: .running),
+                                    WorkoutActivity(time: 2*60, type: .walking),
                                 ], coreRepeats: 1,
-                                end: Activity(time: 5*60, type: .walking)), path: $path
+                                end: WorkoutActivity(time: 5*60, type: .walking)), path: $path
         )
     }
 }
