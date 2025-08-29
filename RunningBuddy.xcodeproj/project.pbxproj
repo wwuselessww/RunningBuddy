@@ -71,7 +71,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Components/StatDisplay.swift,
+				"Extensions/Int+Extensions.swift",
 				Models/Stage.swift,
+				Models/WorkoutModel.swift,
 			);
 			target = A2DAE5F72E5F6889004BECFD /* LiveActivityExtension */;
 		};

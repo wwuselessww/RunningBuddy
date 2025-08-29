@@ -6,8 +6,8 @@
 //
 import Foundation
 
-struct Stage: Identifiable {
-    let id = UUID()
+struct Stage: Identifiable, Codable, Equatable, Hashable {
+    var id = UUID()
     let completed: Bool
     let current: Bool
 }

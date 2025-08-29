@@ -9,7 +9,6 @@ import SwiftUI
 
 struct Training: View {
     @StateObject var vm = TrainingViewModel()
-    @Environment(\.scenePhase) var schenePhase
     @Environment(\.dismiss) var dismiss
     var workout: WorkoutModel
     var height = UIScreen.main.bounds.height
@@ -124,13 +123,6 @@ struct Training: View {
             vm.getTotalTime()
             vm.screenHeight = height
         }
-        .onChange(of: schenePhase, { oldValue, newValue in
-            if schenePhase == .active {
-                vm.isActive = true
-            } else {
-                vm.isActive = false
-            }
-        })
     }
 }
 

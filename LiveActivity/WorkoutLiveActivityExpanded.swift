@@ -6,22 +6,32 @@
 //
 
 import SwiftUI
-
+import WidgetKit
+import ActivityKit
 
 
 struct WorkoutLiveActivityExpanded: View {
-    var stages: [Stage] = [
-        .init(completed: true, current: false),
-        .init(completed: true, current: false),
-        .init(completed: true, current: false),
-        .init(completed: true, current: false),
-        .init(completed: true, current: true),
-        .init(completed: false, current: false),
-        .init(completed: false, current: false),
-        .init(completed: false, current: false),
-        .init(completed: false, current: false),
-        .init(completed: false, current: false),
-    ]
+    var stages: [Stage]
+    
+    var state: WorkoutAttributes.ContentState
+    
+    init(with state: WorkoutAttributes.ContentState) {
+        self.stages = [
+            .init(completed: true, current: false),
+            .init(completed: true, current: false),
+            .init(completed: true, current: false),
+            .init(completed: true, current: false),
+            .init(completed: true, current: true),
+            .init(completed: false, current: false),
+            .init(completed: false, current: false),
+            .init(completed: false, current: false),
+            .init(completed: false, current: false),
+            .init(completed: false, current: false),
+        ]
+        self.state = state
+    }
+    
+    
     var body: some View {
         VStack {
             HStack {
@@ -32,7 +42,7 @@ struct WorkoutLiveActivityExpanded: View {
                         .frame(height: 10)
                         .foregroundStyle(.green)
                 }
-                ForEach(stages,) { stage in
+                ForEach(stages) { stage in
                     VStack {
                         Image(systemName: "figure.run")
                             .foregroundStyle(stage.current ? .white: .clear)
@@ -70,5 +80,6 @@ struct WorkoutLiveActivityExpanded: View {
 }
 
 #Preview {
-    WorkoutLiveActivityExpanded()
+    let initialContentState = WorkoutAttributes.ContentState(activityName: ActivityType.running.rawValue, nextActivity: ActivityType.walking.rawValue, remainingTime: 0, speed: 10, pace: 0, stages: [])
+    WorkoutLiveActivityExpanded(with: initialContentState)
 }

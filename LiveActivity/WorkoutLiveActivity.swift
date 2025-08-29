@@ -14,28 +14,26 @@ import SwiftUI
 struct WorkoutLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: WorkoutAttributes.self) { context in
-            LockScreenLiveActivity()
+            LockScreenLiveActivity(with: context.state)
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.center) {
-                    WorkoutLiveActivityExpanded()
+                    WorkoutLiveActivityExpanded(with: context.state)
                 }
 
                 
             } compactLeading: {
                 HStack {
-                    Image(systemName: "figure.run")
-                    Text("Run")
+                    Image(systemName: context.state.activityName == "Run" ? "figure.run" : "figure.walk")
+                    Text(context.state.activityName.capitalized)
                 }
             } compactTrailing: {
-               Text("30:99")
+                Text("30:00")
             } minimal: {
                 HStack {
-//                    Spacer()
-                    Image(systemName: "figure.run")
+                    Image(systemName: context.state.activityName == ActivityType.running.rawValue ? "figure.run" : "figure.walk")
                         .resizable()
                         .scaledToFit()
-//                    Spacer()
                 }
             }
         }
@@ -46,6 +44,6 @@ struct WorkoutLiveActivity: Widget {
 #Preview("Expanded", as: .dynamicIsland(.compact), using: WorkoutAttributes(activityName: "gg", estimatedDuration: 100)) {
     WorkoutLiveActivity()
 } contentStates: {
-    WorkoutAttributes.ContentState(progress: 6, time: 9, currentActivity: "hhdd")
+    WorkoutAttributes.ContentState(activityName: "running", nextActivity: "walking", remainingTime: 0, speed: 10, pace: 0, stages: [])
 }
 

@@ -222,7 +222,8 @@ class TrainingViewModel: ObservableObject {
         }
         workoutManager.recordLocation(location)
         workoutManager.getTottalDistance()
-        print("DISTANCE \(workoutManager.distance.description)")
+        updateLiveActivity()
+        
         withAnimation {
             distance = Double(workoutManager.distance / 1000)
         }
@@ -231,6 +232,7 @@ class TrainingViewModel: ObservableObject {
         showAlert = false
     }
     
+    //MARK: live activity
     func startLiveActivity() {
         LiveActivityManager.shared.startActivity()
     }
@@ -239,6 +241,18 @@ class TrainingViewModel: ObservableObject {
         Task {
             await LiveActivityManager.shared.stopActivity()
         }
+    }
+    
+    
+    func updateLiveActivity() {
+        
+        if let currentAcitivity = currentAcitivity {
+            Task {
+                await LiveActivityManager.shared.updateActivity(currentActivity: currentAcitivity.type.rawValue, nextActivity: ActivityType.walking.rawValue, remainingTime: timerDisplay, speed: speed, pace: pace, stages: [])
+            }
+        }
+        
+        
     }
     
    
