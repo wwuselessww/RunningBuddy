@@ -13,5 +13,9 @@ struct RunningBuddy_watch_app_Watch_AppApp: App {
         WindowGroup {
             ContentView()
         }
+        
     }
+    
+    
+
 }

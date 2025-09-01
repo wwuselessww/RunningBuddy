@@ -28,7 +28,8 @@ struct WorkoutLiveActivity: Widget {
                     Text(context.state.activityName.capitalized)
                 }
             } compactTrailing: {
-                Text("30:00")
+                Text(Double(context.state.remainingTime).timeString())
+                    .contentTransition(.numericText())
             } minimal: {
                 HStack {
                     Image(systemName: context.state.activityName == ActivityType.running.rawValue ? "figure.run" : "figure.walk")

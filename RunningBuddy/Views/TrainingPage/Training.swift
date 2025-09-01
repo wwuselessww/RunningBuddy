@@ -95,6 +95,7 @@ struct Training: View {
         .onReceive(vm.timer, perform: { value in
             guard vm.isActive else { return }
             vm.handleTimerOnRecive()
+            print("handling time in background")
         })
         .navigationDestination(for: WorkoutResultsModel.self, destination: { workout in
             FinishWorkout(workout: workout, path: $path)

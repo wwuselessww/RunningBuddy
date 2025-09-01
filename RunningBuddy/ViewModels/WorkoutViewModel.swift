@@ -19,14 +19,14 @@ class WorkoutViewModel: ObservableObject {
     }
     var workoutArray: [WorkoutModel] = [
         .init(difficulty: .init(level: "Easy", image: "🥰", color: .blue),
-              start: WorkoutActivity(time: 5*60, type: .walking, repeats: 0),
+              start: WorkoutActivity(time: 1*10, type: .walking, repeats: 0),
               core: [
-                WorkoutActivity(time: 1*60, type: .running),
-                WorkoutActivity(time: 2*60, type: .walking),
-                WorkoutActivity(time: 6*60, type: .running),
-                WorkoutActivity(time: 2*60, type: .walking),
+                WorkoutActivity(time: 1*10, type: .running),
+                WorkoutActivity(time: 1*10, type: .walking),
+                WorkoutActivity(time: 1*10, type: .running),
+                WorkoutActivity(time: 1*10, type: .walking),
               ], coreRepeats: 1,
-              end: WorkoutActivity(time: 5*60, type: .walking)),
+              end: WorkoutActivity(time: 1*10, type: .walking)),
         .init(difficulty: .init(level: "Medium", image: "🫡", color: .yellow),
               start: WorkoutActivity(time: 5*60, type: .walking, repeats: 0),
               core: [

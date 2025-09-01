@@ -12,7 +12,7 @@ class TrainingViewModel: ObservableObject {
     
     @Published var workout: WorkoutModel?
     @Published var isActive: Bool = true
-    @Published var timerDisplay: Int = 300
+    @Published var timerDisplay: Int = 0
     @Published var isPaused: Bool = false {
         didSet {
             if isPaused == true {
