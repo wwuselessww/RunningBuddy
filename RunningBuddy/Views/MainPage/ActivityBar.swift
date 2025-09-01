@@ -58,7 +58,6 @@ struct ActivityBar: View {
     
     Button {
         currentActivity += 100
-        print(currentActivity)
     } label: {
         Text("add")
         Text("\(currentActivity)")

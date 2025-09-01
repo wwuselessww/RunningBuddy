@@ -10,72 +10,71 @@ import MapKit
 struct FinishWorkout: View {
     var isRecordedByWatch: Bool
     var workout: WorkoutResultsModel?
-    @ObservedObject var vm: FinishWorkoutViewModel
+    @ObservedObject var vm: FinishWorkoutViewModel = FinishWorkoutViewModel()
     @Binding var path: NavigationPath
     init(isRecordedByWatch: Bool = false, workout: WorkoutResultsModel?, path: Binding<NavigationPath>) {
         self._path = path
         self.isRecordedByWatch = isRecordedByWatch
         self.workout = workout
-        self.vm = .init(provider: .shared)
-        self.vm.result = workout
-        vm.formatResultData()
+//        self.vm = .init(provider: .shared)
+//        self.vm.result = workout
+//        vm.formatResultData()
     }
     
     var body: some View {
-       if let workout = self.workout {
-           ZStack(alignment: .leading) {
-               Map{
-                   MapPolygon(coordinates: vm.path)
-               }
-               .ignoresSafeArea(.all)
-                   VStack(alignment: .leading) {
-                       Spacer()
-                       Text(vm.dateString)
-                           .font(.title)
-                           .fontWeight(.semibold)
-                           HStack {
-                               InfoCell(title: "Time", data: "\(vm.timeString)")
-                               Spacer()
-                               InfoCell(title: "Distance", data: "\(vm.distanceString) km")
-                               Spacer()
-                               InfoCell(title: "Pace", data: "\(vm.paceString) km/h")
-                           }
-                           if isRecordedByWatch {
-                               HStack {
-                                   InfoCell(title: "Max HR", data: "BPM")
-                                   Spacer()
-                                   InfoCell(title: "Avg HR", data: "10 BPM")
-                                   Spacer()
-                                   InfoCell(title: "Calories", data: "100")
-                               }
-                           }
-                       
-                   }
-                   .padding(.horizontal)
-                   .background {
-                       RoundedRectangle(cornerRadius: 10)
-                           .foregroundStyle(.white)
-                           .mask(
-                               LinearGradient(colors: [.white, .white.opacity(0.5),.white.opacity(0)], startPoint: .bottom, endPoint: .top)
-                           )
-                           .ignoresSafeArea()
-                   }
-               .allowsHitTesting(false)
-           }
-           .navigationBarBackButtonHidden()
-           .toolbar(.hidden, for: .tabBar)
-           .navigationTitle("Outdoor Run")
+        if let workout = self.workout {
+            ZStack(alignment: .leading) {
+                Map{
+                    MapPolygon(coordinates: vm.path)
+                }
+                .ignoresSafeArea(.all)
+                VStack(alignment: .leading) {
+                    Spacer()
+                    Text(vm.dateString)
+                        .font(.title)
+                        .fontWeight(.semibold)
+                    HStack {
+                        InfoCell(title: "Time", data: "\(vm.timeString)")
+                        Spacer()
+                        InfoCell(title: "Distance", data: "\(vm.distanceString) km")
+                        Spacer()
+                        InfoCell(title: "Pace", data: "\(vm.paceString) km/h")
+                    }
+                    if isRecordedByWatch {
+                        HStack {
+                            InfoCell(title: "Max HR", data: "BPM")
+                            Spacer()
+                            InfoCell(title: "Avg HR", data: "10 BPM")
+                            Spacer()
+                            InfoCell(title: "Calories", data: "100")
+                        }
+                    }
+                    
+                }
+                .padding(.horizontal)
+                .background {
+                    RoundedRectangle(cornerRadius: 10)
+                        .foregroundStyle(.white)
+                        .mask(
+                            LinearGradient(colors: [.white, .white.opacity(0.5),.white.opacity(0)], startPoint: .bottom, endPoint: .top)
+                        )
+                        .ignoresSafeArea()
+                }
+                .allowsHitTesting(false)
+            }
+            .navigationBarBackButtonHidden()
+            .toolbar(.hidden, for: .tabBar)
+            .navigationTitle("Outdoor Run")
+            .onAppear {
+                vm.result = workout
+                vm.formatResultData()
+            }
            .toolbar {
                ToolbarItem(id: "Finish workout", placement: .topBarTrailing) {
                    Button {
                        print("Finish")
-                       do {
-                           try vm.saveWorkout()
-                           print("saved")
+                           vm.saveWorkout()
                            path = NavigationPath()
-                       } catch {
-                           print(error)
-                       }
                    } label: {
                        HStack {
                            Text("Finish")

@@ -125,7 +125,6 @@ class TrainingViewModel: ObservableObject {
 
     func selectActivity() {
         guard workout != nil else {
-            print("no workout?")
             return
         }
         let tempActivity = activities[currentAcitivityIndex]
@@ -187,8 +186,6 @@ class TrainingViewModel: ObservableObject {
             progressBarHeight = Double(currentAcitivityIndex) / Double(activities.count) * screenHeight
             progressText = Int(Double(currentAcitivityIndex) / Double(activities.count) * 100)
         }
-        print("progressBarHeight\(progressBarHeight)")
-        print("progressText\(progressText)")
     }
     
     func checkActivity() {

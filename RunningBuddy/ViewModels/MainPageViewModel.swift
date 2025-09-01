@@ -14,7 +14,6 @@ class MainPageViewModel: ObservableObject {
     @Published var totalMonthDistance: Double = 0
     @Published var maxActivity: Int = 1000
     @Published var currentActivity: Int = 0
-    @Published var workoutArray: [HKWorkout] = []
     @Published var workModelArray: [HKWorkoutModel] = []
     @Published var didTapOnWorkout: Bool = false
     @Published var currentIndex: Int = 0
@@ -46,7 +45,8 @@ class MainPageViewModel: ObservableObject {
             if isSuccess {
                 Task {
                     await self.getCallories()
-                    await self.getWorkouts()
+                    await self.getHealthKitWorkouts()
+//                    await self.getPhoneRecordedWorkouts()
                     await self.createWorkoutsArray()
                     await self.getDistanceForCurrentMonth()
                 }
@@ -58,6 +58,7 @@ class MainPageViewModel: ObservableObject {
     }
     @MainActor
     func createWorkoutsArray() async {
+        workModelArray = []
         var tempArray: [HKWorkoutModel] = []
         for workout in phoneRecordedWorkouts {
             var path: [CLLocationCoordinate2D] = []
@@ -70,7 +71,6 @@ class MainPageViewModel: ObservableObject {
             } else {
                 print("no data coordinates")
             }
-            print("path \(path)")
             let workoutModel: HKWorkoutModel = .init(
                 workout: nil,
                 date: workout.creationDate,
@@ -97,10 +97,7 @@ class MainPageViewModel: ObservableObject {
         for workout in workModelArray {
             tempDistance += workout.distance
         }
-        
-//        await MainActor.run {
             totalMonthDistance = tempDistance
-//        }
     }
     
     @MainActor
@@ -108,14 +105,11 @@ class MainPageViewModel: ObservableObject {
         guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startOfTheDay, endDate: currentTime, sample: HKQuantityType(.activeEnergyBurned), resultType: .largeCalorie()) else {
             return
         }
-        
-//        await MainActor.run {
             currentActivity = Int(res)
-//        }
     }
     
     @MainActor
-    func getWorkouts() async {
+    func getHealthKitWorkouts() async {
         let res = await healtKitManager.getWorkouts(from: startOfTheMonth, to: currentTime)
         var modelArray: [HKWorkoutModel] = []
         for i in res {
@@ -129,11 +123,38 @@ class MainPageViewModel: ObservableObject {
             modelArray.append(newWorkout)
             
         }
-        await MainActor.run {
-            workoutArray = res
+//        await MainActor.run {
             workModelArray = modelArray
+//        }
+    }
+    
+    func getPhoneRecordedWorkouts() {
+        do {
+            let res = try WorkoutProvider.shared.fetchAllWorkouts()
+            print("")
+            print("res: \(res)")
+            print("res.count: \(res.count)")
+            print("")
+             phoneRecordedWorkouts = res
+            
+        } catch {
+            print(error)
+            print("cant fetch workouts***")
         }
     }
+    
+    func delete(at offsets: IndexSet) {
+        for index in offsets {
+            if index >= phoneRecordedWorkouts.count {
+                print("cant delete this")
+                return
+            }
+            let workout = phoneRecordedWorkouts[index]
+            WorkoutProvider.shared.deleteWorkoutWith(workout.id)
+        }
+    }
+    
+    
     
     
 }

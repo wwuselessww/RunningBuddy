@@ -16,9 +16,9 @@ final class WorkoutProvider {
         persistentContainer.viewContext
     }
     
-    var newContext: NSManagedObjectContext {
-        persistentContainer.newBackgroundContext()
-    }
+//    var newContext: NSManagedObjectContext {
+//        persistentContainer.newBackgroundContext()
+//    }
     
     private init() {
         
@@ -57,6 +57,33 @@ final class WorkoutProvider {
         } catch {
             print("cant fetch in range because \(error)")
             return []
+        }
+    }
+    
+    func deleteWorkoutWith(_ id: UUID) {
+        let request = NSFetchRequest<Workout>(entityName: "Workout")
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        
+        do {
+            guard let workoutToDelete = try viewContext.fetch(request).first else {
+                print("no workout to delete***")
+                return
+            }
+            print(workoutToDelete)
+            viewContext.delete(workoutToDelete)
+            save()
+        } catch {
+            print(error)
+            print("cant fetch***")
+        }
+    }
+    
+    func save() {
+        do {
+            try viewContext.save()
+            print("saved here")
+        } catch {
+            print(error)
         }
     }
     

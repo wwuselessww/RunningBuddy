@@ -14,12 +14,11 @@ struct MainPage: View {
     @State var authenticated: Bool = false
     @State var trigger: Bool = false
     @State private var path = NavigationPath()
-    @FetchRequest(fetchRequest: Workout.all()) private var workouts
     var body: some View {
         NavigationStack(path: $path) {
             VStack{
                 Header(distance: $vm.totalMonthDistance)
-                ActivityBar(maxActivity: $vm.maxActivity, closedActivity: $vm.currentActivity, title: "Today's activity")
+//                ActivityBar(maxActivity: $vm.maxActivity, closedActivity: $vm.currentActivity, title: "Today's activity")
                     .padding(.bottom, 20)
                     .padding(.horizontal, 10)
                 List {
@@ -29,16 +28,24 @@ struct MainPage: View {
                                 Button {
                                     vm.didTapOnWorkout = true
                                     vm.currentIndex = index
-                                    print("vm.currentActivity", vm.currentActivity)
                                 } label: {
                                     WorkoutCell(healthKitModel: vm.workModelArray[index])
                                 }
-                                
                             }
+                            .onDelete(perform: vm.delete)
                         }
                     }
                 }
                 .scrollContentBackground(.hidden)
+            }
+        }
+        .healthDataAccessRequest(store: vm.healtKitManager.healthStore, readTypes: vm.healtKitManager.activityTypes, trigger: trigger) { result in
+            switch result {
+            case .success(_):
+                authenticated = true
+            case .failure(let error):
+                authenticated = false
+                print(error.localizedDescription)
             }
         }
         .sheet(isPresented: $vm.didTapOnWorkout) {
@@ -53,18 +60,11 @@ struct MainPage: View {
                     .presentationDragIndicator(.visible)
             }
         }
-        .healthDataAccessRequest(store: vm.healtKitManager.healthStore, readTypes: vm.healtKitManager.activityTypes, trigger: trigger) { result in
-            switch result {
-            case .success(_):
-                authenticated = true
-            case .failure(let error):
-                authenticated = false
-                print(error.localizedDescription)
-            }
-        }
+        
         .onAppear {
             trigger.toggle()
-            vm.phoneRecordedWorkouts = Array(workouts)
+//            vm.phoneRecordedWorkouts = Array(workouts)
+            vm.getPhoneRecordedWorkouts()
             vm.getActivity()
         }
     }

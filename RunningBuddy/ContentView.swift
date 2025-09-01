@@ -46,7 +46,6 @@ struct ContentView: View {
         .environment(\.managedObjectContext, WorkoutProvider.shared.viewContext)
         .onAppear {
             HealthKitManager.shared.ensuresHealthKitSetup()
-            print("Healt1")
         }
     }
 }

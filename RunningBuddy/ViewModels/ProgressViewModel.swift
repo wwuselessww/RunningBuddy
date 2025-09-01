@@ -60,7 +60,6 @@ final class ProgressViewModel: ObservableObject {
         endDate = now
         do {
             let fetchedWorkouts = try  WorkoutProvider.shared.fetchWorkouts(from: startDate, to: endDate)
-            print(fetchedWorkouts.count)
             return fetchedWorkouts
 //            await populateActivites()
 //            await MainActor.run {
@@ -96,17 +95,14 @@ final class ProgressViewModel: ObservableObject {
         let now = Date.now
         let calendar = Calendar.current
         guard let startOfMonth = calendar.dateInterval(of: .month, for: now)?.start else {
-            print("😰")
             return nil
         }
         guard let daysInMonth = calendar.range(of: .day, in: .month, for: now) else {
-            print("😰1")
             return nil
         }
         var result: [Date] = []
         for day in daysInMonth {
             guard let date = calendar.date(byAdding: DateComponents(day: day), to: startOfMonth) else {
-                print("😰2")
                 return nil
             }
             result.append(date)
@@ -115,7 +111,6 @@ final class ProgressViewModel: ObservableObject {
     }
     
     func populateActivites() async {
-        print("kek")
         await MainActor.run {
             activites.removeAll()
         }
@@ -125,17 +120,15 @@ final class ProgressViewModel: ObservableObject {
         }
         let workoutsToFetch = await fetchWorkoutsForSelected(.month)
         let fetchedDates = workoutsToFetch.map { $0.creationDate }
-        print("kqk1")
+
         for date in datesInCurrentMonth {
             for fetchedDate in fetchedDates {
                 if (date.startOfDay...date.endOfDay).contains(fetchedDate) {
-                    print("YEA")
                     await MainActor.run {
                         activites.append(.init(isRecorded: true, number: 1))
                     }
                     break
                 } else {
-                    print("no(")
                     await MainActor.run {
                         activites.append(.init(isRecorded: false, number: 1))
                     }
@@ -186,7 +179,6 @@ final class ProgressViewModel: ObservableObject {
     
     func setStepsLabel() async {
         let totalSteps = steps.reduce(0, {$0 + $1.number})
-        print("totalSteps \(totalSteps)")
         await MainActor.run {
             withAnimation {
                 stepsCount = Int(totalSteps)
@@ -203,4 +195,4 @@ enum ProgressPickerOption: String {
     case month = "Month"
     case year = "Year"
 }
-//distanceArray [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0860846003425477, 9.412533233413049e-07, 0.0]
+//distanceArrray [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0860846003425477, 9.412533233413049e-07, 0.0]

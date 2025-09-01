@@ -11,7 +11,7 @@ import CoreLocation
 
 class FinishWorkoutViewModel: ObservableObject {
     @Published var result: WorkoutResultsModel?
-    @Published var workout: Workout
+    @Published var workout: Workout?
     @Published var paceString = ""
     @Published var timeString = ""
     @Published var distanceString = ""
@@ -21,14 +21,14 @@ class FinishWorkoutViewModel: ObservableObject {
         guard let pace = result?.pace, !pace.isInfinite else { return 0 }
         return pace
     }
-    private let context: NSManagedObjectContext
+//    private let context: NSManagedObjectContext
     var resultWorkout: WorkoutResultsModel?
     var workoutProvider = WorkoutProvider.shared
     
-    init(provider: WorkoutProvider, workout: Workout? = nil) {
-        self.context = provider.newContext
-        self.workout = Workout(context: self.context)
-    }
+//    init(provider: WorkoutProvider, workout: Workout? = nil) {
+////        self.context = provider.viewContext
+////        self.workout = Workout(context: self.context)
+//    }
     
     func formatResultData() {
         guard let result = result else { return }
@@ -46,8 +46,8 @@ class FinishWorkoutViewModel: ObservableObject {
         path = result.path.map{$0.coordinate}
     }
     
-    func saveWorkout() throws  {
-        guard let result = result else { return }
+    func saveWorkout()  {
+        guard let result = result, let workout = workout else { return }
         workout.avgBPM = Int16(result.avgHeartRate ?? 0)
         workout.distance = result.distance
         workout.duration = Int64(result.duration)
@@ -57,8 +57,6 @@ class FinishWorkoutViewModel: ObservableObject {
         let latitudes = result.path.map { $0.coordinate.latitude }
         workout.latitudes = latitudes as [Double]
         workout.longitudes = longitudes as [Double]
-        if context.hasChanges {
-            try context.save()
-        }
+        WorkoutProvider.shared.save()
     }
 }

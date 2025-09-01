@@ -67,7 +67,6 @@ struct ProgressPage: View {
                     await vm.setStepsLabel()
                     await vm.getWorkoutDistanceForDuration(selectedChip: .day)
                     await vm.populateActivites()
-                    print("HERE !!!!!")
                 }
             }
         }

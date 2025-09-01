@@ -119,7 +119,6 @@ struct WorkoutInfo: View {
         .onAppear {
             vm.getDateInString(date: workoutModel.date)
             vm.workoutModel = workoutModel
-            print(workoutModel)
             Task {
                 await vm.getWorkoutData()
                 await vm.getWorkoutPath()

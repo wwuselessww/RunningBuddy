@@ -13,16 +13,15 @@ class HealthKitManager {
     static var shared = HealthKitManager()
     var healthStore = HKHealthStore()
     var isAuthorized: Bool = false
-    let activityTypes: Set = [
-        HKQuantityType.workoutType(),
+    let activityTypes: Set<HKSampleType> = [
+        HKObjectType.workoutType(),
         HKQuantityType(.activeEnergyBurned),
         HKQuantityType(.basalEnergyBurned),
         HKQuantityType(.distanceWalkingRunning),
         HKQuantityType(.heartRate),
+        HKQuantityType(.stepCount),
         HKSeriesType.workoutRoute(),
-        HKSeriesType.workoutType(),
-        HKSampleType.activitySummaryType(),
-        HKQuantityType(.stepCount)
+//        HKActivitySummaryType.activitySummaryType()
     ]
     
     private init() {
@@ -236,7 +235,6 @@ class HealthKitManager {
                     let res = sample.quantity.doubleValue(for: HKUnit.count().unitDivided(by: .minute()))
                     let duration = sample.endDate.timeIntervalSince(prevDateSample ?? sample.startDate)
                     prevDateSample = sample.endDate
-                    print("duration \(duration)")
                     
                     
                     switch res {
@@ -249,7 +247,6 @@ class HealthKitManager {
                         print("NO ZONE??? \(res)")
                     }
                 }
-                print(zonesArray)
                 continuation.resume(returning: zonesArray)
             }
             

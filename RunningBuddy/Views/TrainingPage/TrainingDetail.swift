@@ -81,7 +81,6 @@ struct TrainingDetail<Content: View>: View {
         
     
         .onReceive(timer) { new in
-            print("kek")
             speed = Int.random(in: 0...100)
         }
 }
