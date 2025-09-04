@@ -9,14 +9,14 @@ import SwiftUI
 import CoreData
 import CoreLocation
 
-class FinishWorkoutViewModel: ObservableObject {
-    @Published var result: WorkoutResultsModel?
-    @Published var workout: Workout?
-    @Published var paceString = ""
-    @Published var timeString = ""
-    @Published var distanceString = ""
-    @Published var dateString: String = ""
-    @Published var path: [CLLocationCoordinate2D] = []
+@Observable class FinishWorkoutViewModel {
+    var result: WorkoutResultsModel?
+//    var workout: Workout?
+    var paceString = ""
+    var timeString = ""
+    var distanceString = ""
+    var dateString: String = ""
+    var path: [CLLocationCoordinate2D] = []
     private var safePace: Double {
         guard let pace = result?.pace, !pace.isInfinite else { return 0 }
         return pace
@@ -47,16 +47,22 @@ class FinishWorkoutViewModel: ObservableObject {
     }
     
     func saveWorkout()  {
-        guard let result = result, let workout = workout else { return }
-        workout.avgBPM = Int16(result.avgHeartRate ?? 0)
-        workout.distance = result.distance
-        workout.duration = Int64(result.duration)
-        workout.maxBPM = Int16(result.maxHeartRate ?? 0)
-        workout.pace = safePace
+        guard let result = result else {
+        print("no data" , result)
+            return
+        }
+        var tempWorkout = Workout(context: WorkoutProvider.shared.viewContext)
+        tempWorkout.avgBPM = Int16(result.avgHeartRate ?? 0)
+        tempWorkout.distance = result.distance
+        tempWorkout.duration = Int64(result.duration)
+        tempWorkout.maxBPM = Int16(result.maxHeartRate ?? 0)
+        tempWorkout.pace = safePace
         let longitudes = result.path.map { $0.coordinate.longitude }
         let latitudes = result.path.map { $0.coordinate.latitude }
-        workout.latitudes = latitudes as [Double]
-        workout.longitudes = longitudes as [Double]
+        tempWorkout.latitudes = latitudes as [Double]
+        tempWorkout.longitudes = longitudes as [Double]
         WorkoutProvider.shared.save()
+        print("saved")
+        print("workout to save \(tempWorkout)")
     }
 }

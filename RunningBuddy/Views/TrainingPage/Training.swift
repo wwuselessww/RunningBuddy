@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Training: View {
-    @StateObject var vm = TrainingViewModel()
+    @State var vm = TrainingViewModel()
     @Environment(\.dismiss) var dismiss
     var workout: WorkoutModel
     var height = UIScreen.main.bounds.height

@@ -10,7 +10,7 @@ import MapKit
 struct FinishWorkout: View {
     var isRecordedByWatch: Bool
     var workout: WorkoutResultsModel?
-    @ObservedObject var vm: FinishWorkoutViewModel = FinishWorkoutViewModel()
+    @State var vm: FinishWorkoutViewModel = FinishWorkoutViewModel()
     @Binding var path: NavigationPath
     init(isRecordedByWatch: Bool = false, workout: WorkoutResultsModel?, path: Binding<NavigationPath>) {
         self._path = path
@@ -66,6 +66,7 @@ struct FinishWorkout: View {
             .toolbar(.hidden, for: .tabBar)
             .navigationTitle("Outdoor Run")
             .onAppear {
+                print("workout", workout)
                 vm.result = workout
                 vm.formatResultData()
             }

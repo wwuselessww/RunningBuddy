@@ -66,6 +66,9 @@ struct MainPage: View {
 //            vm.phoneRecordedWorkouts = Array(workouts)
             vm.getPhoneRecordedWorkouts()
             vm.getActivity()
+            print(" ")
+            print("array here ", vm.phoneRecordedWorkouts)
+            print(" ")
         }
     }
 }

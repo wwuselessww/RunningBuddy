@@ -6,14 +6,11 @@
 //
 
 import SwiftUI
-@MainActor
-class TrainingViewModel: ObservableObject {
-    
-    
-    @Published var workout: WorkoutModel?
-    @Published var isActive: Bool = true
-    @Published var timerDisplay: Int = 0
-    @Published var isPaused: Bool = false {
+@Observable class TrainingViewModel {
+    var workout: WorkoutModel?
+    var isActive: Bool = true
+    var timerDisplay: Int = 0
+    var isPaused: Bool = false {
         didSet {
             if isPaused == true {
                 startTimer()
@@ -22,24 +19,24 @@ class TrainingViewModel: ObservableObject {
             }
         }
     }
-    @Published var activities: [WorkoutActivity] = []
-    @Published var currentAcitivity: WorkoutActivity?
-    @Published var currentAcitivityIndex: Int = 0
-    @Published var isActivityInProgress: Bool = false
+    var activities: [WorkoutActivity] = []
+    var currentAcitivity: WorkoutActivity?
+    var currentAcitivityIndex: Int = 0
+    var isActivityInProgress: Bool = false
     
-    @Published var showAlert: Bool = false
-    @Published var alertText: String = ""
+    var showAlert: Bool = false
+    var alertText: String = ""
     
-    @Published var speed: Double = 0
-    @Published var pace: Double = 0
-    @Published var distance: Double = 0
-    @Published var duration: Int = 0
+    var speed: Double = 0
+    var pace: Double = 0
+    var distance: Double = 0
+    var duration: Int = 0
     
-    @Published var canProceed: Bool = false
-    @Published var workoutResult: WorkoutResultsModel?
-    @Published var firstStart: Bool = true
-    @Published var progressBarHeight: CGFloat = 0
-    @Published var progressText: Int = 0
+    var canProceed: Bool = false
+    var workoutResult: WorkoutResultsModel?
+    var firstStart: Bool = true
+    var progressBarHeight: CGFloat = 0
+    var progressText: Int = 0
     var paceArray: [Double] = []
     
     var locationManager: LocationManager = LocationManager()
