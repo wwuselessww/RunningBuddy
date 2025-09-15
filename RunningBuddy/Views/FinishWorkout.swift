@@ -16,9 +16,6 @@ struct FinishWorkout: View {
         self._path = path
         self.isRecordedByWatch = isRecordedByWatch
         self.workout = workout
-//        self.vm = .init(provider: .shared)
-//        self.vm.result = workout
-//        vm.formatResultData()
     }
     
     var body: some View {
@@ -33,6 +30,7 @@ struct FinishWorkout: View {
                     Text(vm.dateString)
                         .font(.title)
                         .fontWeight(.semibold)
+                        .foregroundStyle(.black)
                     HStack {
                         InfoCell(title: "Time", data: "\(vm.timeString)")
                         Spacer()
@@ -47,6 +45,7 @@ struct FinishWorkout: View {
                             InfoCell(title: "Avg HR", data: "10 BPM")
                             Spacer()
                             InfoCell(title: "Calories", data: "100")
+                                .foregroundStyle(.black)
                         }
                     }
                     

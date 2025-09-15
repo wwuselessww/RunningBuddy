@@ -35,7 +35,7 @@ struct WorkoutDetails<Content: View>: View {
                         control1: CGPoint(x: geo.size.width * 1, y: geo.size.height * 0.5),
                         control2: CGPoint(x: geo.size.width * 0.9, y: geo.size.height * 0.9)
                     )
-                    context.stroke(path, with: .color(.black), style: .init(lineWidth: 6, lineCap: .round, dash: [10]))
+                    context.stroke(path, with: .color(.label), style: .init(lineWidth: 6, lineCap: .round, dash: [10]))
                 }
                 VStack {
                     HStack {

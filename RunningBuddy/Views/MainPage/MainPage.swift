@@ -18,7 +18,6 @@ struct MainPage: View {
         NavigationStack(path: $path) {
             VStack{
                 Header(distance: $vm.totalMonthDistance)
-//                ActivityBar(maxActivity: $vm.maxActivity, closedActivity: $vm.currentActivity, title: "Today's activity")
                     .padding(.bottom, 20)
                     .padding(.horizontal, 10)
                 List {

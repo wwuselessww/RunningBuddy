@@ -31,7 +31,7 @@ struct WorkoutSection<Content:View>: View {
                 .background {
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(.gray, lineWidth: 4)
-                        .fill(.white)
+                        .fill(.background)
                 }
         }
         

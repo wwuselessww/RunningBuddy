@@ -51,11 +51,11 @@ struct WorkoutInfo: View {
                     if workoutModel.recordedByPhone {
                         Grid(alignment: .leading) {
                             GridRow {
-                                InfoCell(title: "Time", data: vm.timeString)
+                                InfoCell(title: "Time", data: vm.timeString, dataColor: .label)
                                 Spacer()
-                                InfoCell(title: "Distance", data: vm.distanceString)
+                                InfoCell(title: "Distance", data: vm.distanceString, dataColor: .label)
                                 Spacer()
-                                InfoCell(title: "Pace", data: vm.paceString)
+                                InfoCell(title: "Pace", data: vm.paceString, dataColor: .label)
                                 
                             }
                         }
@@ -63,19 +63,19 @@ struct WorkoutInfo: View {
                     } else {
                         Grid(alignment: .leading) {
                             GridRow {
-                                InfoCell(title: "Time", data: vm.timeString)
+                                InfoCell(title: "Time", data: vm.timeString, dataColor: .label)
                                 Spacer()
-                                InfoCell(title: "Distance", data: vm.distanceString)
+                                InfoCell(title: "Distance", data: vm.distanceString, dataColor: .label)
                                 Spacer()
-                                InfoCell(title: "Max Hearth Rate", data: vm.maxHearthRateString)
+                                InfoCell(title: "Max Hearth Rate", data: vm.maxHearthRateString, dataColor: .label)
                                 
                             }
                             GridRow {
-                                InfoCell(title: "Active Energy", data: vm.activeEnergyString)
+                                InfoCell(title: "Active Energy", data: vm.activeEnergyString, dataColor: .label)
                                 Spacer()
-                                InfoCell(title: "Pace", data: vm.paceString)
+                                InfoCell(title: "Pace", data: vm.paceString, dataColor: .label)
                                 Spacer()
-                                InfoCell(title: "Avg Hearth Rate", data: vm.avgHearthRateString)
+                                InfoCell(title: "Avg Hearth Rate", data: vm.avgHearthRateString, dataColor: .label)
                             }
                         }
                         .padding(.top, 3)
@@ -128,6 +128,11 @@ struct WorkoutInfo: View {
             
         }
     }
+}
+
+#Preview {
+    let model: HKWorkoutModel = .init(date: Date.now, distance: 10, type: .outdoorRun)
+    WorkoutInfo(workoutModel: model)
 }
 
 

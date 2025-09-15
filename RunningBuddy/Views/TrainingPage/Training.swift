@@ -13,7 +13,7 @@ struct Training: View {
     var workout: WorkoutModel
     var height = UIScreen.main.bounds.height
     @Binding var path: NavigationPath
-    
+    let maxButtonSize: CGFloat = 66
     var body: some View {
         HStack {
             VStack(spacing: .zero) {
@@ -43,6 +43,7 @@ struct Training: View {
                                 .font(.callout)
                                 .fontWeight(.semibold)
                                 .circleButtonStyle(color: .red)
+                                .frame(minWidth: 44, maxWidth: maxButtonSize, minHeight: 44, maxHeight: maxButtonSize)
                         }
                     }
                     Button {
@@ -55,7 +56,7 @@ struct Training: View {
                         vm.image
                             .resizable()
                             .scaledToFit()
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.label)
                             .frame(minWidth: 44, maxWidth: 88, minHeight: 44, maxHeight: 88)
                     }
                     if !vm.isPaused {
@@ -68,6 +69,7 @@ struct Training: View {
                                 .font(.callout)
                                 .fontWeight(.semibold)
                                 .circleButtonStyle(color: .blue)
+                                .frame(minWidth: 44, maxWidth: maxButtonSize, minHeight: 44, maxHeight: maxButtonSize)
                         }
                     }
                 }

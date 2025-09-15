@@ -31,12 +31,7 @@ class MainPageViewModel: ObservableObject {
         let result = calendar.date(from: components)
         return result ?? Date.now
     }()
-    
-    
-    
-    
-    
-    
+
     @MainActor
     func getActivity() {
         let stepCounter = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
@@ -45,9 +40,10 @@ class MainPageViewModel: ObservableObject {
             if isSuccess {
                 Task {
                     await self.getCallories()
-                    await self.getHealthKitWorkouts()
+                    
 //                    await self.getPhoneRecordedWorkouts()
                     await self.createWorkoutsArray()
+                    await self.getHealthKitWorkouts()
                     await self.getDistanceForCurrentMonth()
                 }
                 
@@ -56,6 +52,7 @@ class MainPageViewModel: ObservableObject {
             }
         }
     }
+    
     @MainActor
     func createWorkoutsArray() async {
         workModelArray = []
@@ -111,6 +108,7 @@ class MainPageViewModel: ObservableObject {
     @MainActor
     func getHealthKitWorkouts() async {
         let res = await healtKitManager.getWorkouts(from: startOfTheMonth, to: currentTime)
+        print("resarray size", res.count)
         var modelArray: [HKWorkoutModel] = []
         for i in res {
             let date = i.startDate
@@ -124,7 +122,8 @@ class MainPageViewModel: ObservableObject {
             
         }
 //        await MainActor.run {
-            workModelArray = modelArray
+        workModelArray += modelArray
+        print("workModelArray", workModelArray)
 //        }
     }
     
