@@ -27,7 +27,6 @@ struct ActivityGrid: View {
 }
 
 #Preview {
-    
     var data: [ActivityForGrid] {
         var array: [ActivityForGrid] = []
         for _ in 0..<31 {

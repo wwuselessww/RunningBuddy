@@ -8,45 +8,52 @@
 import SwiftUI
 
 struct ContentView: View {
+    @AppStorage("isOnboardingCompleted") var isOnboardingCompleted: Bool = false
     var body: some View {
         ZStack {
-            if #available(iOS 18, *) {
-                TabView {
-                    Tab("home", systemImage: "house", role: .none) {
+            if isOnboardingCompleted {
+                if #available(iOS 18, *) {
+                    TabView {
+                        Tab("home", systemImage: "house", role: .none) {
+                            MainPage()
+                        }
+                        Tab("Workout", systemImage: "figure.run", role: .none) {
+                            WorkoutPage()
+                        }
+                        Tab("Progress", systemImage: "chart.line.text.clipboard.fill", role: .none) {
+                            ProgressPage()
+                        }
+                    }
+                } else {
+                    TabView {
                         MainPage()
-                    }
-                    Tab("Workout", systemImage: "figure.run", role: .none) {
+                            .tabItem {
+                                Image(systemName: "house")
+                                Text("Home")
+                            }
                         WorkoutPage()
-                    }
-                    Tab("Progress", systemImage: "chart.line.text.clipboard.fill", role: .none) {
+                            .tabItem {
+                                Image(systemName: "figure.run")
+                                Text("Workout")
+                            }
                         ProgressPage()
+                            .tabItem {
+                                Image(systemName: "chart.bar.xaxis.ascending")
+                                Text("Progress")
+                            }
                     }
+                   
                 }
             } else {
-                TabView {
-                    MainPage()
-                        .tabItem {
-                            Image(systemName: "house")
-                            Text("Home")
-                        }
-                    WorkoutPage()
-                        .tabItem {
-                            Image(systemName: "figure.run")
-                            Text("Workout")
-                        }
-                    ProgressPage()
-                        .tabItem {
-                            Image(systemName: "chart.bar.xaxis.ascending")
-                            Text("Progress")
-                        }
-                }
-               
+                OnboardingRoot()
+                    
             }
+            
         }
         .environment(\.managedObjectContext, WorkoutProvider.shared.viewContext)
-        .onAppear {
-            HealthKitManager.shared.ensuresHealthKitSetup()
-        }
+//        .onAppear {
+//            HealthKitManager.shared.ensuresHealthKitSetup()
+//        }
     }
 }
 
