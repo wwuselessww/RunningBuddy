@@ -20,9 +20,9 @@ struct ContentView: View {
                         Tab("Workout", systemImage: "figure.run", role: .none) {
                             WorkoutPage()
                         }
-                        Tab("Progress", systemImage: "chart.line.text.clipboard.fill", role: .none) {
-                            ProgressPage()
-                        }
+//                        Tab("Progress", systemImage: "chart.line.text.clipboard.fill", role: .none) {
+//                            ProgressPage()
+//                        }
                     }
                 } else {
                     TabView {
@@ -36,11 +36,11 @@ struct ContentView: View {
                                 Image(systemName: "figure.run")
                                 Text("Workout")
                             }
-                        ProgressPage()
-                            .tabItem {
-                                Image(systemName: "chart.bar.xaxis.ascending")
-                                Text("Progress")
-                            }
+//                        ProgressPage()
+//                            .tabItem {
+//                                Image(systemName: "chart.bar.xaxis.ascending")
+//                                Text("Progress")
+//                            }
                     }
                    
                 }

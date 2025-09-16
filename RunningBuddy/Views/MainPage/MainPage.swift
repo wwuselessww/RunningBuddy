@@ -31,7 +31,7 @@ struct MainPage: View {
                                     WorkoutCell(healthKitModel: vm.workModelArray[index])
                                 }
                             }
-                            .onDelete(perform: vm.delete)
+                            //                            .onDelete(perform: vm.delete)
                         }
                     }
                 }
@@ -49,20 +49,25 @@ struct MainPage: View {
         }
         .sheet(isPresented: $vm.didTapOnWorkout) {
             let data = vm.workModelArray[vm.currentIndex]
-            if data.recordedByPhone {
-                WorkoutInfo(workoutModel: data)
+            NavigationStack {
+                if data.recordedByPhone {
+                    WorkoutInfo(workoutModel: data) {
+                        vm.didTapOnWorkout = false
+                        vm.delete(at: vm.currentIndex)
+                        
+                    }
                     .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
-            } else {
-                WorkoutInfo(workoutModel: data)
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.visible)
+                } else {
+                    WorkoutInfo(workoutModel: data) {}
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.visible)
+                }
             }
         }
         
         .onAppear {
             trigger.toggle()
-//            vm.phoneRecordedWorkouts = Array(workouts)
             vm.getPhoneRecordedWorkouts()
             vm.getActivity()
             print(" ")

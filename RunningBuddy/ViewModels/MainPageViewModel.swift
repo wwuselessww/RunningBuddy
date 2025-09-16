@@ -31,7 +31,7 @@ class MainPageViewModel: ObservableObject {
         let result = calendar.date(from: components)
         return result ?? Date.now
     }()
-
+    
     @MainActor
     func getActivity() {
         let stepCounter = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
@@ -92,7 +92,7 @@ class MainPageViewModel: ObservableObject {
         for workout in workModelArray {
             tempDistance += workout.distance
         }
-            totalMonthDistance = tempDistance
+        totalMonthDistance = tempDistance
     }
     
     @MainActor
@@ -100,7 +100,7 @@ class MainPageViewModel: ObservableObject {
         guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startOfTheDay, endDate: currentTime, sample: HKQuantityType(.activeEnergyBurned), resultType: .largeCalorie()) else {
             return
         }
-            currentActivity = Int(res)
+        currentActivity = Int(res)
     }
     
     @MainActor
@@ -119,10 +119,10 @@ class MainPageViewModel: ObservableObject {
             modelArray.append(newWorkout)
             
         }
-//        await MainActor.run {
+        //        await MainActor.run {
         workModelArray += modelArray
         print("workModelArray", workModelArray)
-//        }
+        //        }
     }
     
     func getPhoneRecordedWorkouts() {
@@ -132,7 +132,7 @@ class MainPageViewModel: ObservableObject {
             print("res: \(res)")
             print("res.count: \(res.count)")
             print("")
-             phoneRecordedWorkouts = res
+            phoneRecordedWorkouts = res
             
         } catch {
             print(error)
@@ -140,18 +140,16 @@ class MainPageViewModel: ObservableObject {
         }
     }
     
-    func delete(at offsets: IndexSet) {
-        for index in offsets {
-            if index >= phoneRecordedWorkouts.count {
-                print("cant delete this")
-                return
-            }
-            let workout = phoneRecordedWorkouts[index]
-            WorkoutProvider.shared.deleteWorkoutWith(workout.id)
+    func delete(at index: Int) {
+        if index >= phoneRecordedWorkouts.count {
+            print("cant delete this")
+            return
         }
+        let workout = phoneRecordedWorkouts[index]
+        phoneRecordedWorkouts.remove(at: index)
+        withAnimation {
+            workModelArray.remove(at: index)
+        }
+        WorkoutProvider.shared.deleteWorkoutWith(workout.id)
     }
-    
-    
-    
-    
 }

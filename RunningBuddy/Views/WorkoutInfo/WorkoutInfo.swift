@@ -14,7 +14,7 @@ struct WorkoutInfo: View {
     
     @StateObject var vm = WorkoutInfoViewModel()
     var workoutModel: HKWorkoutModel
-    
+    var action : (() -> Void)
     var body: some View {
         
         GeometryReader { geo in
@@ -114,6 +114,20 @@ struct WorkoutInfo: View {
                 }
                 .padding(.horizontal)
             }
+
+            .toolbar(content: {
+                if workoutModel.recordedByPhone {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            action()
+                        } label: {
+                            Image(systemName: "trash.fill")
+                                .foregroundStyle(.red)
+                        }
+
+                    }
+                }
+            })
             .frame(maxWidth: .infinity)
         }
         .onAppear {
@@ -131,8 +145,21 @@ struct WorkoutInfo: View {
 }
 
 #Preview {
-    let model: HKWorkoutModel = .init(date: Date.now, distance: 10, type: .outdoorRun)
-    WorkoutInfo(workoutModel: model)
+    let model: HKWorkoutModel = .init(date: Date.now, distance: 10, type: .outdoorRun, recordedByPhone: true)
+//    NavigationStack {
+        VStack {
+            Text("jej")
+        }
+        .sheet(isPresented: .constant(true)) {
+            NavigationStack {
+                WorkoutInfo(workoutModel: model) {
+                    print("jesddsd")
+                }
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
+            }
+        }
+//    }
 }
 
 

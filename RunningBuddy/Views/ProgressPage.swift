@@ -46,13 +46,13 @@ struct ProgressPage: View {
                 Divider()
                     .padding(.vertical)
                 
-                VStack {
-                    Text("\(vm.activitiesMonth) Activities")
-                        .font(.body)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    ActivityGrid(data: vm.activites, color: .red)
-                }
+//                VStack {
+//                    Text("\(vm.activitiesMonth) Activities")
+//                        .font(.body)
+//                        .frame(maxWidth: .infinity, alignment: .leading)
+//                    
+//                    ActivityGrid(data: vm.activites, color: .red)
+//                }
                 Spacer()
             }
             .padding()

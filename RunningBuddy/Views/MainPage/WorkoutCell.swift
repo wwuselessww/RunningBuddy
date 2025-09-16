@@ -86,7 +86,6 @@ struct WorkoutCell: View {
 #Preview {
     NavigationStack {
         VStack {
-
             List {
                 WorkoutCell(healthKitModel: HKWorkoutModel(workout: HKWorkout(activityType: .archery, start: Date(), end: Date().advanced(by: 10)), date: Date(), distance: 0.0, avgPulse: 10, type: .outdoorRun))
             }
