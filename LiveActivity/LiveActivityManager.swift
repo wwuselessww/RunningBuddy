@@ -47,8 +47,7 @@ class LiveActivityManager {
     
     func stopActivity() async {
         let initialContentState = WorkoutAttributes.ContentState(activityName: ActivityType.running.rawValue, nextActivity: ActivityType.walking.rawValue, remainingTime: 0, speed: 10, pace: 0, stages: [])
-        
-        await activity?.end(ActivityContent(state: initialContentState, staleDate: nil), dismissalPolicy: .default)
+        await activity?.end(ActivityContent(state: initialContentState, staleDate: nil), dismissalPolicy: .immediate)
         print("activity stopped")
     }
 }
