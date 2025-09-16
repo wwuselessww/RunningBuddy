@@ -40,8 +40,6 @@ class MainPageViewModel: ObservableObject {
             if isSuccess {
                 Task {
                     await self.getCallories()
-                    
-//                    await self.getPhoneRecordedWorkouts()
                     await self.createWorkoutsArray()
                     await self.getHealthKitWorkouts()
                     await self.getDistanceForCurrentMonth()
