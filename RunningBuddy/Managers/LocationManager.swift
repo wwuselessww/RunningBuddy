@@ -18,11 +18,14 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     override init() {
         super.init()
         locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.allowsBackgroundLocationUpdates = true
+        locationManager.showsBackgroundLocationIndicator = true
+        locationManager.pausesLocationUpdatesAutomatically = false
         print("locationManager started")
     }
     @MainActor
     func grantPermission() -> Bool {
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         let authStatus = locationManager.authorizationStatus
         if authStatus == .authorizedWhenInUse || authStatus == .authorizedAlways  {
