@@ -11,7 +11,6 @@ import CoreLocation
 
 @Observable class FinishWorkoutViewModel {
     var result: WorkoutResultsModel?
-//    var workout: Workout?
     var paceString = ""
     var timeString = ""
     var distanceString = ""
@@ -21,14 +20,8 @@ import CoreLocation
         guard let pace = result?.pace, !pace.isInfinite else { return 0 }
         return pace
     }
-//    private let context: NSManagedObjectContext
-    var resultWorkout: WorkoutResultsModel?
     var workoutProvider = WorkoutProvider.shared
     
-//    init(provider: WorkoutProvider, workout: Workout? = nil) {
-////        self.context = provider.viewContext
-////        self.workout = Workout(context: self.context)
-//    }
     
     func formatResultData() {
         guard let result = result else { return }
@@ -51,7 +44,7 @@ import CoreLocation
         print("no data" , result)
             return
         }
-        var tempWorkout = Workout(context: WorkoutProvider.shared.viewContext)
+        let tempWorkout = Workout(context: WorkoutProvider.shared.viewContext)
         tempWorkout.avgBPM = Int16(result.avgHeartRate ?? 0)
         tempWorkout.distance = result.distance
         tempWorkout.duration = Int64(result.duration)
