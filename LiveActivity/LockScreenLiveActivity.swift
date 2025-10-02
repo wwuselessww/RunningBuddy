@@ -33,7 +33,7 @@ struct LockScreenLiveActivity: View {
             Spacer()
             
             VStack(alignment: .trailing) {
-                Text("Speed: \(String(format: "%0.1f",state.remainingTime))km/h")
+                Text("Speed: \(String(format: "%0.1f",state.speed))km/h")
                     .font(.caption2)
                 Text("Pace: \(String(format: "%0.1f",state.pace))")
                     .font(.caption2)

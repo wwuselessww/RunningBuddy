@@ -8,7 +8,11 @@
 import SwiftUI
 import CoreData
 
-final class WorkoutProvider {
+protocol WorkoutProviding {
+    func fetchAllWorkouts() throws -> [Workout]
+}
+
+final class WorkoutProvider: WorkoutProviding {
     static let shared = WorkoutProvider()
     private let persistentContainer: NSPersistentContainer
     

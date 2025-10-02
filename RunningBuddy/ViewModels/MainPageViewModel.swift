@@ -13,10 +13,10 @@ import CoreLocation
 class MainPageViewModel: ObservableObject {
     @Published var totalMonthDistance: Double = 0
     @Published var maxActivity: Int = 1000
-    @Published var currentActivity: Int = 0
+    @Published var currentActivityIndex: Int = 0
     @Published var workModelArray: [HKWorkoutModel] = []
     @Published var didTapOnWorkout: Bool = false
-    @Published var currentIndex: Int = 0
+    @Published var currentIndexToDelete: Int = 0
     
     @Published var phoneRecordedWorkouts: [Workout] = []
     
@@ -24,13 +24,17 @@ class MainPageViewModel: ObservableObject {
     private  var store = HealthKitManager.shared.healthStore
     private let startOfTheDay = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
     private let currentTime = Date()
-    
+    private let workoutProvider: WorkoutProvider
     private let startOfTheMonth: Date = {
         let calendar = Calendar.current
         let components = calendar.dateComponents([.year, .month], from: Date.now)
         let result = calendar.date(from: components)
         return result ?? Date.now
     }()
+    
+    init(workoutProvider: WorkoutProvider = WorkoutProvider.shared) {
+        self.workoutProvider = workoutProvider
+    }
     
     @MainActor
     func getActivity() {
@@ -79,10 +83,10 @@ class MainPageViewModel: ObservableObject {
             )
             tempArray.append(workoutModel)
         }
-        await MainActor.run {
+//        await MainActor.run {
             workModelArray += tempArray
             workModelArray.sort { $0.date > $1.date }
-        }
+//        }
         
     }
     
@@ -100,7 +104,7 @@ class MainPageViewModel: ObservableObject {
         guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startOfTheDay, endDate: currentTime, sample: HKQuantityType(.activeEnergyBurned), resultType: .largeCalorie()) else {
             return
         }
-        currentActivity = Int(res)
+        currentActivityIndex = Int(res)
     }
     
     @MainActor
@@ -127,7 +131,7 @@ class MainPageViewModel: ObservableObject {
     
     func getPhoneRecordedWorkouts() {
         do {
-            let res = try WorkoutProvider.shared.fetchAllWorkouts()
+            let res = try workoutProvider.fetchAllWorkouts()
             print("")
             print("res: \(res)")
             print("res.count: \(res.count)")

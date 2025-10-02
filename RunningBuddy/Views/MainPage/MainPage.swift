@@ -26,7 +26,7 @@ struct MainPage: View {
                             ForEach(0..<vm.workModelArray.count, id: \.self) { index in
                                 Button {
                                     vm.didTapOnWorkout = true
-                                    vm.currentIndex = index
+                                    vm.currentIndexToDelete = index
                                 } label: {
                                     WorkoutCell(healthKitModel: vm.workModelArray[index])
                                 }
@@ -48,12 +48,12 @@ struct MainPage: View {
             }
         }
         .sheet(isPresented: $vm.didTapOnWorkout) {
-            let data = vm.workModelArray[vm.currentIndex]
+            let data = vm.workModelArray[vm.currentIndexToDelete]
             NavigationStack {
                 if data.recordedByPhone {
                     WorkoutInfo(workoutModel: data) {
                         vm.didTapOnWorkout = false
-                        vm.delete(at: vm.currentIndex)
+                        vm.delete(at: vm.currentIndexToDelete)
                         
                     }
                     .presentationDetents([.medium])
