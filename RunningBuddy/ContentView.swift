@@ -9,21 +9,20 @@ import SwiftUI
 
 struct ContentView: View {
     @AppStorage("isOnboardingCompleted") var isOnboardingCompleted: Bool = false
+    @State var currentView: any View = NewMainPage()
     var body: some View {
         ZStack {
             if isOnboardingCompleted {
-                if #available(iOS 18, *) {
+                if #available(iOS 26, *) {
                     TabView {
                         Tab("home", systemImage: "house", role: .none) {
-                            MainPage()
+                            NewMainPage()
                         }
                         Tab("Workout", systemImage: "figure.run", role: .none) {
                             WorkoutPage()
                         }
-//                        Tab("Progress", systemImage: "chart.line.text.clipboard.fill", role: .none) {
-//                            ProgressPage()
-//                        }
                     }
+
                 } else {
                     TabView {
                         MainPage()
@@ -36,11 +35,6 @@ struct ContentView: View {
                                 Image(systemName: "figure.run")
                                 Text("Workout")
                             }
-//                        ProgressPage()
-//                            .tabItem {
-//                                Image(systemName: "chart.bar.xaxis.ascending")
-//                                Text("Progress")
-//                            }
                     }
                    
                 }

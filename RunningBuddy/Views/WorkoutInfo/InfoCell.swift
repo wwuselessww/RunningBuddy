@@ -20,11 +20,11 @@ struct InfoCell: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
-                .bold()
-                .foregroundStyle(.gray)
+                .font(.caption.bold())
+                .foregroundStyle(.label)
             Text(data)
-                .bold()
-                .foregroundStyle(color)
+                .font(.callout.bold())
+                .foregroundStyle(.label)
         }
     }
 }
