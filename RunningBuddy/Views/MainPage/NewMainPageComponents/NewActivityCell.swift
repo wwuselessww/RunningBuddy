@@ -9,7 +9,8 @@ import SwiftUI
 import MapKit
 
 struct NewActivityCell: View {
-    let model: HKWorkoutModel = .init(date: Date.now, distance: 10, type: .outdoorRun, recordedByPhone: false)
+//    let model: HKWorkoutModel = .init(date: Date.now, distance: 10, type: .outdoorRun, recordedByPhone: false)
+    let model: HKWorkoutModel
     var body: some View {
         ZStack {
             Map {
@@ -70,7 +71,8 @@ struct NewActivityCell: View {
 }
 
 #Preview {
-    NewActivityCell()
+    let model: HKWorkoutModel = .init(date: Date.now, distance: 10, type: .outdoorRun, recordedByPhone: false)
+    NewActivityCell(model: model)
         .frame(height: 400)
         .padding()
 }
