@@ -10,22 +10,19 @@ import HealthKit
 import CoreLocation
 
 @Observable class NewMainPageViewModel {
-     var days: [Days] = [.init(name: "mon", number: 26),.init(name: "tue", number: 27),.init(name: "wen", number: 28),.init(name: "thu", number: 29),.init(name: "fri", number: 30),.init(name: "sat", number: 31),.init(name: "sun", number: 1)]
-        var activityValue = 0.1
-        var waterLevel = 0.7
-        var isPressed : Bool = false
-        var chosenDay: String = ""
-        var waterTitle: Int = 10
-        var activityTitle: Int = 15
-        var authenticated: Bool = false
-        var trigger: Bool = false
+    var days: [Days] = [.init(name: "mon", number: 26),.init(name: "tue", number: 27),.init(name: "wen", number: 28),.init(name: "thu", number: 29),.init(name: "fri", number: 30),.init(name: "sat", number: 31),.init(name: "sun", number: 1)]
+    var activityValue = 0.1
+    var waterLevel = 0.7
+    var isPressed : Bool = false
+    var chosenDay: String = ""
+    var waterTitle: Int = 10
+    var activityTitle: Int = 15
+    var authenticated: Bool = false
+    var trigger: Bool = false
     
-    
-    
-    var totalMonthDistance: Double = 0
     var maxActivity: Int = 1000
     var currentActivityIndex: Int = 0
-    var workModelArray: [HKWorkoutModel] = []
+    var hkWorkouts: [HKWorkoutModel] = []
     var didTapOnWorkout: Bool = false
     var currentIndexToDelete: Int = 0
     
@@ -48,16 +45,15 @@ import CoreLocation
     }
     
     @MainActor
-    func getActivity() {
+    func getWorkouts() {
         let stepCounter = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
         let workoutType = HKObjectType.workoutType()
         store.requestAuthorization(toShare: [], read: [stepCounter, workoutType]) { isSuccess, error in
             if isSuccess {
                 Task {
-                    await self.getCallories()
+                    await self.getCalloriesFromHK()
                     await self.createWorkoutsArray()
-                    await self.getHealthKitWorkouts()
-                    await self.getDistanceForCurrentMonth()
+                    await self.getHKWorkouts()
                 }
                 
             } else {
@@ -68,7 +64,7 @@ import CoreLocation
     
     @MainActor
     func createWorkoutsArray() async {
-        workModelArray = []
+        hkWorkouts = []
         var tempArray: [HKWorkoutModel] = []
         for workout in phoneRecordedWorkouts {
             var path: [CLLocationCoordinate2D] = []
@@ -94,24 +90,12 @@ import CoreLocation
             )
             tempArray.append(workoutModel)
         }
-//        await MainActor.run {
-            workModelArray += tempArray
-            workModelArray.sort { $0.date > $1.date }
-//        }
-        
+        hkWorkouts += tempArray
+        hkWorkouts.sort { $0.date > $1.date }
     }
     
     @MainActor
-    private func getDistanceForCurrentMonth() async {
-        var tempDistance: Double = 0
-        for workout in workModelArray {
-            tempDistance += workout.distance
-        }
-        totalMonthDistance = tempDistance
-    }
-    
-    @MainActor
-    private func getCallories() async {
+    private func getCalloriesFromHK() async {
         guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startOfTheDay, endDate: currentTime, sample: HKQuantityType(.activeEnergyBurned), resultType: .largeCalorie()) else {
             return
         }
@@ -119,7 +103,13 @@ import CoreLocation
     }
     
     @MainActor
-    func getHealthKitWorkouts() async {
+    func getHKWorkouts() async {
+        print("")
+        print("")
+        print(startOfTheMonth)
+        print(currentTime)
+        print("")
+        print("")
         let res = await healtKitManager.getWorkouts(from: startOfTheMonth, to: currentTime)
         print("resarray size", res.count)
         var modelArray: [HKWorkoutModel] = []
@@ -127,17 +117,17 @@ import CoreLocation
             let date = i.startDate
             guard  let distance = i.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)), let pulse = await healtKitManager.getBPMFor(workout: i, type: .avg, options: .discreteAverage) else {
                 print("no data")
-                return
+                break
             }
             
             let newWorkout = HKWorkoutModel(workout: i, date: date, distance: distance, avgPulse: pulse, type: .outdoorRun)
             modelArray.append(newWorkout)
             
         }
-        //        await MainActor.run {
-        workModelArray += modelArray
-        print("workModelArray", workModelArray)
-        //        }
+        hkWorkouts += modelArray
+        print("h1h1")
+        print("workModelArray", hkWorkouts)
+        print("h1h1")
     }
     
     func getPhoneRecordedWorkouts() {
@@ -163,7 +153,7 @@ import CoreLocation
         let workout = phoneRecordedWorkouts[index]
         phoneRecordedWorkouts.remove(at: index)
         withAnimation {
-            workModelArray.remove(at: index)
+            hkWorkouts.remove(at: index)
         }
         WorkoutProvider.shared.deleteWorkoutWith(workout.id)
     }
