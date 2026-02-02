@@ -10,7 +10,8 @@ import HealthKit
 import CoreLocation
 
 @Observable class NewMainPageViewModel {
-    var days: [Days] = [.init(name: "mon", number: 26),.init(name: "tue", number: 27),.init(name: "wen", number: 28),.init(name: "thu", number: 29),.init(name: "fri", number: 30),.init(name: "sat", number: 31),.init(name: "sun", number: 1)]
+    var days: [Days] = [.init(name: "mon", number: 0),.init(name: "tue", number: 0),.init(name: "wen", number: 0),.init(name: "thu", number: 0),.init(name: "fri", number: 0),.init(name: "sat", number: 0),.init(name: "sun", number: 0)]
+    
     var activityValue = 0.1
     var waterLevel = 0.7
     var isPressed : Bool = false
@@ -40,9 +41,24 @@ import CoreLocation
         return result ?? Date.now
     }()
     
+    var currentDate: Date = Date.now
+    
     init(workoutProvider: WorkoutProvider = WorkoutProvider.shared) {
         self.workoutProvider = workoutProvider
     }
+    
+    func getWeekArray() {
+        let calendar = Calendar.current
+        var startOfTheWeek = calendar.startOfWeek(for: Date.now)!
+        
+        for i in 0..<7 {
+            let date = calendar.date(byAdding: .day, value: i, to: startOfTheWeek)!
+            days[i].number = calendar.component(.day, from: date)
+        }
+    }
+    
+    
+    
     
     @MainActor
     func getWorkouts() {
@@ -50,10 +66,12 @@ import CoreLocation
         let workoutType = HKObjectType.workoutType()
         store.requestAuthorization(toShare: [], read: [stepCounter, workoutType]) { isSuccess, error in
             if isSuccess {
+                self.getWeekArray()
                 Task {
                     await self.getCalloriesFromHK()
                     await self.createWorkoutsArray()
                     await self.getHKWorkouts()
+                    print("current date\(self.currentDate)")
                 }
                 
             } else {
