@@ -10,17 +10,18 @@ import SwiftUI
 struct NewMainPage: View {
     @State private var path = NavigationPath()
     @State var viewModel = NewMainPageViewModel()
-    
     var body: some View {
             VStack {
                 WeekHeader(waterLevel: $viewModel.waterLevel, waterTitle: $viewModel.waterTitle, days: $viewModel.days, chosenDay: $viewModel.chosenDay, activityValue: $viewModel.activityValue, activityTitle: $viewModel.activityTitle)
                 ScrollView {
                     if !viewModel.hkWorkouts.isEmpty {
-                        ForEach(0..<viewModel.hkWorkouts.count, id: \.self) { i in
-                            NewWorkoutCell(model: viewModel.hkWorkouts[i])
+                        ForEach(viewModel.hkWorkouts, id: \.id) { workout in
+                            NewWorkoutCell(model: workout)
                                 .padding(.all)
                                 .frame(minWidth: 300, maxWidth: .infinity, minHeight: 500, maxHeight: 500)
                         }
+                    } else {
+                        Text("No data for you")
                     }
                 }.scrollClipDisabled()
                 Spacer()
@@ -38,14 +39,12 @@ struct NewMainPage: View {
             
             .onAppear {
                 viewModel.trigger.toggle()
-                viewModel.getPhoneRecordedWorkouts()
-                viewModel.getWorkouts()
-                print(" ")
+                viewModel.fetchPhoneWorkouts()
                 print("array here ", viewModel.phoneRecordedWorkouts)
-                print(" ")
             }
             .onChange(of: viewModel.chosenDay) { oldValue, newValue in
-                viewModel.setCurrentDate(newValue)
+                viewModel.setDateTo(newValue)
+                viewModel.fetchPhoneWorkouts()
             }
     }
 }

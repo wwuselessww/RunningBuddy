@@ -86,7 +86,7 @@ final class WorkoutProvider: WorkoutProviding {
         let pace = result.pace
         let safePace = (pace.isNaN || pace.isInfinite) ? 0 : pace
         
-        let tempWorkout = Workout(context: WorkoutProvider.shared.viewContext)
+        let tempWorkout = Workout(context: viewContext)
         tempWorkout.avgBPM = Int16(result.avgHeartRate ?? 0)
         tempWorkout.distance = result.distance
         tempWorkout.duration = Int64(result.duration)
@@ -99,8 +99,6 @@ final class WorkoutProvider: WorkoutProviding {
         tempWorkout.creationDate = date
         
         save()
-        print("saved")
-        print("workout to save \(tempWorkout)")
     }
     
     func save() {

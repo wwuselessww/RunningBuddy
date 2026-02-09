@@ -21,13 +21,10 @@ extension Calendar {
     //MARK: strange time 21:00 and  not 0:00
     func startOfMonth(for date: Date) -> Date? {
         let startOfMonth = self.dateInterval(of: .month, for: date)
-        guard let endOfLastMonth = startOfMonth?.start else {
+        guard let actualStart = startOfMonth?.start else {
             return nil
         }
-        guard let lastDay = self.date(byAdding: .day, value: 1, to: endOfLastMonth) else {
-            return nil
-        }
-        return self.startOfDay(for: lastDay)
+        return actualStart
     }
     
     func startOfYear(for date: Date) -> Date? {
