@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
-    @AppStorage("isOnboardingCompleted") var isOnboardingCompleted: Bool = false
+    //MARK: For debuging
+    @AppStorage("isOnboardingCompleted") var isOnboardingCompleted: Bool = true
     @State var currentView: any View = NewMainPage()
     var body: some View {
         ZStack {
@@ -20,6 +21,9 @@ struct ContentView: View {
                         }
                         Tab("Workout", systemImage: "figure.run", role: .none) {
                             WorkoutPage()
+                        }
+                        Tab("Debug", systemImage: "ladybug", role: .none) {
+                            DebugPage()
                         }
                     }
 

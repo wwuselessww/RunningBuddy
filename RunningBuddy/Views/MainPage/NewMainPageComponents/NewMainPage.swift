@@ -44,6 +44,9 @@ struct NewMainPage: View {
                 print("array here ", viewModel.phoneRecordedWorkouts)
                 print(" ")
             }
+            .onChange(of: viewModel.chosenDay) { oldValue, newValue in
+                viewModel.setCurrentDate(newValue)
+            }
     }
 }
 

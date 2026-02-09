@@ -15,7 +15,7 @@ import CoreLocation
     var activityValue = 0.1
     var waterLevel = 0.7
     var isPressed : Bool = false
-    var chosenDay: String = ""
+    var chosenDay: Int = 0
     var waterTitle: Int = 10
     var activityTitle: Int = 15
     var authenticated: Bool = false
@@ -34,28 +34,47 @@ import CoreLocation
     private let startOfTheDay = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: Date())!
     private let currentTime = Date()
     private let workoutProvider: WorkoutProvider
-    private let startOfTheMonth: Date = {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month], from: Date.now)
-        let result = calendar.date(from: components)
-        return result ?? Date.now
-    }()
+    private var startOfTheWeek: Date  {
+        return calendar.startOfWeek(for: Date.now) ?? Date.now
+    }
+    var calendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.firstWeekday = 2
+        calendar.locale = Locale(identifier: "en_GB")
+        calendar.timeZone = .current
+        return calendar
+    }
     
-    var currentDate: Date = Date.now
+    var chosenDate: Date = Calendar.current.startOfDay(for: Date.now)
     
     init(workoutProvider: WorkoutProvider = WorkoutProvider.shared) {
         self.workoutProvider = workoutProvider
+        setCurrentDay()
+    }
+    
+    func setCurrentDay() {
+        chosenDay = calendar.component(.day, from: Date.now)
     }
     
     func getWeekArray() {
-        let calendar = Calendar.current
-        var startOfTheWeek = calendar.startOfWeek(for: Date.now)!
+//        let calendar = Calendar.current
+        let startOfTheWeek = calendar.startOfWeek(for: Date.now)!
         
         for i in 0..<7 {
             let date = calendar.date(byAdding: .day, value: i, to: startOfTheWeek)!
             days[i].number = calendar.component(.day, from: date)
         }
     }
+    
+    @MainActor func setCurrentDate(_ date: Int) {
+        print("changed date")
+        chosenDate = calendar.date(byAdding: .day, value: date, to: startOfTheWeek) ?? Date.now
+        print("chosen date\(calendar.component(.weekday, from: chosenDate)))")
+        
+        getWorkouts()
+    }
+    
+    
     
     
     
@@ -71,7 +90,6 @@ import CoreLocation
                     await self.getCalloriesFromHK()
                     await self.createWorkoutsArray()
                     await self.getHKWorkouts()
-                    print("current date\(self.currentDate)")
                 }
                 
             } else {
@@ -124,11 +142,11 @@ import CoreLocation
     func getHKWorkouts() async {
         print("")
         print("")
-        print(startOfTheMonth)
+        print(startOfTheWeek)
         print(currentTime)
         print("")
         print("")
-        let res = await healtKitManager.getWorkouts(from: startOfTheMonth, to: currentTime)
+        let res = await healtKitManager.getWorkouts(from: chosenDate, to: currentTime)
         print("resarray size", res.count)
         var modelArray: [HKWorkoutModel] = []
         for i in res {
@@ -143,14 +161,12 @@ import CoreLocation
             
         }
         hkWorkouts += modelArray
-        print("h1h1")
         print("workModelArray", hkWorkouts)
-        print("h1h1")
     }
     
     func getPhoneRecordedWorkouts() {
         do {
-            let res = try workoutProvider.fetchAllWorkouts()
+            let res = try workoutProvider.fetchWorkouts(from: chosenDate, to: currentTime)
             print("")
             print("res: \(res)")
             print("res.count: \(res.count)")
@@ -174,5 +190,11 @@ import CoreLocation
             hkWorkouts.remove(at: index)
         }
         WorkoutProvider.shared.deleteWorkoutWith(workout.id)
+    }
+    func debug(_ date: Date, calendar: Calendar) {
+        print("debug".capitalized)
+        print("weekday:", calendar.component(.weekday, from: date)) // 2 = Monday
+        print("local:", date.formatted(date: .complete, time: .complete))
+        print("UTC:", date)
     }
 }

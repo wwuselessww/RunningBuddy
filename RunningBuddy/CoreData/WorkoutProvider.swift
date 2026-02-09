@@ -20,10 +20,6 @@ final class WorkoutProvider: WorkoutProviding {
         persistentContainer.viewContext
     }
     
-//    var newContext: NSManagedObjectContext {
-//        persistentContainer.newBackgroundContext()
-//    }
-    
     private init() {
         
         ValueTransformer.setValueTransformer(DoubleArrayTransformer(), forName: NSValueTransformerName("DoubleArrayTransformer"))
@@ -80,6 +76,31 @@ final class WorkoutProvider: WorkoutProviding {
             print(error)
             print("cant fetch***")
         }
+    }
+    
+    func createWorkout(workout result: WorkoutResultsModel?, date: Date = Date())  {
+        guard let result = result else {
+        print("no data" , result)
+            return
+        }
+        let pace = result.pace
+        let safePace = (pace.isNaN || pace.isInfinite) ? 0 : pace
+        
+        let tempWorkout = Workout(context: WorkoutProvider.shared.viewContext)
+        tempWorkout.avgBPM = Int16(result.avgHeartRate ?? 0)
+        tempWorkout.distance = result.distance
+        tempWorkout.duration = Int64(result.duration)
+        tempWorkout.maxBPM = Int16(result.maxHeartRate ?? 0)
+        tempWorkout.pace = safePace
+        let longitudes = result.path.map { $0.coordinate.longitude }
+        let latitudes = result.path.map { $0.coordinate.latitude }
+        tempWorkout.latitudes = latitudes as [Double]
+        tempWorkout.longitudes = longitudes as [Double]
+        tempWorkout.creationDate = date
+        
+        save()
+        print("saved")
+        print("workout to save \(tempWorkout)")
     }
     
     func save() {

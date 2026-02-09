@@ -11,7 +11,7 @@ struct WeekHeader: View {
     @Binding var waterLevel: Double
     @Binding var waterTitle: Int
     @Binding var days: [Days]
-    @Binding var chosenDay: String
+    @Binding var chosenDay: Int
     @Binding var activityValue: Double
     @Binding var activityTitle: Int
     

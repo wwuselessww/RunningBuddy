@@ -30,7 +30,7 @@ struct NewWorkoutCell: View {
             VStack {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(model.type.rawValue)
+                        Text(model.date.formateToString())
                             .font(.title.bold())
                     }
                     Spacer()

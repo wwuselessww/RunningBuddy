@@ -54,7 +54,7 @@ struct WorkoutCell: View {
                 .foregroundStyle(Color.label)
             } else {
                 VStack(alignment: .trailing) {
-                    Text(healkitModel.type.rawValue)
+                    Text(healkitModel.type.displayName)
                         .font(.title)
                         .fontDesign(.rounded) +
                     Text(" \(String(format: "%.1f", healkitModel.distance))km")

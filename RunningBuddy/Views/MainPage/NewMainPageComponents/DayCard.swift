@@ -9,11 +9,11 @@ import SwiftUI
 
 struct DayCard: View {
     @Binding var day: Days
-    @Binding var isChosen: String
+    @Binding var isChosen: Int
     var body: some View {
         Button {
             withAnimation {
-                isChosen = day.name
+                isChosen = day.number
             }
             print(isChosen)
         } label: {
@@ -26,7 +26,7 @@ struct DayCard: View {
             .frame(width: 30, height: 50)
             .background {
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundStyle( isChosen == day.name ? .gray.opacity(0.1) : .clear)
+                    .foregroundStyle( isChosen == day.number ? .gray.opacity(0.1) : .clear)
             }
         }
 
