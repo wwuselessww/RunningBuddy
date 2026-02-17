@@ -39,12 +39,12 @@ struct NewMainPage: View {
             
             .onAppear {
                 viewModel.trigger.toggle()
-                viewModel.fetchPhoneWorkouts()
+                viewModel.updateView()
                 print("array here ", viewModel.phoneRecordedWorkouts)
             }
             .onChange(of: viewModel.chosenDay) { oldValue, newValue in
                 viewModel.setDateTo(newValue)
-                viewModel.fetchPhoneWorkouts()
+                viewModel.updateView()
             }
     }
 }
