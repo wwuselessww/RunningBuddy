@@ -26,7 +26,7 @@ struct ActivityRing: View {
             
             
             Circle()
-                .trim(from: 0, to: value)
+                .trim(from: 0.05, to: value)
                 .stroke(Color.green, style: StrokeStyle(lineWidth: 5, lineCap: .round))
                 .shadow(color: .green, radius: 1.5)
                 .rotationEffect(Angle(degrees: 90))
@@ -43,7 +43,6 @@ struct ActivityRing: View {
             Text(title.description)
                 .font(.caption.bold())
                 .padding()
-//                .frame(width: 50)
         }
         
             

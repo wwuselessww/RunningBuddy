@@ -12,7 +12,7 @@ import CoreLocation
 @Observable class NewMainPageViewModel {
     var days: [Days] = [.init(name: "mon", number: 0),.init(name: "tue", number: 0),.init(name: "wen", number: 0),.init(name: "thu", number: 0),.init(name: "fri", number: 0),.init(name: "sat", number: 0),.init(name: "sun", number: 0)]
     
-    var activityValue = 0.1
+    var activityValue = 0.2
     var waterLevel = 0.7
     var isPressed : Bool = false
     var chosenDay: Int = 0
@@ -78,10 +78,16 @@ import CoreLocation
         var convertedAppleWorkouts: [HKWorkoutModel] = []
         Task {
            activityTitle = await fetchCalories(from: chosenDateEnd, untill: chosenDateStart)
-            
             let appleWorkouts = await fetchHKWorkouts()
             convertedAppleWorkouts = await convertHKWorkoutsToHKWorkoutModels(appleWorkouts)
+            await MainActor.run {
+                withAnimation {
+                    activityValue = calculateCalooriesRing()
+                }
+            }
         }
+        
+        
         
         result = convertedAppleWorkouts + phoneWorkouts
         
@@ -127,7 +133,7 @@ import CoreLocation
         return workouts
     }
     
-    func fetchCalories(from date: Date, untill endDate: Date) async -> Int{
+    private func fetchCalories(from date: Date, untill endDate: Date) async -> Int{
         guard let callories = await healtKitManager.getNumericFromHealthKit(startDate: chosenDateStart.startOfDay, endDate: chosenDateEnd.endOfDay, sample: HKQuantityType(.activeEnergyBurned), resultType: .largeCalorie()) else {
             print("no callories for today")
             return 0
@@ -135,6 +141,12 @@ import CoreLocation
         print("callories \(callories)")
         return Int(callories)
     }
+    
+    private func calculateCalooriesRing() -> Double {
+        let maxCalories = Double(maxCallories)
+        return Double(activityTitle) / maxCalories
+    }
+    
     private func convertHKWorkoutsToHKWorkoutModels(_ workouts: [HKWorkout]) async -> [HKWorkoutModel] {
         var result: [HKWorkoutModel] = []
         for workout in workouts {
