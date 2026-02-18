@@ -52,5 +52,5 @@ struct ActivityRing: View {
 
 #Preview {
     
-    ActivityRing(value: .constant(0.5), title: .constant(56))
+    ActivityRing(value: .constant(0.5), title: .constant(453))
 }

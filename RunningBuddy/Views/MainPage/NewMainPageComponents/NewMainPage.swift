@@ -13,7 +13,6 @@ struct NewMainPage: View {
     var body: some View {
             VStack {
                 WeekHeader(waterLevel: $viewModel.waterLevel, waterTitle: $viewModel.waterTitle, days: $viewModel.days, chosenDay: $viewModel.chosenDay, activityValue: $viewModel.activityValue, activityTitle: $viewModel.activityTitle)
-//                ScrollView {
                     if !viewModel.hkWorkouts.isEmpty {
                         ScrollView {
                             ForEach(viewModel.hkWorkouts, id: \.id) { workout in
@@ -29,7 +28,6 @@ struct NewMainPage: View {
                         NoActivityPlaceholder()
                         Spacer()
                     }
-//                }.scrollClipDisabled()
                 
             }
             .ignoresSafeArea(edges: .top)

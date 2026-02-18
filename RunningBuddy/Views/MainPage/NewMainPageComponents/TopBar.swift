@@ -23,14 +23,14 @@ struct WeekHeader: View {
                 HStack {
                     Spacer()
                     WaterBalance(waterBalance: $waterLevel, title: $waterTitle)
-                        .frame(width: 55)
+                        .frame(width: 60)
                     ForEach($days, id: \.id) { day in
                         Spacer()
                         DayCard(day: day, isChosen: $chosenDay)
                         
                     }
                     ActivityRing(value: $activityValue, title: $activityTitle)
-                        .frame(width: 55)
+                        .frame(width: 60)
                     Spacer()
                 }
             }
