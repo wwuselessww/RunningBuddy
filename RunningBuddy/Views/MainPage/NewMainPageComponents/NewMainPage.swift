@@ -13,18 +13,24 @@ struct NewMainPage: View {
     var body: some View {
             VStack {
                 WeekHeader(waterLevel: $viewModel.waterLevel, waterTitle: $viewModel.waterTitle, days: $viewModel.days, chosenDay: $viewModel.chosenDay, activityValue: $viewModel.activityValue, activityTitle: $viewModel.activityTitle)
-                ScrollView {
+//                ScrollView {
                     if !viewModel.hkWorkouts.isEmpty {
-                        ForEach(viewModel.hkWorkouts, id: \.id) { workout in
-                            NewWorkoutCell(model: workout)
-                                .padding(.all)
-                                .frame(minWidth: 300, maxWidth: .infinity, minHeight: 500, maxHeight: 500)
+                        ScrollView {
+                            ForEach(viewModel.hkWorkouts, id: \.id) { workout in
+                                NewWorkoutCell(model: workout)
+                                    .padding(.all)
+                                    .frame(minWidth: 300, maxWidth: .infinity, minHeight: 500, maxHeight: 500)
+                            }
+                            .scrollClipDisabled()
+                            Spacer()
                         }
                     } else {
-                        Text("No data for you")
+                        Spacer()
+                        NoActivityPlaceholder()
+                        Spacer()
                     }
-                }.scrollClipDisabled()
-                Spacer()
+//                }.scrollClipDisabled()
+                
             }
             .ignoresSafeArea(edges: .top)
             .healthDataAccessRequest(store: viewModel.healtKitManager.healthStore, readTypes: viewModel.healtKitManager.activityTypes, trigger: viewModel.trigger) { result in
