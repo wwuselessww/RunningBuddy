@@ -16,9 +16,10 @@ struct WorkoutModel: Hashable {
 
 }
 
-struct WorkoutDifficulty: Hashable {
+struct WorkoutDifficulty: Hashable, Identifiable {
+    let id: UUID = UUID()
     let level: String
-    let image: String
+    let image: Emotion
     let color: Color
 }
 
@@ -32,4 +33,11 @@ struct WorkoutActivity: Hashable {
 enum ActivityType: String {
     case walking = "Walk"
     case running = "Run"
+}
+
+
+enum Emotion: String {
+    case easy = "easy"
+    case mid = "mid"
+    case hard = "hard"
 }

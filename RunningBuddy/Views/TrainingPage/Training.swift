@@ -132,7 +132,7 @@ struct Training: View {
 #Preview {
     @Previewable @State var path = NavigationPath()
     NavigationStack {
-        Training(workout: .init(difficulty: .init(level: "Easy", image: "🥰", color: .blue),
+        Training(workout: .init(difficulty: .init(level: "Easy", image: .easy, color: .blue),
                                 start: WorkoutActivity(time: 5*60, type: .walking, repeats: 0),
                                 core: [
                                     WorkoutActivity(time: 1*10, type: .running),

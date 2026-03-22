@@ -20,7 +20,7 @@ struct NewWorkoutScreen: View {
                 
             }
             .pickerStyle(.segmented)
-            Face(emotion: $emotion)
+//            Face(emotion: $emotion)
                 .padding(.all)
             
             
