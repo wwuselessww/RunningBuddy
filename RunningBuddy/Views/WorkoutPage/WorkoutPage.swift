@@ -26,40 +26,50 @@ struct WorkoutPage: View {
                     Face(emotion: $vm.selectedEmotion, color: vm.backgroundColor)
                         .frame(maxWidth: .infinity, maxHeight: geo.size.height * (1/4))
                     Spacer()
-                    WorkoutMaps(vm: $vm)
-                        .padding(.all)
-                        .background {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 30)
-                                
-                                RoundedRectangle(cornerRadius: 30)
-                                    .stroke(lineWidth: 3)
-                                    .foregroundStyle(.black)
+                    if vm.selectedType == .outdoorRun {
+                        WorkoutMaps(vm: $vm)
+                            .padding(.all)
+                            .background {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 30)
+                                    
+                                    RoundedRectangle(cornerRadius: 30)
+                                        .stroke(lineWidth: 3)
+                                        .foregroundStyle(.black)
+                                }
+                                .foregroundStyle(.white)
+                                .opacity(0.5)
                             }
-                            .foregroundStyle(.white)
-                            .opacity(0.5)
+                            .padding(.top, 100)
+                            .padding(.all)
+                        ScrollingButtons(selectedType: $vm.selectedDifficulty, scrollId: $vm.selectedEmotion, workoutTypes: vm.dificultyArray, time: vm.time) {
+                            path.append(vm.selectedWorkout)
                         }
-                        .padding(.top, 100)
-                        .padding(.all)
-                       
+                        .onChange(of: vm.selectedEmotion, { oldValue, newValue in
+                            guard let index = vm.dificultyArray.firstIndex(where: { $0.image == newValue }) else {
+                                print("no index")
+                                return
+                            }
+                            vm.selectedIndex = index
+                            vm.backgroundColor = vm.dificultyArray[index].color
+                        })
+                        .frame(height: 100)
                         
-
-                    ScrollingButtons(selectedType: $vm.selectedDifficulty, scrollId: $vm.selectedEmotion, workoutTypes: vm.dificultyArray, time: vm.time) {
-                        path.append(vm.selectedWorkout)
-                    }
-                    .onChange(of: vm.selectedEmotion, { oldValue, newValue in
-                        guard let index = vm.dificultyArray.firstIndex(where: { $0.image == newValue }) else {
-                            print("no index")
-                            return
+                    } else {
+                        VStack {
+                            Spacer()
+//                            RoundedRectangle(cornerRadius: 30)
+                            WalkDurationPicker(selectedTime: .constant(10), height: 10) {
+                                print("he")
+                            }
+//                            Spacer()
                         }
-                        vm.selectedIndex = index
-                        vm.backgroundColor = vm.dificultyArray[index].color
-                    })
-                    .frame(height: 100)
-                    .navigationDestination(for: WorkoutModel.self, destination: { workout in
-                        Training(workout: workout, path: $path)
-                    })
+                        .padding(.top, 60)
+                    }
                 }
+                .navigationDestination(for: WorkoutModel.self, destination: { workout in
+                    Training(workout: workout, path: $path)
+                })
                 .padding()
                 .background {
                     vm.backgroundColor
@@ -73,10 +83,10 @@ struct WorkoutPage: View {
             vm.calculateTime(vm.selectedWorkout)
             vm.getWorkoutData(vm.selectedWorkout)
         })
-        .onChange(of: vm.selectedWorkout) { oldValue, newValue in
-            vm.calculateTime(vm.selectedWorkout)
-            vm.getWorkoutData(vm.selectedWorkout)
-            vm.selectedEmotion = vm.selectedWorkout.difficulty.image
+        .onChange(of: vm.selectedWorkout) { _, newValue in
+            vm.calculateTime(newValue)
+            vm.getWorkoutData(newValue)
+            vm.selectedEmotion = newValue.difficulty.image
         }
         
     }

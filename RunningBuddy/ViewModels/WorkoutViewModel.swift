@@ -21,7 +21,7 @@ import SwiftUI
         .init(level: "hard", image: .hard, color: .red),
     ]
     var selectedDifficulty: WorkoutDifficulty = .init(level: "easy", image: .easy, color: .green)
-    var selectedType: WorkoutType = .outdoorRun
+    var selectedType: WorkoutType = .outdoorWalk
     var backgroundColor: Color = .green
     var selectedEmotion: Emotion? = .easy
     var currentTotalTime: Int = 0
