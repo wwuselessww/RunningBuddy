@@ -8,6 +8,7 @@
 import SwiftUI
 
 @Observable class WorkoutViewModel {
+    
     var selectedIndex: Int = 0
     var time: Int = 0
     var numberOfRepeats: Int = 0
@@ -20,14 +21,15 @@ import SwiftUI
         .init(level: "hard", image: .hard, color: .red),
     ]
     var selectedDifficulty: WorkoutDifficulty = .init(level: "easy", image: .easy, color: .green)
-    
+    var selectedType: WorkoutType = .outdoorRun
+    var backgroundColor: Color = .green
     var selectedEmotion: Emotion? = .easy
-//    var currentPositionInScroll: ? = "easy"
+    var currentTotalTime: Int = 0
     
     var selectedWorkout: WorkoutModel {
-        workoutArray.indices.contains(selectedIndex) ? workoutArray[selectedIndex] : workoutArray.first!
+        workoutRunArray.indices.contains(selectedIndex) ? workoutRunArray[selectedIndex] : workoutRunArray.first!
     }
-    var workoutArray: [WorkoutModel] = [
+    var workoutRunArray: [WorkoutModel] = [
         .init(difficulty: .init(level: "Easy", image: .easy, color: .blue),
               start: WorkoutActivity(time: 1*10, type: .walking, repeats: 0),
               core: [
@@ -54,12 +56,6 @@ import SwiftUI
                 WorkoutActivity(time: 10*60, type: .running),
               ],
               end: WorkoutActivity(time: 5*60, type: .walking)),
-        //        .init(difficulty: .init(level: "Free Run", image: "😌", color: .green),
-        //              start: WorkoutActivity(time: 1*60, type: .walking, repeats: 0),
-        //              core: [
-        //                WorkoutActivity(time: 30*60, type: .running)
-        //              ],
-        //              end: WorkoutActivity(time: 5*60, type: .walking)),
     ]
     
     func calculateTime(_ workout: WorkoutModel) {

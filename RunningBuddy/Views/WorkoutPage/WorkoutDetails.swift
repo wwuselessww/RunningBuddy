@@ -7,16 +7,20 @@
 
 import SwiftUI
 
-struct WorkoutDetails<Content: View>: View {
+struct WorkoutDetails<Start: View, Center: View, Finish: View>: View {
     @StateObject var vm = WorkOutDetailsViewModel()
-    var startView: Content
-    var centerView: Content
-    var finishView: Content
     
-    init(@ViewBuilder startView: () -> Content, @ViewBuilder centerView: () -> Content, @ViewBuilder finishView: () -> Content) {
-        self.startView = startView()
-        self.centerView = centerView()
-        self.finishView = finishView()
+    var startView: () -> Start
+        var centerView: () -> Center
+        var finishView: () -> Finish
+    
+    init(@ViewBuilder startView: @escaping () -> Start,
+         @ViewBuilder centerView: @escaping () -> Center,
+         @ViewBuilder finishView: @escaping () -> Finish
+    ) {
+        self.startView = startView
+        self.centerView = centerView
+        self.finishView = finishView
     }
     
     var body: some View {
@@ -39,32 +43,27 @@ struct WorkoutDetails<Content: View>: View {
                 }
                 VStack {
                     HStack {
-                        startView
+                        startView()
                         .track(index: 0)
                         Spacer()
                     }
                     Spacer()
-                        centerView
+                        centerView()
                         .track(index: 1)
                     Spacer()
                     HStack {
                         Spacer()
-                        finishView
+                        finishView()
                             .track(index: 2)
                     }
                 }
                 
             }
-//            .onAppear(perform: {
-//                print("j")
-//                vm.getPoints()
-//            })
             .coordinateSpace(name: "WorkoutDetailsSpace")
             .onPreferenceChange(UpdateArray.self) { preferences in
                 for pref in preferences {
                     if vm.viewFrames.indices.contains(pref.index) {
                         vm.viewFrames[pref.index] = pref.frame
-//                        vm.getPoints()
                     }
                 }
                 

@@ -15,27 +15,56 @@ struct WorkoutPage: View {
         NavigationStack(path: $path)  {
             GeometryReader { geo in
                 VStack {
-                    Face(emotion: $vm.selectedEmotion, color: .green)
+                    Picker("Type", selection: $vm.selectedType) {
+                        ForEach(WorkoutType.allCases) { type in
+                            Text(type.displayName)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
+                    
+                    Face(emotion: $vm.selectedEmotion, color: vm.backgroundColor)
                         .frame(maxWidth: .infinity, maxHeight: geo.size.height * (1/4))
                     Spacer()
                     WorkoutMaps(vm: $vm)
+                        .padding(.all)
+                        .background {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 30)
+                                
+                                RoundedRectangle(cornerRadius: 30)
+                                    .stroke(lineWidth: 3)
+                                    .foregroundStyle(.black)
+                            }
+                            .foregroundStyle(.white)
+                            .opacity(0.5)
+                        }
                         .padding(.top, 100)
                         .padding(.all)
-//                    Spacer()
-                    ScrollingButtons(selectedType: $vm.selectedDifficulty, scrollId: $vm.selectedEmotion, workoutTypes: vm.dificultyArray) {
+                       
+                        
+
+                    ScrollingButtons(selectedType: $vm.selectedDifficulty, scrollId: $vm.selectedEmotion, workoutTypes: vm.dificultyArray, time: vm.time) {
                         path.append(vm.selectedWorkout)
                     }
                     .onChange(of: vm.selectedEmotion, { oldValue, newValue in
-                        let index = vm.dificultyArray.firstIndex(where: { $0.image == newValue })
-                        vm.selectedIndex = index ?? 0
-
-                        
-                        
+                        guard let index = vm.dificultyArray.firstIndex(where: { $0.image == newValue }) else {
+                            print("no index")
+                            return
+                        }
+                        vm.selectedIndex = index
+                        vm.backgroundColor = vm.dificultyArray[index].color
                     })
                     .frame(height: 100)
                     .navigationDestination(for: WorkoutModel.self, destination: { workout in
                         Training(workout: workout, path: $path)
                     })
+                }
+                .padding()
+                .background {
+                    vm.backgroundColor
+                        .opacity(0.7)
+                        .ignoresSafeArea()
                 }
             }
         }

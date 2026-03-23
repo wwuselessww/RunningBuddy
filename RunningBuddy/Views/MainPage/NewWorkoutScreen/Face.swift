@@ -10,7 +10,7 @@ import SwiftUI
 
 struct Face: View {
     @Binding var emotion: Emotion?
-    @State var color: Color
+    var color: Color
     
     @State private var radius: Double = 200
     @State private var height: Double = 100
@@ -99,7 +99,7 @@ struct Face: View {
     VStack {
         Text(emotion?.rawValue ?? "emotion is nill")
         Spacer()
-        Face(emotion: $emotion, color: .blue)
+        Face(emotion: $emotion, color: .red)
         Spacer()
         Picker("Emotion", selection: $emotion) {
             Text("Easy").tag(Emotion.easy)
