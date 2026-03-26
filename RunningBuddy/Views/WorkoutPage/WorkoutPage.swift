@@ -45,20 +45,30 @@ struct WorkoutPage: View {
                         ScrollingButtons(selectedType: $vm.selectedDifficulty, scrollId: $vm.selectedEmotion, workoutTypes: vm.dificultyArray, time: vm.time) {
                             path.append(vm.selectedWorkout)
                         }
-                        .onChange(of: vm.selectedEmotion, { oldValue, newValue in
+                        .onChange(of: vm.selectedEmotion, { _, newValue in
                             guard let index = vm.dificultyArray.firstIndex(where: { $0.image == newValue }) else {
                                 print("no index")
                                 return
                             }
+                            guard let emotion = newValue else {
+                                print("No emotion")
+                                return
+                            }
+                            
+                            
                             vm.selectedIndex = index
+                            vm.selectedWorkout = vm.workoutRunArray[index]
                             vm.backgroundColor = vm.dificultyArray[index].color
+                            vm.getWorkoutData(selectedIndex: emotion)
+                            
+                            vm.calculateTime(vm.selectedWorkout)
                         })
                         .frame(height: 100)
                         
                     } else {
                         VStack {
                             Spacer()
-                            WalkDurationPicker(selectedTime: $vm.time, height: 10) {
+                            WalkDurationPicker(selectedTime: $vm.time,height: 10, timeArray: vm.timeArray) {
                                 vm.createWalkingWorkout()
                                 path.append(vm.workoutWalk)
                             }
@@ -80,17 +90,14 @@ struct WorkoutPage: View {
         
         .onAppear(perform: {
             vm.calculateTime(vm.selectedWorkout)
-            vm.getWorkoutData(vm.selectedWorkout)
+            vm.getWorkoutData(selectedIndex: vm.selectedEmotion ?? .easy)
             vm.changeWorkoutType(vm.selectedType)
         })
-        .onChange(of: vm.selectedWorkout) { _, newValue in
-            vm.calculateTime(newValue)
-            vm.getWorkoutData(newValue)
-            vm.selectedEmotion = newValue.difficulty.image
-        }
+        
         .onChange(of: vm.selectedType) { _, newValue in
             vm.changeWorkoutType(newValue)
         }
+
         
     }
 }

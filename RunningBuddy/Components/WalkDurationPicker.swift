@@ -12,7 +12,7 @@ struct WalkDurationPicker: View {
     
     var height: Int
     
-    let timeArray: [Int] = Array(stride(from: 5, to: 305, by: 5))
+    let timeArray: [Int]
     
     var action: () -> Void
     
@@ -74,7 +74,7 @@ struct WalkDurationPicker: View {
 #Preview {
     VStack {
         Spacer()
-        WalkDurationPicker(selectedTime: .constant(285), height: 300) {
+        WalkDurationPicker(selectedTime: .constant(285), height: 300, timeArray: []) {
             
         }
         Spacer()

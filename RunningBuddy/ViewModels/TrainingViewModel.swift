@@ -216,7 +216,8 @@ import SwiftUI
             path: workoutManager.locationArray,
             calories: nil,
             avgHeartRate: nil,
-            maxHeartRate: nil
+            maxHeartRate: nil,
+            type: workout?.type
             )
         
         canProceed = true

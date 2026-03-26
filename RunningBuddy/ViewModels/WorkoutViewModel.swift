@@ -10,7 +10,7 @@ import SwiftUI
 @Observable class WorkoutViewModel {
     
     var selectedIndex: Int = 0
-    var time: Int = 0
+    var time: Int = 6
     var numberOfRepeats: Int = 0
     var startingBlock: WorkoutActivity?
     var mainBlock: [WorkoutActivity] = []
@@ -25,10 +25,7 @@ import SwiftUI
     var selectedEmotion: Emotion? = .easy
     var selectedWorkout: WorkoutModel = .init(difficulty: .init(level: "", image: .easy, color: .pink), type: .running)
     var backgroundColor: Color = .green
-    
     var currentTotalTime: Int = 0
-    
-    
     var workoutRunArray: [WorkoutModel] = [
         .init(difficulty: .init(level: "Easy", image: .easy, color: .blue), type: .running,
               start: WorkoutActivity(time: 1*10, type: .walking, repeats: 0),
@@ -63,11 +60,10 @@ import SwiftUI
                                           start: .init(time: 0, type: .walking),
                                           core: nil,
                                           end: nil)
+    let timeArray: [Int] = Array(stride(from: 5, to: 305, by: 5))
     
-    
-    func createWalkingWorkout() {
-        //        workoutWalk.start?.time = time * 60
-        workoutWalk.start?.time = time
+    func createoutdoorWalkWorkout() {
+                workoutWalk.start?.time = time * 60
     }
     
     func calculateTime(_ workout: WorkoutModel) {
@@ -92,13 +88,15 @@ import SwiftUI
         
     }
     
-    func getWorkoutData(_ workout: WorkoutModel) {
+    func getWorkoutData(selectedIndex: Emotion) {
+        guard let index = workoutRunArray.firstIndex(where: { $0.difficulty.image == selectedIndex }) else { return print("no index here") }
+        
+        let workout = workoutRunArray[index]
         
         guard let core = workout.core else {
             print("no core to get data to")
             return
         }
-        
         withAnimation {
             numberOfRepeats = workout.coreRepeats ?? 0
             startingBlock = workout.start
@@ -110,12 +108,12 @@ import SwiftUI
         
     }
     
-    
     func changeWorkoutType(_ type: WorkoutType) {
         if type == .outdoorRun {
            selectedWorkout = workoutRunArray.indices.contains(selectedIndex) ? workoutRunArray[selectedIndex] : workoutRunArray.first!
             
         } else {
+            time =  timeArray.first ?? 1000000
             selectedWorkout = workoutWalk
         }
         

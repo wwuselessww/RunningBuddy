@@ -65,7 +65,7 @@ struct DebugPage: View {
                 Spacer()
                 Button {
                     guard let distance, let duration, let pace else { return }
-                    let tempWorkout = WorkoutResultsModel(pace: pace, distance: distance, duration: duration, path: [], calories: 10, avgHeartRate: 11, maxHeartRate: 12)
+                    let tempWorkout = WorkoutResultsModel(pace: pace, distance: distance, duration: duration, path: [], calories: 10, avgHeartRate: 11, maxHeartRate: 12, type: .outdoorRun)
                     
                     WorkoutProvider.shared.createWorkout(workout: tempWorkout, date: date)
                     
