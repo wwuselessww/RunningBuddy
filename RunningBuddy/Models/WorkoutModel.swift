@@ -9,10 +9,11 @@ import SwiftUI
 
 struct WorkoutModel: Hashable {
     var difficulty: WorkoutDifficulty
-    var start: WorkoutActivity
-    var core: [WorkoutActivity]
+    var type: ActivityType
+    var start: WorkoutActivity?
+    var core: [WorkoutActivity]?
     var coreRepeats: Int?
-    var end: WorkoutActivity
+    var end: WorkoutActivity?
 
 }
 

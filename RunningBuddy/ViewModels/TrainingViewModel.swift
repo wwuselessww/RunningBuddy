@@ -9,7 +9,7 @@ import SwiftUI
 @Observable class TrainingViewModel {
     var workout: WorkoutModel?
     var isActive: Bool = true
-    var timerDisplay: Int = 0
+    var currentObjectiveTime: Int = 0
     var isPaused: Bool = false {
         didSet {
             if isPaused == true {
@@ -92,60 +92,106 @@ import SwiftUI
         print("total time \(time / 60)")
         totalTime = time
     }
+    
+    func getCurrentActivityTime() {
+        guard let timeForFirstActivity = activities.first?.time else {
+            print("No first activity to get time from")
+            return
+        }
+        currentObjectiveTime = timeForFirstActivity
+    }
 
     
-    func createActivitiesArray() {
-        guard var workout = workout else {
+    func createActivities() {
+        guard let workout = workout else {
             print("no workout?")
             return
         }
-        let repeats = workout.coreRepeats ?? 0
-        var tempArray: [WorkoutActivity] = []
-        workout.start.id = UUID()
-        tempArray.append(workout.start)
-        for i in 0...repeats {
-            print("repeat \(i)")
-            for activity in workout.core {
-                var tempActivity = activity
-                tempActivity.id = UUID()
-                tempArray.append(tempActivity)
+        
+        if workout.type == .running {
+            
+            guard var start = workout.start, let core = workout.core, var end = workout.end else {
+                print("no core or start or end to create activity array")
+                return
             }
+            
+            let repeats = workout.coreRepeats ?? 0
+            var tempArray: [WorkoutActivity] = []
+            start.id = UUID()
+            tempArray.append(start)
+            for i in 0...repeats {
+                for activity in core {
+                    var tempActivity = activity
+                    tempActivity.id = UUID()
+                    tempArray.append(tempActivity)
+                }
+            }
+            end.id = UUID()
+            tempArray.append(end)
+            
+            activities = tempArray
+            currentAcitivityIndex = 0
+            
+            
+        } else {
+            
+            guard let walkingWorkout = workout.start else {
+                print("no walking workout to start")
+                return
+            }
+            activities.append(walkingWorkout)
+                
         }
-        workout.end.id = UUID()
-        tempArray.append(workout.end)
-        
-        activities = tempArray
-        currentAcitivityIndex = 0
-        print(tempArray)
-        
     }
 
     func selectActivity() {
-        guard workout != nil else {
+        guard let workout = workout else {
             return
         }
-        let tempActivity = activities[currentAcitivityIndex]
-        withAnimation {
-            timerDisplay = tempActivity.time
+       
+        if workout.type == .walking {
+            guard let tempActivity = workout.start else {
+                print("no selected activity for walking")
+                return
+            }
+            withAnimation {
+                currentObjectiveTime = tempActivity.time
+            }
+            currentAcitivity = tempActivity
             
+        } else {
+            let tempActivity = activities[currentAcitivityIndex]
+        
+            withAnimation {
+                currentObjectiveTime = tempActivity.time
+                
+            }
+            currentAcitivity = tempActivity
         }
-        currentAcitivity = tempActivity
     }
     
     func nextActivity() {
-        if currentAcitivityIndex < activities.count - 1 {
-            currentAcitivityIndex += 1
+        guard let workout = workout else {
+            print("no workout for next activity")
+            return
+        }
+        
+        if workout.type == .running {
+            if currentAcitivityIndex < activities.count - 1 {
+                currentAcitivityIndex += 1
+            } else {
+                stopActivity()
+            }
+            selectActivity()
         } else {
             stopActivity()
         }
-        selectActivity()
-        //MARK: check for time in minus 
     }
     
     func skipHolded() {
-        let timeCheck = totalTime - timerDisplay
+        let timeCheck = totalTime - currentObjectiveTime
         if timeCheck > 0 {
-            totalTime -= timerDisplay
+            totalTime -= currentObjectiveTime
         }
         
         nextActivity()
@@ -181,12 +227,17 @@ import SwiftUI
        
         withAnimation {
             progressBarHeight = Double(currentAcitivityIndex) / Double(activities.count) * screenHeight
+            
+            print("")
+            print("currentAcitivityIndex \(currentAcitivityIndex) and activities.count \(activities.count)")
+            print("")
+            
             progressText = Int(Double(currentAcitivityIndex) / Double(activities.count) * 100)
         }
     }
     
     func checkActivity() {
-        if timerDisplay == 0 {
+        if currentObjectiveTime == 0 {
             nextActivity()
         }
     }
@@ -197,8 +248,9 @@ import SwiftUI
             getSpeed()
             getPace()
             calculateProgress()
-            timerDisplay -= 1
-            totalTime -= 1
+            
+            totalTime = max(0, totalTime - 1)
+            currentObjectiveTime -= 1
             duration += 1
         }
     }
@@ -242,7 +294,7 @@ import SwiftUI
         
         if let currentAcitivity = currentAcitivity {
             Task {
-                await LiveActivityManager.shared.updateActivity(currentActivity: currentAcitivity.type.rawValue, nextActivity: ActivityType.walking.rawValue, remainingTime: timerDisplay, speed: speed, pace: pace, stages: [])
+                await LiveActivityManager.shared.updateActivity(currentActivity: currentAcitivity.type.rawValue, nextActivity: ActivityType.walking.rawValue, remainingTime: currentObjectiveTime, speed: speed, pace: pace, stages: [])
             }
         }
         

@@ -58,11 +58,10 @@ struct WorkoutPage: View {
                     } else {
                         VStack {
                             Spacer()
-//                            RoundedRectangle(cornerRadius: 30)
-                            WalkDurationPicker(selectedTime: .constant(10), height: 10) {
-                                print("he")
+                            WalkDurationPicker(selectedTime: $vm.time, height: 10) {
+                                vm.createWalkingWorkout()
+                                path.append(vm.workoutWalk)
                             }
-//                            Spacer()
                         }
                         .padding(.top, 60)
                     }
@@ -82,11 +81,15 @@ struct WorkoutPage: View {
         .onAppear(perform: {
             vm.calculateTime(vm.selectedWorkout)
             vm.getWorkoutData(vm.selectedWorkout)
+            vm.changeWorkoutType(vm.selectedType)
         })
         .onChange(of: vm.selectedWorkout) { _, newValue in
             vm.calculateTime(newValue)
             vm.getWorkoutData(newValue)
             vm.selectedEmotion = newValue.difficulty.image
+        }
+        .onChange(of: vm.selectedType) { _, newValue in
+            vm.changeWorkoutType(newValue)
         }
         
     }
