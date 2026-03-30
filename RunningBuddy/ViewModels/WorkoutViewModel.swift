@@ -62,7 +62,7 @@ import SwiftUI
                                           end: nil)
     let timeArray: [Int] = Array(stride(from: 5, to: 305, by: 5))
     
-    func createoutdoorWalkWorkout() {
+    func createWalkingWorkout() {
                 workoutWalk.start?.time = time * 60
     }
     

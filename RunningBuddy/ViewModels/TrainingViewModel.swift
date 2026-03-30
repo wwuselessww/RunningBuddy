@@ -207,6 +207,9 @@ import SwiftUI
         for i in paceArray {
             paceCounter += i
         }
+        
+        
+        
        let avgPace = paceCounter / Double(paceArray.count)
         //FIXME: pace should be avg not last recorded
         workoutResult = WorkoutResultsModel(

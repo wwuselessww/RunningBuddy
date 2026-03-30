@@ -16,5 +16,5 @@ struct WorkoutResultsModel: Hashable {
     let calories: Int?
     let avgHeartRate: Int?
     let maxHeartRate: Int?
-    let type: WorkoutType?
+    let type: ActivityType?
 }
