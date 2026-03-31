@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct WaterBalance: View {
+struct StreakMeter: View {
     @Binding var waterBalance: Double
     @Binding var title: Int
     @State private var phase: Double = 0
@@ -19,14 +19,20 @@ struct WaterBalance: View {
                 .foregroundStyle(.gray.opacity(0.2))
             GeometryReader { geo in
                 Wave(strength: 10, frequency: 3, phase: phase)
-                    .fill(Color.blue)
+                    .fill(Color.orange)
                     .frame(height: geo.size.height * waterBalance)
                 //min 0.5
                 //max 1.5
             }
             .rotationEffect(.degrees(180))
-            Text(title.description)
-                .font(.caption.bold())
+            HStack(spacing: 4) {
+                Text(title.description)
+                    .font(.caption.bold())
+                Image(systemName: "flame")
+                    .foregroundStyle(.orange)
+                    .font(.caption)
+                    
+            }
         }
         .clipShape (Circle())
         .onAppear {
