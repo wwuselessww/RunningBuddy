@@ -46,30 +46,30 @@ struct SwapableWorkoutCell: View {
                 .padding(.all)
                 .frame(minWidth: 300, maxWidth: .infinity, minHeight: 500, maxHeight: 500)
                 .offset(x: offset + translation)
-                .gesture(DragGesture().updating($translation, body: { value, state, _ in
-                    let delta = value.translation.width
-                    state = delta
-                    withAnimation {
-                        if delta > 150 {
-                            isShown = true
-                        } else {
-                            isShown = false
+                .gesture(
+                    DragGesture(minimumDistance: 20, coordinateSpace: .local)
+                        .updating($translation) { value, state, _ in
+                            guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                            let delta = value.translation.width
+                            state = delta
+                            withAnimation {
+                                isShown = delta > 150
+                            }
                         }
-                    }
-                }).onEnded({ value in
-                    let delta = value.translation.width
-                    offset += delta
-                    
-                    withAnimation {
-                        if offset > 150 {
-                            offset = 150
-                            isShown = true
-                        } else {
-                            offset = 0
-                            isShown = false
+                        .onEnded { value in
+                            guard abs(value.translation.width) > abs(value.translation.height) else { return }
+                            let delta = value.translation.width
+                            offset += delta
+                            withAnimation {
+                                if offset > 150 {
+                                    offset = 150
+                                    isShown = true
+                                } else {
+                                    offset = 0
+                                    isShown = false
+                                }
+                            }
                         }
-                    }
-                })
                 )
         }
     }

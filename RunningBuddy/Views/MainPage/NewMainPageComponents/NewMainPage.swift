@@ -23,6 +23,13 @@ struct NewMainPage: View {
                             ForEach(viewModel.hkWorkouts, id: \.id) { workout in
                                 SwapableWorkoutCell(workout: workout) {
                                     print("delete")
+                                    guard let index = viewModel.hkWorkouts.firstIndex(where: {$0.id == workout.id}) else {
+                                        print("NO INDEX TO DELETE")
+                                        return
+                                    }
+                                    print("index \(index)")
+                                    viewModel.delete(at: index)
+                                    
                                 }
                             }
                             .scrollClipDisabled()

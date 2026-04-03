@@ -201,140 +201,18 @@ import CoreLocation
     }
     
     
-    
-    
-    
-    
-    //
-    //    @MainActor func setCurrentDate(_ date: Int) {
-    //        print("changed date")
-    //        chosenDate = calendar.date(byAdding: .day, value: date, to: startOfTheWeek) ?? Date.now
-    //        print("chosen date\(calendar.component(.weekday, from: chosenDate)))")
-    //
-    //        getWorkouts()
-    //    }
-    //
-    //
-    //
-    //
-    //
-    //
-    //    @MainActor
-    //    func getWorkouts() {
-    //        let stepCounter = HKQuantityType.quantityType(forIdentifier: .distanceWalkingRunning)!
-    //        let workoutType = HKObjectType.workoutType()
-    //        store.requestAuthorization(toShare: [], read: [stepCounter, workoutType]) { isSuccess, error in
-    //            if isSuccess {
-    //                self.getWeekArray()
-    //                Task {
-    //                    self.getPhoneRecordedWorkouts()
-    //                    await self.getCalloriesFromHK()
-    //                    await self.createWorkoutsArray()
-    //                    await self.getHKWorkouts()
-    //                }
-    //
-    //            } else {
-    //                print(error!)
-    //            }
-    //        }
-    //    }
-    //
-    //    @MainActor
-    //    func createWorkoutsArray() async {
-    //        hkWorkouts = []
-    //        phoneRecordedWorkouts = []
-    //        currentActivityIndex = 0
-    //        var tempArray: [HKWorkoutModel] = []
-    //        for workout in phoneRecordedWorkouts {
-    //            var path: [CLLocationCoordinate2D] = []
-    //            if let latitudes = workout.latitudes, let longitudes = workout.longitudes {
-    //                var tempPath: CLLocationCoordinate2D
-    //                for cordIndex in 0..<latitudes.count {
-    //                    tempPath = .init(latitude: latitudes[cordIndex], longitude: longitudes[cordIndex])
-    //                    path.append(tempPath)
-    //                }
-    //            } else {
-    //                print("no data coordinates")
-    //            }
-    //            let workoutModel: HKWorkoutModel = .init(
-    //                workout: nil,
-    //                date: workout.creationDate,
-    //                distance: workout.distance,
-    //                avgPulse: nil,
-    //                type: .outdoorRun,
-    //                path: path,
-    //                duration: Int(workout.duration),
-    //                pace: workout.pace,
-    //                recordedByPhone: true
-    //            )
-    //            tempArray.append(workoutModel)
-    //        }
-    //        hkWorkouts += tempArray
-    //        hkWorkouts.sort { $0.date > $1.date }
-    //    }
-    //
-    //    @MainActor
-    //    private func getCalloriesFromHK() async {
-    //        guard let res = await healtKitManager.getNumericFromHealthKit(startDate: startOfTheDay, endDate: currentTime, sample: HKQuantityType(.activeEnergyBurned), resultType: .largeCalorie()) else {
-    //            return
-    //        }
-    //        currentActivityIndex = Int(res)
-    //    }
-    //
-    //    @MainActor
-    //    func getHKWorkouts() async {
-    //        print("")
-    //        print("")
-    //        print(startOfTheWeek)
-    //        print(currentTime)
-    //        print("")
-    //        print("")
-    //        let res = await healtKitManager.getWorkouts(from: chosenDate, to: currentTime)
-    //        print("resarray size", res.count)
-    //        var modelArray: [HKWorkoutModel] = []
-    //        for i in res {
-    //            let date = i.startDate
-    //            guard  let distance = i.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)), let pulse = await healtKitManager.getBPMFor(workout: i, type: .avg, options: .discreteAverage) else {
-    //                print("no data")
-    //                break
-    //            }
-    //
-    //            let newWorkout = HKWorkoutModel(workout: i, date: date, distance: distance, avgPulse: pulse, type: .outdoorRun)
-    //            modelArray.append(newWorkout)
-    //
-    //        }
-    //        hkWorkouts += modelArray
-    //        print("workModelArray", hkWorkouts)
-    //    }
-    //
-    //    func getPhoneRecordedWorkouts() {
-    //        do {
-    ////            debug(chosenDate, calendar: calendar)
-    ////            print("")
-    ////            debug(currentTime, calendar: calendar)
-    //            let res = try workoutProvider.fetchWorkouts(from: chosenDate, to: currentTime)
-    //            print("res: \(res)")
-    //            print("res.count: \(res.count)")
-    //            phoneRecordedWorkouts = res
-    //
-    //        } catch {
-    //            print(error)
-    //            print("cant fetch workouts***")
-    //        }
-    //    }
-    //
-    //    func delete(at index: Int) {
-    //        if index >= phoneRecordedWorkouts.count {
-    //            print("cant delete this")
-    //            return
-    //        }
-    //        let workout = phoneRecordedWorkouts[index]
-    //        phoneRecordedWorkouts.remove(at: index)
-    //        withAnimation {
-    //            hkWorkouts.remove(at: index)
-    //        }
-    //        WorkoutProvider.shared.deleteWorkoutWith(workout.id)
-    //    }
+        func delete(at index: Int) {
+            if index >= phoneRecordedWorkouts.count {
+                print("cant delete this")
+                return
+            }
+            let workout = phoneRecordedWorkouts[index]
+            phoneRecordedWorkouts.remove(at: index)
+            withAnimation {
+                hkWorkouts.remove(at: index)
+            }
+            WorkoutProvider.shared.deleteWorkoutWith(workout.id)
+        }
     
     func debug(_ date: Date, calendar: Calendar) {
         print("debug".capitalized)
