@@ -25,20 +25,20 @@ class HealthKitManager {
     ]
     
     private init() {
-        ensuresHealthKitSetup()
+//        ensuresHealthKitSetup()
     }
     
-    func ensuresHealthKitSetup() -> Bool  {
-        if HKHealthStore.isHealthDataAvailable() {
-            print("health kit is available")
-            isAuthorized = true
-            return true
-        } else {
-            print("health kit is not available")
-            isAuthorized = false
-            return false
-        }
-    }
+//    func ensuresHealthKitSetup() -> Bool  {
+//        if HKHealthStore.isHealthDataAvailable() {
+//            print("health kit is available")
+//            isAuthorized = true
+//            return true
+//        } else {
+//            print("health kit is not available")
+//            isAuthorized = false
+//            return false
+//        }
+//    }
     
     func getNumericFromHealthKit(startDate: Date, endDate: Date, sample type: HKQuantityType, resultType: HKUnit) async -> Double? {
         do {

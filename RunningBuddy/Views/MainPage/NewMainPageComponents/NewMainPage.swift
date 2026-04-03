@@ -10,15 +10,20 @@ import SwiftUI
 struct NewMainPage: View {
     @State private var path = NavigationPath()
     @State var viewModel = NewMainPageViewModel()
+    @State private var offset: CGFloat = 0
+    
+    private let maxOffset: CGFloat = 80
+    @GestureState var translation: CGFloat = 0
+    
     var body: some View {
             VStack {
                 WeekHeader(waterLevel: $viewModel.waterLevel, waterTitle: $viewModel.waterTitle, days: $viewModel.days, chosenDay: $viewModel.chosenDay, activityValue: $viewModel.activityValue, activityTitle: $viewModel.activityTitle)
                     if !viewModel.hkWorkouts.isEmpty {
                         ScrollView {
                             ForEach(viewModel.hkWorkouts, id: \.id) { workout in
-                                NewWorkoutCell(model: workout)
-                                    .padding(.all)
-                                    .frame(minWidth: 300, maxWidth: .infinity, minHeight: 500, maxHeight: 500)
+                                SwapableWorkoutCell(workout: workout) {
+                                    print("delete")
+                                }
                             }
                             .scrollClipDisabled()
                             Spacer()
@@ -62,5 +67,7 @@ struct Days: Identifiable {
 }
 
 #Preview {
-    NewMainPage()
+    NavigationStack {
+        NewMainPage()
+    }
 }
