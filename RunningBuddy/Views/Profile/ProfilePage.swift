@@ -55,7 +55,6 @@ struct ProfilePage: View {
                                         Text(days[index].name.capitalized)
                                             .foregroundStyle(.label)
                                     }
-                                    .glassEffect()
                                 })
                                     .frame(width: 40, height: 50)
                                     .buttonStyle(.plain)

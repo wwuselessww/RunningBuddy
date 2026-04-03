@@ -25,7 +25,7 @@ struct OnboardingRoot: View {
             }
             PermissionView(viewModel: $vm, title: "High five for Health 🙌", explanation: "Connect Apple Health (and Apple Watch) to sync steps and workouts. Keep everything in one place and get insights to celebrate every move"){
                 PermisionsButton(title: "Activity", isGranted: $vm.healthKitGranted) {
-                    HealthKitManager.shared.ensuresHealthKitSetup()
+//                    HealthKitManager.shared.ensuresHealthKitSetup()
                     vm.healthKitTrigger.toggle()
                     
                 }
