@@ -25,7 +25,7 @@ struct Training: View {
                     StatDisplay(title: "Pace", value: String(format: "%0.1f", vm.pace), unit: "km")
                     StatDisplay(title: "Speed", value: String(format: "%0.1f", vm.speed), unit: "km/h")
                 }
-                StatDisplay(title: "Current objective time", value: Double(vm.timerDisplay).timeString(), unit: "min")
+                StatDisplay(title: "Current objective time", value: Double(vm.currentObjectiveTime).timeString(), unit: "min")
                 Text(vm.currentAcitivity?.type.rawValue ?? "Walk")
                     .font(Font.system(size: 44, weight: .bold, design: .default))
                     .bold()
@@ -119,12 +119,15 @@ struct Training: View {
         })
         .onAppear {
             vm.workout = workout
-            vm.createActivitiesArray()
-            vm.currentAcitivityIndex = 0
-            vm.currentAcitivity = vm.activities.first
+            vm.createActivities()
+            
             vm.stopTimer()
             vm.getTotalTime()
+            vm.getCurrentActivityTime()
             vm.screenHeight = height
+            
+            vm.currentAcitivityIndex = 0
+            vm.currentAcitivity = vm.activities.first
         }
     }
 }
@@ -132,7 +135,7 @@ struct Training: View {
 #Preview {
     @Previewable @State var path = NavigationPath()
     NavigationStack {
-        Training(workout: .init(difficulty: .init(level: "Easy", image: "🥰", color: .blue),
+        Training(workout: .init(difficulty: .init(level: "Easy", image: .easy, color: .blue), type: .running,
                                 start: WorkoutActivity(time: 5*60, type: .walking, repeats: 0),
                                 core: [
                                     WorkoutActivity(time: 1*10, type: .running),

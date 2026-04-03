@@ -18,11 +18,15 @@ struct WorkoutSection<Content:View>: View {
     var body: some View {
         VStack(alignment: .leading) {
             if repeats != 0 {
-                Group {
-                    Text(Image(systemName: "repeat.circle")) +
-                    Text("\(repeats) times")
-                }
-                .font(.callout)
+//                Group {
+                    HStack(spacing: 0) {
+                        Image(systemName: "repeat.circle")
+                        Text("\(repeats) times")
+                    }
+                    .font(.callout)
+                    .contentTransition(.numericText())
+//                }
+                
             }
             
             content

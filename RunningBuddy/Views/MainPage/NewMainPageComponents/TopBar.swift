@@ -22,7 +22,7 @@ struct WeekHeader: View {
                 Spacer()
                 HStack {
                     Spacer()
-                    WaterBalance(waterBalance: $waterLevel, title: $waterTitle)
+                    StreakMeter(waterBalance: $waterLevel, title: $waterTitle)
                         .frame(width: 60)
                     ForEach($days, id: \.id) { day in
                         Spacer()
@@ -45,6 +45,11 @@ struct WeekHeader: View {
     }
 }
 
-//#Preview {
-//    WeekHeader()
-//}
+#Preview {
+    @Previewable @State var viewModel = NewMainPageViewModel()
+    VStack {
+        WeekHeader(waterLevel: $viewModel.waterLevel, waterTitle: $viewModel.waterTitle, days: $viewModel.days, chosenDay: $viewModel.chosenDay, activityValue: $viewModel.activityValue, activityTitle: $viewModel.activityTitle)
+        Spacer()
+    }
+    
+}

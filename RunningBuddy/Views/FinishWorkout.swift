@@ -63,7 +63,7 @@ struct FinishWorkout: View {
             }
             .navigationBarBackButtonHidden()
             .toolbar(.hidden, for: .tabBar)
-            .navigationTitle("Outdoor Run")
+            .navigationTitle(workout.type?.rawValue ?? "No display name")
             .onAppear {
                 print("workout", workout)
                 vm.result = workout
@@ -96,6 +96,6 @@ struct FinishWorkout: View {
 #Preview {
     @Previewable @State var path = NavigationPath()
     NavigationStack {
-        FinishWorkout(isRecordedByWatch: false, workout: .init(pace: 10, distance: 10, duration: 0, path: [], calories: 10, avgHeartRate: 10, maxHeartRate: 10), path: $path)
+        FinishWorkout(isRecordedByWatch: false, workout: .init(pace: 10, distance: 10, duration: 0, path: [], calories: 10, avgHeartRate: 10, maxHeartRate: 10, type: .running), path: $path)
     }
 }

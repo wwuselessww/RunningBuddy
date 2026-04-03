@@ -8,82 +8,96 @@
 import SwiftUI
 
 struct WorkoutPage: View {
-    @StateObject var vm = WorkoutViewModel()
+    @State var vm = WorkoutViewModel()
     @State private var path = NavigationPath()
     @Environment(\.managedObjectContext) var context
     var body: some View {
         NavigationStack(path: $path)  {
-            VStack {
-                Text(vm.selectedWorkout.difficulty.image)
-                    .font(.system(size: 200))
-                    .frame(maxWidth: .infinity, maxHeight: UIScreen.main.bounds.height / 2)
-                    .background {
-                        vm.selectedWorkout.difficulty.color
-                            .animation(.easeInOut)
-                            .ignoresSafeArea()
-                    }
-                Group {
-                    Picker("selection of difficulty", selection: $vm.selectedIndex) {
-                        ForEach(vm.workoutArray.indices, id: \.self) { index in
-                            Text(vm.workoutArray[index].difficulty.level)
+            GeometryReader { geo in
+                VStack {
+                    Picker("Type", selection: $vm.selectedType) {
+                        ForEach(WorkoutType.allCases) { type in
+                            Text(type.displayName)
                         }
                     }
                     .pickerStyle(.segmented)
-                    if let startingBlock = vm.startingBlock, let endBlock = vm.endBlock {
-                        WorkoutDetails {
-                            AnyView(
-                                WorkoutSection(repeats: 0, {
-                                    Text("^[\(Int(startingBlock.time / 60)) minutes](inflect: true) \(startingBlock.type.rawValue)")
-                                        .contentTransition(.numericText())
+
+                    
+                    Face(emotion: $vm.selectedEmotion, color: vm.backgroundColor)
+                        .frame(maxWidth: .infinity, maxHeight: geo.size.height * (1/4))
+                    Spacer()
+                    if vm.selectedType == .outdoorRun {
+                        WorkoutMaps(vm: $vm)
+                            .padding(.all)
+                            .background {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 30)
                                     
-                                })
-                            )
-                        } centerView: {
-                            AnyView (
-                                WorkoutSection(repeats: vm.numberOfRepeats, {
-                                    VStack(alignment: .leading) {
-                                        ForEach(vm.mainBlock, id: \.self) { section in
-                                            Text("^[\(Int(section.time / 60)) minutes](inflect: true) \(section.type.rawValue)")
-                                        }
-                                    }
-                                })
-                                .contentTransition(.numericText())
-                            )
-                        } finishView: {
-                            AnyView(
-                                WorkoutSection(repeats: 0, {
-                                    Text("^[\(Int(endBlock.time / 60)) minutes](inflect: true) \(endBlock.type.rawValue)")
-                                })
-                            )
+                                    RoundedRectangle(cornerRadius: 30)
+                                        .stroke(lineWidth: 3)
+                                        .foregroundStyle(.black)
+                                }
+                                .foregroundStyle(.white)
+                                .opacity(0.5)
+                            }
+                            .padding(.top, 100)
+                            .padding(.all)
+                        ScrollingButtons(selectedType: $vm.selectedDifficulty, scrollId: $vm.selectedEmotion, workoutTypes: vm.dificultyArray, time: vm.time) {
+                            path.append(vm.selectedWorkout)
                         }
+                        .onChange(of: vm.selectedEmotion, { _, newValue in
+                            guard let index = vm.dificultyArray.firstIndex(where: { $0.image == newValue }) else {
+                                print("no index")
+                                return
+                            }
+                            guard let emotion = newValue else {
+                                print("No emotion")
+                                return
+                            }
+                            
+                            
+                            vm.selectedIndex = index
+                            vm.selectedWorkout = vm.workoutRunArray[index]
+                            vm.backgroundColor = vm.dificultyArray[index].color
+                            vm.getWorkoutData(selectedIndex: emotion)
+                            
+                            vm.calculateTime(vm.selectedWorkout)
+                        })
+                        .frame(height: 100)
+                        
                     } else {
-                        Spacer()
-                    }
-                }
-                .padding(.all)
-                NavigationLink(value: vm.selectedWorkout){
-                    Text("Start \(vm.time / 60) Min Workout")
-                        .foregroundStyle(.white)
-                        .padding()
-                        .background {
-                            RoundedRectangle(cornerRadius: 20)
+                        VStack {
+                            Spacer()
+                            WalkDurationPicker(selectedTime: $vm.time,height: 10, timeArray: vm.timeArray) {
+                                vm.createWalkingWorkout()
+                                path.append(vm.workoutWalk)
+                            }
                         }
-                        .contentTransition(.numericText())
+                        .padding(.top, 60)
+                    }
                 }
                 .navigationDestination(for: WorkoutModel.self, destination: { workout in
                     Training(workout: workout, path: $path)
                 })
+                .padding()
+                .background {
+                    vm.backgroundColor
+                        .opacity(0.7)
+                        .ignoresSafeArea()
+                }
             }
         }
-
+        
         .onAppear(perform: {
             vm.calculateTime(vm.selectedWorkout)
-            vm.getWorkoutData(vm.selectedWorkout)
+            vm.getWorkoutData(selectedIndex: vm.selectedEmotion ?? .easy)
+            vm.changeWorkoutType(vm.selectedType)
         })
-        .onChange(of: vm.selectedWorkout) { oldValue, newValue in
-            vm.calculateTime(vm.selectedWorkout)
-            vm.getWorkoutData(vm.selectedWorkout)
+        
+        .onChange(of: vm.selectedType) { _, newValue in
+            vm.changeWorkoutType(newValue)
         }
+
         
     }
 }

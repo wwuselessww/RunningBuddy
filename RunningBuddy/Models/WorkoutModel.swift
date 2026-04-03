@@ -9,16 +9,18 @@ import SwiftUI
 
 struct WorkoutModel: Hashable {
     var difficulty: WorkoutDifficulty
-    var start: WorkoutActivity
-    var core: [WorkoutActivity]
+    var type: ActivityType
+    var start: WorkoutActivity?
+    var core: [WorkoutActivity]?
     var coreRepeats: Int?
-    var end: WorkoutActivity
+    var end: WorkoutActivity?
 
 }
 
-struct WorkoutDifficulty: Hashable {
+struct WorkoutDifficulty: Hashable, Identifiable {
+    let id: UUID = UUID()
     let level: String
-    let image: String
+    let image: Emotion
     let color: Color
 }
 
@@ -32,4 +34,11 @@ struct WorkoutActivity: Hashable {
 enum ActivityType: String {
     case walking = "Walk"
     case running = "Run"
+}
+
+
+enum Emotion: String {
+    case easy = "easy"
+    case mid = "mid"
+    case hard = "hard"
 }
