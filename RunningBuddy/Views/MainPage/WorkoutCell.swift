@@ -1,94 +1,99 @@
 //
-//  WorkoutCell.swift
+//  NewActivityCell.swift
 //  RunningBuddy
 //
-//  Created by Alexander Kozharin on 07.05.25.
+//  Created by Alexander Kozharin on 28.01.26.
 //
 
 import SwiftUI
-import HealthKit
+import MapKit
 
 struct WorkoutCell: View {
-    var workoutModel: HKWorkoutModel?
-    init(healthKitModel: HKWorkoutModel? = nil) {
-        self.workoutModel = healthKitModel
-    }
-    
-    @Environment(\.sizeCategory) var sizeCategory
-    
+    @StateObject var vm = WorkoutInfoViewModel()
+    let model: HKWorkoutModel
     var body: some View {
-        if let healkitModel = workoutModel {
-            if !sizeCategory.isAccessibilityCategory {
-                HStack {
-                    Image(systemName: healkitModel.type == .outdoorRun ? "figure.run": "figure.walk")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(minWidth: 40, maxWidth: 60, minHeight: 40, maxHeight: 60)
-                    VStack(alignment: .leading) {
-                        Text("Outdoor Run")
-                            .font(.title)
-                            .fontDesign(.rounded)
-                        Text("\(String(format: "%.1f", healkitModel.distance))km")
-                            .font(.title)
-                            .fontDesign(.rounded)
-                    }
-                    Spacer()
-                    VStack(alignment: .leading) {
-                        if let bpm = healkitModel.avgPulse {
-                            Text("Avg")
-                                .font(.title3)
-                                .fontDesign(.rounded)
-                            + Text(Image(systemName: "heart"))
-                                .font(.title3)
-                                .fontDesign(.rounded)
-                                .foregroundStyle(.red)
-                            + Text ("\(bpm)")
-                                .font(.title3)
-                                .fontDesign(.rounded)
-                        }
-                        Text("\(healkitModel.date.formateToString())")
-                            .font(.title3)
-                            .fontDesign(.rounded)
-                    }
-                }
-                .foregroundStyle(Color.label)
+        ZStack {
+            if vm.isLoading {
+                ProgressView()
+            } else if vm.locationsArray.isEmpty {
+                Text("no route")
             } else {
-                VStack(alignment: .trailing) {
-                    Text(healkitModel.type.displayName)
-                        .font(.title)
-                        .fontDesign(.rounded) +
-                    Text(" \(String(format: "%.1f", healkitModel.distance))km")
-                        .font(.title)
-                        .fontDesign(.rounded)
-                    VStack(alignment: .trailing) {
-                        if let bpm = healkitModel.avgPulse {
-                            Text("Avg")
-                                .font(.title3)
-                                .fontDesign(.rounded)
-                            + Text(Image(systemName: "heart"))
-                                .font(.title3)
-                                .fontDesign(.rounded)
-                                .foregroundStyle(.red)
-                            + Text ("\(bpm)")
-                                .font(.title3)
-                                .fontDesign(.rounded)
-                        }
-                        Text("\(healkitModel.date.formateToString())")
-                            .font(.title3)
-                            .fontDesign(.rounded)
-                    }
+                Map {
+                    let coords = vm.locationsArray.map{$0.coordinate}
+                    MapPolygon(coordinates: coords)
+                        .stroke(.blue, lineWidth: 5)
                 }
+                .overlay {
+                    LinearGradient(colors: [.white.opacity(0.1), .white], startPoint: .top, endPoint: .bottom)
                 }
             }
+            VStack {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(model.date.formateToString())
+                            .font(.title.bold())
+                    }
+                    Spacer()
+                    
+                }
+                .padding(.top)
+                .padding(.horizontal)
+                Spacer()
+                if model.recordedByPhone {
+                    VStack {
+                        HStack {
+                            InfoCell(title: "Time", data: vm.timeString, dataColor: .label)
+                            Spacer()
+                            InfoCell(title: "Distance", data: vm.distanceString, dataColor: .label)
+                            Spacer()
+                            InfoCell(title: "Pace", data: vm.paceString, dataColor: .label)
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding(.bottom)
+                } else {
+                    VStack {
+                        HStack {
+                            InfoCell(title: "Time", data: vm.timeString, dataColor: .label)
+                            Spacer()
+                            InfoCell(title: "Distance", data: vm.distanceString, dataColor: .label)
+                            Spacer()
+                            InfoCell(title: "Max Hearth Rate", data: vm.maxHearthRateString, dataColor: .label)
+                        }
+                        .padding(.horizontal)
+                        HStack {
+                            InfoCell(title: "Active Energy", data: vm.activeEnergyString, dataColor: .label)
+                            Spacer()
+                            InfoCell(title: "Pace", data: vm.paceString, dataColor: .label)
+                            Spacer()
+                            InfoCell(title: "Avg Hearth Rate", data: vm.avgHearthRateString, dataColor: .label)
+                        }
+                        .padding()
+                    }
+                    .padding(.bottom)
+                }
+            }
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .shadow(radius: 10)
+        .onAppear {
+            vm.getDateInString(date: model.date)
+            vm.workoutModel = model
+            Task {
+                await vm.getWorkoutData()
+                await vm.getWorkoutPath()
+                await vm.getZones()
+                vm.foodBurned = vm.calculateBurnedCaloriesInFood(caloriee: Int(vm.activeEnergyString) ?? 0)
+            }
+            
+        }
+        
     }
 }
 
 #Preview {
-    NavigationStack {
-        VStack {
-            List {
-                WorkoutCell(healthKitModel: HKWorkoutModel(workout: HKWorkout(activityType: .archery, start: Date(), end: Date().advanced(by: 10)), date: Date(), distance: 0.0, avgPulse: 10, type: .outdoorRun))
-            }
-        }
-    }
+    let model: HKWorkoutModel = .init(date: Date.now, distance: 10, type: .outdoorRun, recordedByPhone: false)
+    WorkoutCell(model: model)
+        .frame(height: 400)
+        .padding()
 }

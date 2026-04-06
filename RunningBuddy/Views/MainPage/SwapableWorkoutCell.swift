@@ -42,7 +42,7 @@ struct SwapableWorkoutCell: View {
                 }
             }
             
-            NewWorkoutCell(model: workout)
+            WorkoutCell(model: workout)
                 .padding(.all)
                 .frame(minWidth: 300, maxWidth: .infinity, minHeight: 500, maxHeight: 500)
                 .offset(x: offset + translation)
