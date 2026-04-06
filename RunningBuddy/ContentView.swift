@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     //MARK: For debuging
-    @AppStorage("isOnboardingCompleted") var isOnboardingCompleted: Bool = true
+    @AppStorage("isOnboardingCompleted") var isOnboardingCompleted: Bool = false
     @State var currentView: any View = NewMainPage()
     var body: some View {
         ZStack {
@@ -50,6 +50,9 @@ struct ContentView: View {
                     
             }
             
+        }
+        .task {
+            await HealthKitManager.shared.requestAuthorization()
         }
         .environment(\.managedObjectContext, WorkoutProvider.shared.viewContext)
 //        .onAppear {

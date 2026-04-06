@@ -21,16 +21,9 @@ struct NewMainPage: View {
                     if !viewModel.hkWorkouts.isEmpty {
                         ScrollView {
                             ForEach(viewModel.hkWorkouts, id: \.id) { workout in
-                                SwapableWorkoutCell(workout: workout) {
-                                    print("delete")
-                                    guard let index = viewModel.hkWorkouts.firstIndex(where: {$0.id == workout.id}) else {
-                                        print("NO INDEX TO DELETE")
-                                        return
-                                    }
-                                    print("index \(index)")
-                                    viewModel.delete(at: index)
-                                    
-                                }
+                                NewWorkoutCell(model: workout)
+                                    .padding(.all)
+                                    .frame(minWidth: 300, maxWidth: .infinity, minHeight: 500, maxHeight: 500)
                             }
                             .scrollClipDisabled()
                             Spacer()
@@ -56,7 +49,7 @@ struct NewMainPage: View {
             .onAppear {
                 viewModel.trigger.toggle()
                 viewModel.updateView()
-                print("array here ", viewModel.phoneRecordedWorkouts)
+//                print("array here ", viewModel.phoneRecordedWorkouts)
             }
             .onChange(of: viewModel.chosenDay) { oldValue, newValue in
                 viewModel.setDateTo(newValue)

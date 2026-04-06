@@ -73,27 +73,18 @@ import CoreLocation
     }
     
     public func updateView() {
-        var result: [HKWorkoutModel] = []
-        let phoneWorkouts = fetchPhoneWorkouts()
-        var convertedAppleWorkouts: [HKWorkoutModel] = []
         Task {
-           activityTitle = await fetchCalories(from: chosenDateEnd, untill: chosenDateStart)
+            activityTitle = await fetchCalories(from: chosenDateEnd, untill: chosenDateStart)
             let appleWorkouts = await fetchHKWorkouts()
-            convertedAppleWorkouts = await convertHKWorkoutsToHKWorkoutModels(appleWorkouts)
+            let convertedAppleWorkouts = await convertHKWorkoutsToHKWorkoutModels(appleWorkouts)
+            let phoneWorkouts = fetchPhoneWorkouts()
             await MainActor.run {
                 withAnimation {
                     activityValue = calculateCalooriesRing()
+                    hkWorkouts = convertedAppleWorkouts + phoneWorkouts
                 }
             }
         }
-        
-        
-        
-        result = convertedAppleWorkouts + phoneWorkouts
-        
-        hkWorkouts = result
-        
-        
     }
     
     
@@ -119,9 +110,8 @@ import CoreLocation
                 
                 result.append(tempWorkout)
             }
-            print("Phone workouts fetched: \(phoneRecordedWorkouts.count)")
         } catch {
-            print("error")
+            print("error \(error)")
         }
         
         return result
@@ -129,7 +119,7 @@ import CoreLocation
     
     private func fetchHKWorkouts() async -> [HKWorkout] {
         var workouts: [HKWorkout] = []
-            workouts = await healtKitManager.getWorkouts(from: chosenDateStart, to: chosenDateEnd)
+        workouts = await healtKitManager.getWorkouts(from: chosenDateStart, to: chosenDateEnd)
         return workouts
     }
     
@@ -138,13 +128,12 @@ import CoreLocation
             print("no callories for today")
             return 0
         }
-        print("callories \(callories)")
         return Int(callories)
     }
     
     private func calculateCalooriesRing() -> Double {
         let maxCalories = Double(maxCallories)
-        return Double(activityTitle) / maxCalories
+        return Double(activityTitle) / maxCalories 
     }
     
     private func convertHKWorkoutsToHKWorkoutModels(_ workouts: [HKWorkout]) async -> [HKWorkoutModel] {
@@ -152,22 +141,26 @@ import CoreLocation
         for workout in workouts {
             guard  let distance = workout.statistics(for: HKQuantityType(.distanceWalkingRunning))?.sumQuantity()?.doubleValue(for: .meterUnit(with: .kilo)) else {
                 print("no distance")
-                break
+                continue
             }
-            guard let pulse = await healtKitManager.getBPMFor(workout: workout, type: .avg, options: .discreteAverage) else {
-                print("no pule")
-                break
-            }
-            
+            let pulse = await healtKitManager.getBPMFor(workout: workout, type: .avg, options: .discreteAverage)
+            let coordinates = await healtKitManager.getRouteFor(workout: workout)
+            let convertedTo2D = coordinates?.map { CLLocationCoordinate2D(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude)}
+            print("")
+            print("")
+            print("converted \(coordinates)")
+            print("converted2d \(convertedTo2D)")
+            print("")
+            print("")
             
             
             result.append(.init(id: workout.uuid,
                                 workout: workout,
                                 date: workout.endDate,
                                 distance: distance,
-                                avgPulse: pulse,
-                                type: .outdoorRun,
-                                path: nil,
+                                avgPulse: pulse ?? 0,
+                                type: workout.workoutActivityType == .running ? .outdoorRun : .outdoorWalk,
+                                path: convertedTo2D,
                                 duration: nil,
                                 pace: nil,
                                 recordedByPhone: false
@@ -201,18 +194,18 @@ import CoreLocation
     }
     
     
-        func delete(at index: Int) {
-            if index >= phoneRecordedWorkouts.count {
-                print("cant delete this")
-                return
-            }
-            let workout = phoneRecordedWorkouts[index]
-            phoneRecordedWorkouts.remove(at: index)
-            withAnimation {
-                hkWorkouts.remove(at: index)
-            }
-            WorkoutProvider.shared.deleteWorkoutWith(workout.id)
+    func delete(at index: Int) {
+        if index >= phoneRecordedWorkouts.count {
+            print("cant delete this")
+            return
         }
+        let workout = phoneRecordedWorkouts[index]
+        phoneRecordedWorkouts.remove(at: index)
+        withAnimation {
+            hkWorkouts.remove(at: index)
+        }
+        WorkoutProvider.shared.deleteWorkoutWith(workout.id)
+    }
     
     func debug(_ date: Date, calendar: Calendar) {
         print("debug".capitalized)

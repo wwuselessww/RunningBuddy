@@ -43,6 +43,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         if location.speed >= 0 {
             speed = location.speed * 3.6
             print(speed)
+            print("UPDATING SPEED")
         } else {
             speed = 0.0
         }

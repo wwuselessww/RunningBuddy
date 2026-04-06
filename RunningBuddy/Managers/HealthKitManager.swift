@@ -14,31 +14,33 @@ class HealthKitManager {
     var healthStore = HKHealthStore()
     var isAuthorized: Bool = false
     let activityTypes: Set<HKSampleType> = [
-        HKObjectType.workoutType(),
-        HKQuantityType(.activeEnergyBurned),
-        HKQuantityType(.basalEnergyBurned),
-        HKQuantityType(.distanceWalkingRunning),
-        HKQuantityType(.heartRate),
-        HKQuantityType(.stepCount),
-        HKSeriesType.workoutRoute(),
-//        HKActivitySummaryType.activitySummaryType()
-    ]
+            HKObjectType.workoutType(),
+            HKQuantityType(.activeEnergyBurned),
+            HKQuantityType(.basalEnergyBurned),
+            HKQuantityType(.distanceWalkingRunning),
+            HKQuantityType(.heartRate),
+            HKQuantityType(.stepCount),
+            HKSeriesType.workoutRoute()
+        ]
     
-    private init() {
-//        ensuresHealthKitSetup()
-    }
+    private init() {}
     
-//    func ensuresHealthKitSetup() -> Bool  {
-//        if HKHealthStore.isHealthDataAvailable() {
-//            print("health kit is available")
-//            isAuthorized = true
-//            return true
-//        } else {
-//            print("health kit is not available")
-//            isAuthorized = false
-//            return false
-//        }
-//    }
+    func requestAuthorization() async -> Bool {
+          guard HKHealthStore.isHealthDataAvailable() else {
+              print("HealthKit not available on this device")
+              return false
+          }
+
+          do {
+              try await healthStore.requestAuthorization(toShare: activityTypes, read: activityTypes)
+              isAuthorized = true
+              return true
+          } catch {
+              print("HealthKit auth failed:", error)
+              isAuthorized = false
+              return false
+          }
+      }
     
     func getNumericFromHealthKit(startDate: Date, endDate: Date, sample type: HKQuantityType, resultType: HKUnit) async -> Double? {
         do {
@@ -105,7 +107,9 @@ class HealthKitManager {
                         continuation.resume(throwing: error)
                     }
                     guard let samples = sample else {
-                        fatalError("some error")
+//                        fatalError("some error")
+                        print("NO SAMPLES")
+                        return
                     }
                     let workouts = samples.compactMap { $0 as? HKWorkout }
                     continuation.resume(returning: workouts)
@@ -125,23 +129,27 @@ class HealthKitManager {
             let rate: Double = try await withCheckedThrowingContinuation { continuation in
                 let query = HKStatisticsQuery(quantityType: HKQuantityType(.heartRate), quantitySamplePredicate: predicate, options: options) { _, stats, error in
                     if let error = error {
+                        // ✅ Code 11 = no data, not a real error
+                        let hkError = error as? HKError
+                        if hkError?.code == .errorNoData {
+                            continuation.resume(returning: 0.0)
+                            return
+                        }
                         continuation.resume(throwing: error)
+                        return
                     }
                     switch type {
                     case .avg:
-                        let bpm = stats?.averageQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
-                        continuation.resume(returning: bpm)
+                        continuation.resume(returning: stats?.averageQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0)
                     case .min:
-                        let bpm = stats?.minimumQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
-                        continuation.resume(returning: bpm)
+                        continuation.resume(returning: stats?.minimumQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0)
                     case .max:
-                        let bpm = stats?.maximumQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0
-                        continuation.resume(returning: bpm)
+                        continuation.resume(returning: stats?.maximumQuantity()?.doubleValue(for: HKUnit.count().unitDivided(by: .minute())) ?? 0)
                     }
                 }
                 healthStore.execute(query)
             }
-            return Int(rate)
+            return rate == 0.0 ? nil : Int(rate) // ✅ return nil if no HR data
         } catch {
             print("BPM ERROR \(error)")
             return nil
@@ -162,6 +170,7 @@ class HealthKitManager {
     }
     
     func getRouteFor(workout: HKWorkout) async -> [CLLocation]? {
+        print("1")
         let predicate = HKQuery.predicateForObjects(from: workout)
         
         return try? await withCheckedThrowingContinuation { continuation in
@@ -172,11 +181,13 @@ class HealthKitManager {
                 sortDescriptors: nil
             ) { _, samples, error in
                 if let error = error {
+                    print("errr\(error)")
                     continuation.resume(throwing: error)
                     return
                 }
                 
                 guard let route = samples?.first as? HKWorkoutRoute else {
+                    print("no route in gate pace")
                     continuation.resume(returning: [])
                     return
                 }
@@ -185,15 +196,18 @@ class HealthKitManager {
                 
                 let routeQuery = HKWorkoutRouteQuery(route: route) { _, locations, done, error in
                     if let error = error {
+                        print("error in getRoute\(error)")
                         continuation.resume(throwing: error)
                         return
                     }
                     
                     if let locations = locations {
+                        print(locations)
                         allLocations.append(contentsOf: locations)
                     }
                     
                     if done {
+                        print("allLocations \(allLocations)")
                         continuation.resume(returning: allLocations)
                     }
                 }
@@ -252,6 +266,53 @@ class HealthKitManager {
             
             healthStore.execute(query)
         }
+    }
+    
+    func saveHKWorkout(start: Date, end: Date, path: [CLLocation], calories: Double, distance: Double, type: ActivityType) async throws {
+        let builder = HKWorkoutBuilder(healthStore: healthStore, configuration: workoutConfig(for: type), device: .local())
+        
+        try await builder.beginCollection(at: start)
+        
+        // Calories
+        let calorieQuantity = HKQuantity(unit: .kilocalorie(), doubleValue: calories)
+        let calorieSample = HKCumulativeQuantitySample(
+            type: .init(.activeEnergyBurned),
+            quantity: calorieQuantity,
+            start: start,
+            end: end
+        )
+        
+        let distanceQuantity = HKQuantity(unit: .meter(), doubleValue: distance * 1000)
+        let distanceSample = HKCumulativeQuantitySample(
+            type: .init(.distanceWalkingRunning),
+            quantity: distanceQuantity,
+            start: start,
+            end: end
+        )
+        
+        try await builder.addSamples([calorieSample, distanceSample])
+        try await builder.endCollection(at: end)
+        
+        guard let resultWorkout = try await builder.finishWorkout() else {
+            print("NO HK WTF")
+            return
+        }
+        try await saveRoute(locations: path, workout: resultWorkout)
+        print("")
+        print("DISTANCE \(distance)")
+        print("")
+    }
+    
+    private func workoutConfig(for activityType: ActivityType) -> HKWorkoutConfiguration {
+        let config = HKWorkoutConfiguration()
+        config.activityType = activityType == .running ? .running : .walking
+        config.locationType = .outdoor
+        return config
+    }
+    private func saveRoute(locations: [CLLocation], workout: HKWorkout) async throws {
+        let builder = HKWorkoutRouteBuilder(healthStore: healthStore, device: .local())
+        try await builder.insertRouteData(locations)
+        try await builder.finishRoute(with: workout, metadata: nil)
     }
 }
 

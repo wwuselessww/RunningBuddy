@@ -556,7 +556,7 @@
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We want to read data";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "we want to use location for calculating workout route";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "For tracking workouts and speed";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "For tracking workouts and speed";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
@@ -599,7 +599,7 @@
 				INFOPLIST_KEY_NSHealthClinicalHealthRecordsShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "We want to read data";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "We want to read data";
-				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "we want to use location for calculating workout route";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "For tracking workouts and speed";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "For tracking workouts and speed";
 				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
