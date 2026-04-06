@@ -73,7 +73,9 @@ struct FinishWorkout: View {
                ToolbarItem(id: "Finish workout", placement: .topBarTrailing) {
                    Button {
                        print("Finish")
-                           vm.saveWorkout()
+                       Task {
+                           await vm.saveWorkout()
+                       }
                            path = NavigationPath()
                    } label: {
                        HStack {

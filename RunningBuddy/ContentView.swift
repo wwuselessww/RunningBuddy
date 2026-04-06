@@ -9,15 +9,15 @@ import SwiftUI
 
 struct ContentView: View {
     //MARK: For debuging
-    @AppStorage("isOnboardingCompleted") var isOnboardingCompleted: Bool = true
-    @State var currentView: any View = NewMainPage()
+    @AppStorage("isOnboardingCompleted") var isOnboardingCompleted: Bool = false
+    @State var currentView: any View = MainPage()
     var body: some View {
         ZStack {
             if isOnboardingCompleted {
                 if #available(iOS 26, *) {
                     TabView {
                         Tab("home", systemImage: "house", role: .none) {
-                            NewMainPage()
+                            MainPage()
                         }
                         Tab("Workout", systemImage: "figure.run", role: .none) {
                             WorkoutPage()
@@ -50,6 +50,9 @@ struct ContentView: View {
                     
             }
             
+        }
+        .task {
+            await HealthKitManager.shared.requestAuthorization()
         }
         .environment(\.managedObjectContext, WorkoutProvider.shared.viewContext)
 //        .onAppear {

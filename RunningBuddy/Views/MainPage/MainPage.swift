@@ -1,80 +1,68 @@
 //
-//  MainView.swift
+//  NewMainPage.swift
 //  RunningBuddy
 //
 //  
 //
 
 import SwiftUI
-import HealthKit
-import HealthKitUI
 
 struct MainPage: View {
-    @ObservedObject var vm = MainPageViewModel()
-    @State var authenticated: Bool = false
-    @State var trigger: Bool = false
     @State private var path = NavigationPath()
+    @State var viewModel = MainPageViewModel()
+    @State private var offset: CGFloat = 0
+    
+    private let maxOffset: CGFloat = 80
+    @GestureState var translation: CGFloat = 0
+    
     var body: some View {
-        NavigationStack(path: $path) {
-            VStack{
-                Header(distance: $vm.totalMonthDistance)
-                    .padding(.bottom, 20)
-                    .padding(.horizontal, 10)
-                List {
-                    if !vm.workModelArray.isEmpty {
-                        Section(header: Text("Workouts")) {
-                            ForEach(0..<vm.workModelArray.count, id: \.self) { index in
-                                Button {
-                                    vm.didTapOnWorkout = true
-                                    vm.currentIndexToDelete = index
-                                } label: {
-                                    WorkoutCell(healthKitModel: vm.workModelArray[index])
-                                }
+            VStack {
+                WeekHeader(waterLevel: $viewModel.waterLevel, waterTitle: $viewModel.waterTitle, days: $viewModel.days, chosenDay: $viewModel.chosenDay, activityValue: $viewModel.activityValue, activityTitle: $viewModel.activityTitle)
+                    if !viewModel.hkWorkouts.isEmpty {
+                        ScrollView {
+                            ForEach(viewModel.hkWorkouts, id: \.id) { workout in
+                                WorkoutCell(model: workout)
+                                    .padding(.all)
+                                    .frame(minWidth: 300, maxWidth: .infinity, minHeight: 500, maxHeight: 500)
                             }
-                            //                            .onDelete(perform: vm.delete)
+                            .scrollClipDisabled()
+                            Spacer()
                         }
+                    } else {
+                        Spacer()
+                        NoActivityPlaceholder()
+                        Spacer()
                     }
-                }
-                .scrollContentBackground(.hidden)
+                
             }
-        }
-        .healthDataAccessRequest(store: vm.healtKitManager.healthStore, readTypes: vm.healtKitManager.activityTypes, trigger: trigger) { result in
-            switch result {
-            case .success(_):
-                authenticated = true
-            case .failure(let error):
-                authenticated = false
-                print(error.localizedDescription)
-            }
-        }
-        .sheet(isPresented: $vm.didTapOnWorkout) {
-            let data = vm.workModelArray[vm.currentIndexToDelete]
-            NavigationStack {
-                if data.recordedByPhone {
-                    WorkoutInfo(workoutModel: data) {
-                        vm.didTapOnWorkout = false
-                        vm.delete(at: vm.currentIndexToDelete)
-                        
-                    }
-                    .presentationDetents([.medium])
-                    .presentationDragIndicator(.visible)
-                } else {
-                    WorkoutInfo(workoutModel: data) {}
-                        .presentationDetents([.large])
-                        .presentationDragIndicator(.visible)
+            .ignoresSafeArea(edges: .top)
+            .healthDataAccessRequest(store: viewModel.healtKitManager.healthStore, readTypes: viewModel.healtKitManager.activityTypes, trigger: viewModel.trigger) { result in
+                switch result {
+                case .success(_):
+                    viewModel.authenticated = true
+                case .failure(let error):
+                    viewModel.authenticated = false
+                    print(error.localizedDescription)
                 }
             }
-        }
-        
-        .onAppear {
-            trigger.toggle()
-            vm.getPhoneRecordedWorkouts()
-            vm.getActivity()
-            print(" ")
-            print("array here ", vm.phoneRecordedWorkouts)
-            print(" ")
-        }
+            
+            .onAppear {
+                viewModel.trigger.toggle()
+                viewModel.updateView()
+            }
+            .onChange(of: viewModel.chosenDay) { oldValue, newValue in
+                viewModel.setDateTo(newValue)
+                viewModel.updateView()
+            }
     }
+}
+
+
+struct Days: Identifiable {
+   let id: UUID = UUID()
+    var name: String
+    var number: Int
+    var isSelected: Bool = false
 }
 
 #Preview {
@@ -82,5 +70,15 @@ struct MainPage: View {
         MainPage()
     }
 }
+#Preview("iPhone SE-ish", traits: .fixedLayout(width: 375, height: 667)) {
+    NavigationStack {
+        MainPage()
+    }
+}
 
+#Preview("iPhone 16 Pro-ish", traits: .fixedLayout(width: 393, height: 852)) {
+    NavigationStack {
+        MainPage()
+    }
+}
 
