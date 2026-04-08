@@ -11,8 +11,9 @@ struct OnboardingRoot: View {
     @State var vm = OnbnoardingViewModel()
     var body: some View {
         TabView {
+            WeightView(selectedWeight: $vm.weight)
             Hello()
-            Tutorial()
+            
             PermissionView(viewModel: $vm, title: "Let’s find your moves 🌍✨", explanation: "To track your walks, runs, or rides we need access to your location. This way we can map your adventures, measure progress, and cheer you on wherever you go 🚴‍♂️🏃‍♀️🚶"){
                 PermisionsButton(title: "Location", isGranted: $vm.locationGranted) {
                         if  LocationManager.shared.grantPermission() {

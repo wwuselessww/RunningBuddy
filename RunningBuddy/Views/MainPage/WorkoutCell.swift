@@ -20,8 +20,9 @@ struct WorkoutCell: View {
             } else {
                 Map {
                     let coords = vm.locationsArray.map{$0.coordinate}
-                    MapPolygon(coordinates: coords)
+                    MapPolyline(coordinates: coords)
                         .stroke(.blue, lineWidth: 5)
+                        .strokeStyle(style: .init(lineCap: .round))
                 }
                 .overlay {
                     LinearGradient(colors: [.white.opacity(0.1), .white], startPoint: .top, endPoint: .bottom)

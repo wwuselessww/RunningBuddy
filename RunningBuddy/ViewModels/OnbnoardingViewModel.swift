@@ -16,6 +16,7 @@ import SwiftUI
     var healKitManager = HealthKitManager.shared
     var isCompleted: Bool = false
     var errorText: String = ""
+    var weight: Int = 60
     
     func checkOnboardingCompletion(){
         if healthKitGranted && locationGranted && isCompleted {

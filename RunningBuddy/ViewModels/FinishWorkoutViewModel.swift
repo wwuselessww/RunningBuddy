@@ -62,7 +62,9 @@ import CoreLocation
                 return
             }
             
-            let calories = calculateCalories(weightKg: 90, durationSeconds: Double(result.duration), paceMinPerKm: paceNumber)
+            let weight = try UserProvider.shared.fetchWeight()
+            
+            let calories = calculateCalories(weightKg: Double(weight), durationSeconds: Double(result.duration), paceMinPerKm: paceNumber)
             try await heathStoreManager.saveHKWorkout(start: start, end: Date.now, path: locations, calories: calories, distance: result.distance, type: result.type ?? .running)
         } catch {
             print("error in proccess of saving")

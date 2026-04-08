@@ -11,6 +11,8 @@ struct ProfilePage: View {
     private let flameSize: CGFloat = 80
     @State var currentStreak: Int = 0
     @State var days: [Days] = [.init(name: "mon", number: 1, isSelected: true),.init(name: "tue", number: 2),.init(name: "wen", number: 3),.init(name: "thu", number: 4),.init(name: "fri", number: 5),.init(name: "sat", number: 6),.init(name: "sun", number: 7)]
+    @State var selectedWeight: Int = 0
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -64,8 +66,11 @@ struct ProfilePage: View {
                         }
                     }
                     Section("Settings") {
-                        SettingsCell(image: Image(systemName: "bell"), title: "Notifications", color: .green, destination: {MainPage()})
-                        SettingsCell(image: Image(systemName: "calendar"), title: "Streak calendar", color: .black, destination: {MainPage()})
+//                        SettingsCell(image: Image(systemName: "bell"), title: "Notifications", color: .green, destination: {MainPage()})
+//                        SettingsCell(image: Image(systemName: "calendar"), title: "Streak calendar", color: .black, destination: {MainPage()})
+                        SettingsCell(image: Image(systemName: "scalemass.fill"), title: "Weight is \(selectedWeight)") {
+                            WeightView(selectedWeight: $selectedWeight)
+                        }
                     }
                     
                 }
@@ -76,6 +81,17 @@ struct ProfilePage: View {
                 
                 
             }
+            .onAppear {
+                fetchWeight()
+            }
+        }
+    }
+    
+    func fetchWeight() {
+        do {
+            selectedWeight =  try UserProvider.shared.fetchWeight()
+        } catch {
+            print(error)
         }
     }
 }

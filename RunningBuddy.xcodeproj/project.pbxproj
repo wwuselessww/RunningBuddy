@@ -79,6 +79,8 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Components/StatDisplay.swift,
+				CoreData/UserProvider.swift,
+				CoreData/WorkoutsDataModel.xcdatamodeld,
 				"Extensions/Int+Extensions.swift",
 				Models/Stage.swift,
 				Models/WorkoutModel.swift,
@@ -100,6 +102,14 @@
 			);
 			target = A2DAE5F72E5F6889004BECFD /* LiveActivityExtension */;
 		};
+		A2EA6DA52F8694CA00E5A1F2 /* Exceptions for "RunningBuddy" folder in "RunningBuddy_Tests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				CoreData/UserProvider.swift,
+				CoreData/WorkoutsDataModel.xcdatamodeld,
+			);
+			target = A28555B52E8E85FB00D8DD53 /* RunningBuddy_Tests */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -113,6 +123,7 @@
 			exceptions = (
 				A26826CB2DFC3DAF00DD5A95 /* Exceptions for "RunningBuddy" folder in "RunningBuddy" target */,
 				A20693D62E6082EE00D1EC9F /* Exceptions for "RunningBuddy" folder in "LiveActivityExtension" target */,
+				A2EA6DA52F8694CA00E5A1F2 /* Exceptions for "RunningBuddy" folder in "RunningBuddy_Tests" target */,
 			);
 			path = RunningBuddy;
 			sourceTree = "<group>";
