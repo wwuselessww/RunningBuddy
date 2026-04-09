@@ -66,7 +66,7 @@ struct SettingsCell<Destination: View, MenuContent: View, MenuLabel: View>: View
     let img = Image(systemName: "gear")
     List {
         SettingsCell(image: img, title: "settingss", destination: {
-            ProfilePage()
+            SettingsPage()
         })
         
     }

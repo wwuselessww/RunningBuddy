@@ -18,13 +18,14 @@ struct PermissionView<Content: View>: View {
                 .frame(width: 100, height: 100)
                 .overlay {
                     Text("CHANGE ME")
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.label)
                 }
                 .padding(.top)
             Text(title)
                 .foregroundStyle(.label)
-                .whiteRoundedText()
                 .multilineTextAlignment(.center)
+                .fontWeight(.bold)
+                .fontDesign(.rounded)
                 .font(.title)
                 .padding(.bottom, 5)
             Text(explanation)
@@ -39,7 +40,7 @@ struct PermissionView<Content: View>: View {
         .padding(.all)
         .background {
             RoundedRectangle(cornerRadius: 20)
-                .foregroundStyle(.white)
+                .foregroundStyle(.reverserLabel.opacity(0.5))
                 .padding()
         }
     }

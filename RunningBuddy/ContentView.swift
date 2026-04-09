@@ -23,7 +23,7 @@ struct ContentView: View {
                             WorkoutPage()
                         }
                         Tab("Profile", systemImage: "person.fill", role: .none) {
-                            ProfilePage()
+                            SettingsPage()
                         }
                         Tab("Debug", systemImage: "ladybug", role: .none) {
                             DebugPage()
