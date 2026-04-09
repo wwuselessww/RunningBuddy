@@ -14,7 +14,6 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             if isOnboardingCompleted {
-                if #available(iOS 26, *) {
                     TabView {
                         Tab("home", systemImage: "house", role: .none) {
                             MainPage()
@@ -29,22 +28,6 @@ struct ContentView: View {
                             DebugPage()
                         }
                     }
-
-                } else {
-                    TabView {
-                        MainPage()
-                            .tabItem {
-                                Image(systemName: "house")
-                                Text("Home")
-                            }
-                        WorkoutPage()
-                            .tabItem {
-                                Image(systemName: "figure.run")
-                                Text("Workout")
-                            }
-                    }
-                   
-                }
             } else {
                 OnboardingRoot()
                     
@@ -55,9 +38,6 @@ struct ContentView: View {
             await HealthKitManager.shared.requestAuthorization()
         }
         .environment(\.managedObjectContext, WorkoutProvider.shared.viewContext)
-//        .onAppear {
-//            HealthKitManager.shared.ensuresHealthKitSetup()
-//        }
     }
 }
 
