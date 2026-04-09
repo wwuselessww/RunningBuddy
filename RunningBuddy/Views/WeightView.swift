@@ -8,10 +8,18 @@
 import SwiftUI
 
 struct WeightView: View {
+    @Environment(\.dismiss) private var dismiss
     @Binding var selectedWeight: Int
     @State var units: WeightUnits = .kg
     @State private var isButtonEnable: Bool = false
     private let weightsArray: [Int] = Array(0..<200)
+    var needsDismiss: Bool = false
+    
+    init(selectedWeight: Binding<Int>, needsDismiss: Bool = false) {
+        self._selectedWeight = selectedWeight
+        self.needsDismiss = needsDismiss
+    }
+    
     var body: some View {
         VStack {
             Text("What is your current weight?")
@@ -47,6 +55,9 @@ struct WeightView: View {
             Spacer()
             Button {
                 saveWeight()
+                if needsDismiss {
+                    dismiss()
+                }
             } label: {
                 Text("Confirm")
                     .foregroundStyle(.white)

@@ -66,10 +66,8 @@ struct ProfilePage: View {
                         }
                     }
                     Section("Settings") {
-//                        SettingsCell(image: Image(systemName: "bell"), title: "Notifications", color: .green, destination: {MainPage()})
-//                        SettingsCell(image: Image(systemName: "calendar"), title: "Streak calendar", color: .black, destination: {MainPage()})
                         SettingsCell(image: Image(systemName: "scalemass.fill"), title: "Weight is \(selectedWeight)") {
-                            WeightView(selectedWeight: $selectedWeight)
+                            WeightView(selectedWeight: $selectedWeight, needsDismiss: true)
                         }
                     }
                     
