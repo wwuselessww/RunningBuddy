@@ -79,7 +79,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Components/StatDisplay.swift,
-				CoreData/UserProvider.swift,
 				CoreData/WorkoutsDataModel.xcdatamodeld,
 				"Extensions/Int+Extensions.swift",
 				Models/Stage.swift,
@@ -105,7 +104,6 @@
 		A2EA6DA52F8694CA00E5A1F2 /* Exceptions for "RunningBuddy" folder in "RunningBuddy_Tests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				CoreData/UserProvider.swift,
 				CoreData/WorkoutsDataModel.xcdatamodeld,
 			);
 			target = A28555B52E8E85FB00D8DD53 /* RunningBuddy_Tests */;

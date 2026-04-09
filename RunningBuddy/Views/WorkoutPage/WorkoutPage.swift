@@ -28,7 +28,7 @@ struct WorkoutPage: View {
                     Spacer()
                     if vm.selectedType == .outdoorRun {
                         WorkoutMaps(vm: $vm)
-                            .padding(.all)
+                            .padding(.all, 10)
                             .background {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 30)
@@ -40,7 +40,7 @@ struct WorkoutPage: View {
                                 .foregroundStyle(.white)
                                 .opacity(0.5)
                             }
-                            .padding(.top, 100)
+                            .padding(.top, 70)
                             .padding(.all)
                         ScrollingButtons(selectedType: $vm.selectedDifficulty, scrollId: $vm.selectedEmotion, workoutTypes: vm.dificultyArray, time: vm.time) {
                             path.append(vm.selectedWorkout)

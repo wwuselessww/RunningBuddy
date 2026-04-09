@@ -21,10 +21,16 @@ struct WalkDurationPicker: View {
             Spacer()
             HStack {
                 Text("This much of walking")
-                
+                    .font(.default)
+                    .fontWeight(.medium)
+                    .fontDesign(.rounded)
+                    .foregroundStyle(.label)
+                    .padding(.vertical,5)
+                    .padding(.horizontal, 10)
+                    .glassEffect(.regular)
                 Spacer()
             }
-            .padding(.leading, 30)
+            .padding(.bottom, 10)
             Picker("Time", selection: $selectedTime) {
                 ForEach(timeArray, id: \.self) { time in
                     Text("\(time)")
@@ -35,7 +41,6 @@ struct WalkDurationPicker: View {
                 }
             }
             .pickerStyle(.wheel)
-//            .roundedRectangleWithBorder()
             .background {
                 ZStack {
                     RoundedRectangle(cornerRadius: 30)
@@ -80,7 +85,7 @@ struct WalkDurationPicker: View {
         Spacer()
     }
     .background {
-        Color.black
+        Color.red
             .ignoresSafeArea()
     }
 }

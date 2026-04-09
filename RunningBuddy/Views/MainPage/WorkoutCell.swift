@@ -25,7 +25,7 @@ struct WorkoutCell: View {
                         .strokeStyle(style: .init(lineCap: .round))
                 }
                 .overlay {
-                    LinearGradient(colors: [.white.opacity(0.1), .white], startPoint: .top, endPoint: .bottom)
+                    LinearGradient(colors: [.reverserLabel.opacity(0.1), .reverserLabel], startPoint: .top, endPoint: .bottom)
                 }
             }
             VStack {
@@ -33,9 +33,12 @@ struct WorkoutCell: View {
                     VStack(alignment: .leading) {
                         Text(model.date.formateToString())
                             .font(.title.bold())
+                            .fontDesign(.rounded)
                     }
                     Spacer()
-                    
+                    Text(model.type.displayName)
+                        .font(.title3.bold())
+                        .fontDesign(.rounded)
                 }
                 .padding(.top)
                 .padding(.horizontal)
