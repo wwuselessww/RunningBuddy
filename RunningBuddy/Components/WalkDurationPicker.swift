@@ -20,7 +20,7 @@ struct WalkDurationPicker: View {
         VStack {
             Spacer()
             HStack {
-                Text("This much of walking")
+                Text("Minutes")
                     .font(.default)
                     .fontWeight(.medium)
                     .fontDesign(.rounded)
@@ -45,10 +45,10 @@ struct WalkDurationPicker: View {
                 ZStack {
                     RoundedRectangle(cornerRadius: 30)
                         .stroke(lineWidth: 3)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.reverserLabel)
                         .opacity(0.5)
                     RoundedRectangle(cornerRadius: 30)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(.reverserLabel)
                         .opacity(0.5)
                 }
             }

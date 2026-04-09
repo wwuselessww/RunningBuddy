@@ -54,13 +54,10 @@ struct WorkoutPage: View {
                                 print("No emotion")
                                 return
                             }
-                            
-                            
                             vm.selectedIndex = index
                             vm.selectedWorkout = vm.workoutRunArray[index]
                             vm.backgroundColor = vm.dificultyArray[index].color
                             vm.getWorkoutData(selectedIndex: emotion)
-                            
                             vm.calculateTime(vm.selectedWorkout)
                         })
                         .frame(height: 100)

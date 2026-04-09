@@ -43,7 +43,7 @@ struct ScrollingButtons: View {
                                 } label: {
                                     Text(data.level.capitalized)
                                         .font(.title)
-                                        .foregroundStyle(.white)
+                                        .foregroundStyle(.reverserLabel)
                                         .frame(width: geo.size.width / 1.0, height: 50)
                                         .glassEffect(.regular.tint(data.color).interactive())
                                 }

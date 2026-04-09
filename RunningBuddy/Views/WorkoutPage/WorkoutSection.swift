@@ -18,14 +18,24 @@ struct WorkoutSection<Content:View>: View {
     var body: some View {
         VStack(alignment: .leading) {
             if repeats != 0 {
-//                Group {
                     HStack(spacing: 0) {
                         Image(systemName: "repeat.circle")
                         Text("\(repeats) times")
                     }
                     .font(.callout)
+                    .fontDesign(.rounded)
                     .contentTransition(.numericText())
-//                }
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 2)
+                    .background {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 16)
+                                .foregroundStyle(.reverserLabel)
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(lineWidth: 2)
+                                .foregroundStyle(.gray)
+                        }
+                    }
                 
             }
             
