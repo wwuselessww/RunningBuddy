@@ -18,7 +18,7 @@ struct DayCard: View {
             print(isChosen)
         } label: {
             VStack {
-                Text(day.name.capitalized)
+                Text(LocalizedStringKey(day.name.capitalized))
                 Text(day.number.description)
             }
             .foregroundStyle(Color(.label))

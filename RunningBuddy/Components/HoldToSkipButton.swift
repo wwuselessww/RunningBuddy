@@ -18,7 +18,7 @@ struct HoldToSkipButton: View {
         ZStack {
             RoundedRectangle(cornerRadius: 20)
                 .foregroundStyle(isHolded ? .red : .blue)
-            Text("Hold To Skip")
+            Text("Hold To Skip", comment: "hold to skip button in training view")
                 .font(.system(size: 18, weight: .semibold))
                 .foregroundStyle(.white)
         }

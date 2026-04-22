@@ -19,9 +19,18 @@ struct WorkoutModel: Hashable {
 
 struct WorkoutDifficulty: Hashable, Identifiable {
     let id: UUID = UUID()
-    let level: String
+    let level: LocalizedStringResource
     let image: Emotion
     let color: Color
+    
+    static func == (lhs: WorkoutDifficulty, rhs: WorkoutDifficulty) -> Bool {
+            lhs.id == rhs.id
+        }
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+    
 }
 
 struct WorkoutActivity: Hashable {
@@ -31,11 +40,17 @@ struct WorkoutActivity: Hashable {
     var repeats: Int?
 }
 
-enum ActivityType: String {
+enum ActivityType: String, CaseIterable {
     case walking = "Walk"
     case running = "Run"
+    
+    var localizedName: LocalizedStringResource {
+        switch self {
+        case .walking: return "Walk"
+        case .running: return "Run"
+        }
+    }
 }
-
 
 enum Emotion: String {
     case easy = "easy"

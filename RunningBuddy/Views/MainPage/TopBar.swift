@@ -26,7 +26,6 @@ struct WeekHeader: View {
                     ForEach($days, id: \.id) { day in
                         Spacer()
                         DayCard(day: day, isChosen: $chosenDay)
-                        
                     }
                     ActivityRing(value: $activityValue, title: $activityTitle)
                         .frame(width: 65)

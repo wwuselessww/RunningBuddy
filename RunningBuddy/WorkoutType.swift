@@ -5,7 +5,7 @@
 //  Created by Alexander Kozharin on 07.05.25.
 //
 
-import Foundation
+import SwiftUI
 //enum WorkoutType: String {
 //    case outdoorRun = "Outdoor Run"
 //    case outdoorWalk = "Outdoor Walk"
@@ -17,10 +17,10 @@ enum WorkoutType: Identifiable, CaseIterable, Hashable {
     
     var id: WorkoutType { self }
     
-    var displayName: String {
+    var displayName: LocalizedStringKey {
         switch self {
-        case .outdoorRun: return "Outdoor Run"
-        case .outdoorWalk: return "Outdoor Walk"
+        case .outdoorRun: return LocalizedStringKey("Outdoor Run")
+        case .outdoorWalk: return LocalizedStringKey("Outdoor Walk")
         }
     }
 }

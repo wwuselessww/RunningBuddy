@@ -10,6 +10,7 @@ struct CircleButtonModifier: ViewModifier {
     var color: Color
     func body(content: Content) -> some View {
         content
+            .padding()
             .frame(minWidth: 44, maxWidth: 88, minHeight: 44, maxHeight: 88)
             .background {
                 Circle()

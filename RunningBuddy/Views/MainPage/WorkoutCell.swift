@@ -31,7 +31,7 @@ struct WorkoutCell: View {
             VStack {
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(model.date.formateToString())
+                        Text(model.date.formateToString().capitalized)
                             .font(.title.bold())
                             .fontDesign(.rounded)
                     }

@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct StatDisplay: View {
-    var title: String
+    var title: LocalizedStringKey
     var value: String
-    var unit: String
+    var unit: LocalizedStringKey
     var body: some View {
         VStack {
             HStack {

@@ -18,7 +18,7 @@ struct ScrollingButtons: View {
     var body: some View {
         VStack {
             HStack {
-                Text("Total time: \(time / 60) min")
+                Text("Total time: \(time / 60) min", comment: "workout screen total time calculated ")
                     .contentTransition(.numericText())
                     .font(.default)
                     .padding(.horizontal)
@@ -41,7 +41,7 @@ struct ScrollingButtons: View {
                                     print(selectedType)
                                     action()
                                 } label: {
-                                    Text(data.level.capitalized)
+                                    Text(data.level)
                                         .font(.title)
                                         .foregroundStyle(.reverserLabel)
                                         .frame(width: geo.size.width / 1.0, height: 50)
