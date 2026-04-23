@@ -20,7 +20,7 @@ struct WalkDurationPicker: View {
         VStack {
             Spacer()
             HStack {
-                Text("Minutes")
+                Text("Workout duration in minutes")
                     .font(.default)
                     .fontWeight(.medium)
                     .fontDesign(.rounded)

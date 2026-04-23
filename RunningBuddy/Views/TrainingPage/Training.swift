@@ -18,15 +18,15 @@ struct Training: View {
             HStack {
                 VStack(spacing: .zero) {
                     HStack {
-                        StatDisplay(title: "Time remaining", value: Double(vm.totalTime).timeString(), unit: "min")
-                        StatDisplay(title: "Distance", value: String(format: "%0.2f", vm.distance), unit: "km")
+                        StatDisplay(title: LocalizedStringKey("Time remaining"), value: Double(vm.totalTime).timeString(), unit: LocalizedStringKey("min"))
+                        StatDisplay(title: LocalizedStringKey("Distance"), value: String(format: "%0.2f", vm.distance), unit: LocalizedStringKey("km"))
                     }
                     HStack {
-                        StatDisplay(title: "Pace", value: String(format: "%0.1f", vm.pace), unit: "km")
-                        StatDisplay(title: "Speed", value: String(format: "%0.1f", vm.speed), unit: "km/h")
+                        StatDisplay(title: LocalizedStringKey("Pace"), value: String(format: "%0.1f", vm.pace), unit: LocalizedStringKey("km"))
+                        StatDisplay(title: LocalizedStringKey("Speed"), value: String(format: "%0.1f", vm.speed), unit: LocalizedStringKey("km/h"))
                     }
-                    StatDisplay(title: "Current objective time", value: Double(vm.currentObjectiveTime).timeString(), unit: "min")
-                    Text(vm.currentAcitivity?.type.rawValue ?? "Walk")
+                    StatDisplay(title: LocalizedStringKey("Current objective time"), value: Double(vm.currentObjectiveTime).timeString(), unit: LocalizedStringKey("min"))
+                    Text(vm.currentAcitivity?.type.localizedName ?? "Walk")
                         .font(Font.system(size: 44, weight: .bold, design: .default))
                         .bold()
                     Spacer()
@@ -36,7 +36,10 @@ struct Training: View {
                                 print("exit")
                                 vm.backPressed()
                             } label: {
-                                Text("End")
+//                                Text("End")
+                                Image(systemName: "x.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
                                     .foregroundStyle(.white)
                                     .font(.callout)
                                     .fontWeight(.semibold)
@@ -60,7 +63,10 @@ struct Training: View {
                                 print("skip")
                                 vm.skipHolded()
                             } label: {
-                                Text("Skip")
+                                Image(systemName: "forward.fill")
+                                    .resizable()
+                                    .scaledToFit()
+//                                Text("Skip")
                                     .foregroundStyle(.white)
                                     .font(.callout)
                                     .fontWeight(.semibold)

@@ -11,16 +11,18 @@ import SwiftUI
 
 struct SettingsCell<Destination: View, MenuContent: View, MenuLabel: View>: View {
     var image: Image = Image(systemName: "gear")
-    var title: String
+    var title: LocalizedStringKey
     var color: Color
+    var data: LocalizedStringKey?
     var destination: Destination?
     var menuContent: MenuContent?
     var menuLabel: MenuLabel?
 
     init(
         image: Image = Image(systemName: "gear"),
-        title: String,
+        title: LocalizedStringKey,
         color: Color = .primary,
+        data: LocalizedStringKey? = nil,
         @ViewBuilder destination: () -> Destination,
         @ViewBuilder menuContent: () -> MenuContent,
         @ViewBuilder menuLabel: () -> MenuLabel
@@ -31,6 +33,7 @@ struct SettingsCell<Destination: View, MenuContent: View, MenuLabel: View>: View
         self.destination = destination()
         self.menuContent = menuContent()
         self.menuLabel = menuLabel()
+        self.data = data
     }
 
     var body: some View {
@@ -55,8 +58,13 @@ struct SettingsCell<Destination: View, MenuContent: View, MenuLabel: View>: View
                 .scaledToFit()
                 .frame(width: 20)
                 .foregroundStyle(color)
-            Text(title.capitalized)
+            Text(title)
                 .font(.callout)
+            if let data {
+                Text(data)
+                    .font(.callout)
+            }
+                
             Spacer()
         }
     }
@@ -77,7 +85,7 @@ struct SettingsCell<Destination: View, MenuContent: View, MenuLabel: View>: View
 extension SettingsCell where Destination == EmptyView, MenuContent == EmptyView, MenuLabel == EmptyView {
     init(
         image: Image = Image(systemName: "gear"),
-        title: String,
+        title: LocalizedStringKey,
         color: Color = .primary
     ) {
         self.image = image
@@ -92,8 +100,9 @@ extension SettingsCell where Destination == EmptyView, MenuContent == EmptyView,
 extension SettingsCell where MenuContent == EmptyView, MenuLabel == EmptyView {
     init(
         image: Image = Image(systemName: "gear"),
-        title: String,
+        title: LocalizedStringKey,
         color: Color = .primary,
+        data: LocalizedStringKey? = nil,
         @ViewBuilder destination: () -> Destination
     ) {
         self.image = image
@@ -101,6 +110,7 @@ extension SettingsCell where MenuContent == EmptyView, MenuLabel == EmptyView {
         self.color = color
         self.destination = destination()
         self.menuContent = nil
+        self.data = data
     }
 }
 
@@ -108,7 +118,7 @@ extension SettingsCell where MenuContent == EmptyView, MenuLabel == EmptyView {
 extension SettingsCell where Destination == EmptyView {
     init(
         image: Image = Image(systemName: "gear"),
-        title: String,
+        title: LocalizedStringKey,
         color: Color = .primary,
         @ViewBuilder menuContent: () -> MenuContent,
         @ViewBuilder menuLabel: () -> MenuLabel

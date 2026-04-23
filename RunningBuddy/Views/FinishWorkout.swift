@@ -34,9 +34,9 @@ struct FinishWorkout: View {
                     HStack {
                         InfoCell(title: "Time", data: "\(vm.timeString)")
                         Spacer()
-                        InfoCell(title: "Distance", data: "\(vm.distanceString) km")
+                        InfoCell(title: "Distance", data: "\(vm.distanceString)", units: "km")
                         Spacer()
-                        InfoCell(title: "Pace", data: "\(vm.paceString) km/h")
+                        InfoCell(title: "Pace", data: "\(vm.paceString)", units: "km/h")
                     }
                     if isRecordedByWatch {
                         HStack {
@@ -63,7 +63,7 @@ struct FinishWorkout: View {
             }
             .navigationBarBackButtonHidden()
             .toolbar(.hidden, for: .tabBar)
-            .navigationTitle(workout.type?.rawValue ?? "No display name")
+            .navigationTitle(workout.type == .running ? LocalizedStringKey("Running") : LocalizedStringKey("Walking"))
             .onAppear {
                 print("workout", workout)
                 vm.result = workout

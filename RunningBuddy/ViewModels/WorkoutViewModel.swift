@@ -23,7 +23,7 @@ import SwiftUI
     var selectedDifficulty: WorkoutDifficulty = .init(level: "easy", image: .easy, color: .green)
     var selectedType: WorkoutType = .outdoorWalk
     var selectedEmotion: Emotion? = .easy
-    var selectedWorkout: WorkoutModel = .init(difficulty: .init(level: "", image: .easy, color: .pink), type: .running)
+    var selectedWorkout: WorkoutModel = .init(difficulty: .init(level: "easy", image: .easy, color: .pink), type: .running)
     var backgroundColor: Color = .green
     var currentTotalTime: Int = 0
     var workoutRunArray: [WorkoutModel] = [

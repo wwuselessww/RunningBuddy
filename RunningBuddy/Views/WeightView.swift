@@ -41,7 +41,7 @@ struct WeightView: View {
                 }
                 Picker("Weight Units", selection: $units) {
                     ForEach(WeightUnits.allCases, id: \.self) { unit in
-                        Text(unit.rawValue)
+                        Text(unit.localized)
                             .font(.largeTitle)
                             .bold()
                             .fontDesign(.rounded)
@@ -91,4 +91,11 @@ struct WeightView: View {
 enum WeightUnits: String, CaseIterable {
     case kg = "kg"
     case pound = "lbs"
+    
+    var localized: LocalizedStringResource {
+        switch self {
+        case .kg: return "kg"
+        case .pound: return "lbs"
+        }
+    }
 }

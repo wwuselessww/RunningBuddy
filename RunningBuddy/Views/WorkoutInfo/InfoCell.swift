@@ -9,26 +9,34 @@ import SwiftUI
 
 struct InfoCell: View {
     
-    init(title: String, data: String, dataColor: Color = .black) {
+    init(title: LocalizedStringKey, data: String, units: LocalizedStringKey? = nil, dataColor: Color = .black) {
         self.title = title
         self.data = data
         self.color = dataColor
+        self.units = units
     }
     var color: Color = .black
-    var title: String
+    var title: LocalizedStringKey
+    var units: LocalizedStringKey?
     var data: String
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
                 .font(.caption.bold())
                 .foregroundStyle(.label)
-            Text(data)
-                .font(.callout.bold())
-                .foregroundStyle(.label)
+            HStack {
+                Text(data)
+                if let unit = units {
+                    Text(unit)
+                }
+                
+            }
+            .font(.callout.bold())
+            .foregroundStyle(.label)
         }
     }
 }
 
 #Preview {
-    InfoCell(title: "Avg Hearth Rate", data: "00;00;00", dataColor: .red)
+    InfoCell(title: "Avg Hearth Rate", data: "00;00;00", units: "km", dataColor: .red)
 }

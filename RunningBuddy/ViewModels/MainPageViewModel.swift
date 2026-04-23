@@ -10,7 +10,13 @@ import HealthKit
 import CoreLocation
 
 @Observable class MainPageViewModel {
-    var days: [Days] = [.init(name: "mon", number: 0),.init(name: "tue", number: 0),.init(name: "wen", number: 0),.init(name: "thu", number: 0),.init(name: "fri", number: 0),.init(name: "sat", number: 0),.init(name: "sun", number: 0)]
+    var days: [Days] = [.init(name: String(localized: "mon"),number: 0),
+                        .init(name: String(localized: "tue"),number: 0),
+                        .init(name: String(localized: "wen"),number: 0),
+                        .init(name: String(localized: "thu"), number: 0),
+                        .init(name: String(localized: "fri"), number: 0),
+                        .init(name: String(localized: "sat"), number: 0),
+                        .init(name: String(localized: "sun"), number: 0)]
     
     var activityValue = 0.2
     var waterLevel = 0.7

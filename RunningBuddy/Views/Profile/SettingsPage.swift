@@ -66,7 +66,7 @@ struct SettingsPage: View {
 //                        }
 //                    }
                     Section("Settings") {
-                        SettingsCell(image: Image(systemName: "scalemass.fill"), title: "Weight is \(selectedWeight)") {
+                        SettingsCell(image: Image(systemName: "scalemass.fill"), title: "Weight is ", data: "\(selectedWeight) kg") {
                             WeightView(selectedWeight: $selectedWeight, needsDismiss: true)
                         }
                     }
