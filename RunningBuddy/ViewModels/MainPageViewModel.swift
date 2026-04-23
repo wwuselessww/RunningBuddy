@@ -40,6 +40,9 @@ import CoreLocation
     private var startOfTheWeek: Date  {
         return calendar.startOfWeek(for: Date.now) ?? Date.now
     }
+    
+    var streak: Int = 0
+    
     var calendar: Calendar {
         var calendar = Calendar(identifier: .gregorian)
         calendar.firstWeekday = 2
@@ -149,6 +152,15 @@ import CoreLocation
             let date = calendar.date(byAdding: .day, value: i, to: startOfTheWeek)!
             days[i].number = calendar.component(.day, from: date)
         }
+    }
+    
+    
+    func getActivityStreak() {
+        Task {
+            let counter = await healtKitManager.getActivityStreak()
+            streak = counter
+        }
+        
     }
     
     

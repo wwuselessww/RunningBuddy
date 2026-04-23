@@ -80,7 +80,6 @@ final class WorkoutProvider: WorkoutProviding {
     
     func createWorkout(workout result: WorkoutResultsModel?, date: Date = Date())  {
         guard let result = result else {
-        print("no data" , result)
             return
         }
         let pace = result.pace
@@ -108,6 +107,22 @@ final class WorkoutProvider: WorkoutProviding {
         } catch {
             print(error)
         }
+    }
+    
+    
+    func getStreak()-> Int {
+        do {
+            let workouts = try fetchAllWorkouts()
+            print("workoutDays", workouts.count)
+            return workouts.count
+        } catch {
+            print("get streak error ", error)
+            return -1
+        }
+        
+        
+        
+        
     }
     
 }

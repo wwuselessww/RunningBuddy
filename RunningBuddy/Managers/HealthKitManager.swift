@@ -303,6 +303,31 @@ class HealthKitManager {
         print("")
     }
     
+    
+    func getActivityStreak() async -> Int {
+        let calendar = Calendar.current
+        var streak = 0
+        var dayToCheck = calendar.startOfDay(for: Date())
+        
+        while true {
+            let nextDay = calendar.date(byAdding: .day, value: 1, to: dayToCheck)!
+            let workouts = await getWorkouts(from: dayToCheck, to: nextDay)
+            
+            if workouts.isEmpty {
+                if streak == 0 {
+                    dayToCheck = calendar.date(byAdding: .day, value: -1, to: dayToCheck)!
+                    continue
+                }
+                break
+            }
+            
+            streak += 1
+            dayToCheck = calendar.date(byAdding: .day, value: -1, to: dayToCheck)!
+        }
+        
+        return streak
+    }
+    
     private func workoutConfig(for activityType: ActivityType) -> HKWorkoutConfiguration {
         let config = HKWorkoutConfiguration()
         config.activityType = activityType == .running ? .running : .walking

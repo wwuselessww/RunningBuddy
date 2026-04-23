@@ -20,15 +20,17 @@ struct WeekHeader: View {
             VStack {
                 Spacer(minLength: 50)
                 HStack {
-                    Circle()
-                        .foregroundStyle(.clear)
+                    Spacer()
+                    StreakMeter(waterBalance: $waterLevel, title: $waterTitle)
                         .frame(width: 60)
+                        .padding(.leading)
                     ForEach($days, id: \.id) { day in
                         Spacer()
                         DayCard(day: day, isChosen: $chosenDay)
                     }
+                    
                     ActivityRing(value: $activityValue, title: $activityTitle)
-                        .frame(width: 65)
+                        .frame(width: 60)
                         .padding(.bottom)
                         .padding(.trailing)
                     Spacer()
@@ -46,7 +48,7 @@ struct WeekHeader: View {
 #Preview {
     @Previewable @State var viewModel = MainPageViewModel()
     VStack {
-        WeekHeader(waterLevel: $viewModel.waterLevel, waterTitle: $viewModel.waterTitle, days: $viewModel.days, chosenDay: $viewModel.chosenDay, activityValue: $viewModel.activityValue, activityTitle: $viewModel.activityTitle)
+        WeekHeader(waterLevel: $viewModel.waterLevel, waterTitle: .constant(300), days: $viewModel.days, chosenDay: $viewModel.chosenDay, activityValue: $viewModel.activityValue, activityTitle: $viewModel.activityTitle)
         Spacer()
     }
     

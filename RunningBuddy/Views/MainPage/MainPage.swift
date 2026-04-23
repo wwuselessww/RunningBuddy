@@ -17,7 +17,7 @@ struct MainPage: View {
     
     var body: some View {
             VStack {
-                WeekHeader(waterLevel: $viewModel.waterLevel, waterTitle: $viewModel.waterTitle, days: $viewModel.days, chosenDay: $viewModel.chosenDay, activityValue: $viewModel.activityValue, activityTitle: $viewModel.activityTitle)
+                WeekHeader(waterLevel: $viewModel.waterLevel, waterTitle: $viewModel.streak, days: $viewModel.days, chosenDay: $viewModel.chosenDay, activityValue: $viewModel.activityValue, activityTitle: $viewModel.activityTitle)
                     if !viewModel.hkWorkouts.isEmpty {
                         ScrollView {
                             ForEach(viewModel.hkWorkouts, id: \.id) { workout in
@@ -49,10 +49,12 @@ struct MainPage: View {
             .onAppear {
                 viewModel.trigger.toggle()
                 viewModel.updateView()
+                viewModel.getActivityStreak()
             }
             .onChange(of: viewModel.chosenDay) { oldValue, newValue in
                 viewModel.setDateTo(newValue)
                 viewModel.updateView()
+                viewModel.getActivityStreak()
             }
     }
 }
@@ -70,15 +72,5 @@ struct Days: Identifiable {
         MainPage()
     }
 }
-#Preview("iPhone SE-ish", traits: .fixedLayout(width: 375, height: 667)) {
-    NavigationStack {
-        MainPage()
-    }
-}
 
-#Preview("iPhone 16 Pro-ish", traits: .fixedLayout(width: 393, height: 852)) {
-    NavigationStack {
-        MainPage()
-    }
-}
 
