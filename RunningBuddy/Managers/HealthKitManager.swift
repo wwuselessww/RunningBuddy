@@ -98,10 +98,15 @@ class HealthKitManager {
     }
     
     func getWorkouts(from: Date, to: Date) async -> [HKWorkout] {
-        let predicate = HKQuery.predicateForSamples(withStart: from, end: to)
+        let runningPredicate = HKQuery.predicateForWorkouts(with: .running)
+        let walkingPredicate = HKQuery.predicateForWorkouts(with: .walking)
+        let datePredicate = HKQuery.predicateForSamples(withStart: from, end: to)
+        
+        let combinePredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [NSCompoundPredicate(orPredicateWithSubpredicates: [runningPredicate, walkingPredicate]), datePredicate])
+        
         do {
             let data: [HKWorkout] = try await withCheckedThrowingContinuation { continuation in
-                let query = HKSampleQuery(sampleType: .workoutType(), predicate: predicate, limit: HKObjectQueryNoLimit, sortDescriptors: [.init(keyPath: \HKSample.startDate, ascending: false)]) { query, sample, error in
+                let query = HKSampleQuery(sampleType: .workoutType(), predicate: combinePredicate, limit: HKObjectQueryNoLimit, sortDescriptors: [.init(keyPath: \HKSample.startDate, ascending: false)]) { query, sample, error in
                     if let error = error {
                         print(error)
                         continuation.resume(throwing: error)
