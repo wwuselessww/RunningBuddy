@@ -157,7 +157,7 @@ import CoreLocation
     
     func getActivityStreak() {
         Task {
-            let counter = await healtKitManager.getActivityStreak()
+            let counter = await healtKitManager.getActivityStreak(schedule: [.monday,.tuesday,.wednesday,.thursday,.friday,.saturday,.sunday])
             streak = counter
         }
         

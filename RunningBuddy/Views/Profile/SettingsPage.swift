@@ -69,6 +69,9 @@ struct SettingsPage: View {
                         SettingsCell(image: Image(systemName: "scalemass.fill"), title: "Weight is ", data: "\(selectedWeight) kg") {
                             WeightView(selectedWeight: $selectedWeight, needsDismiss: true)
                         }
+//                        SettingsCell(image: Image(systemName: "calendar"), title: "Workout schedule") {
+//                            EmptyView()
+//                        }
                     }
                     
                 }

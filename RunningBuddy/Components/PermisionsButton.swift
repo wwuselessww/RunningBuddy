@@ -7,7 +7,7 @@
 
 import SwiftUI
 struct PermisionsButton: View {
-    let title: String
+    let title: LocalizedStringKey
     @Binding var isGranted: Bool
     let action: () -> Void
     var body: some View {
@@ -18,7 +18,7 @@ struct PermisionsButton: View {
                 Image(systemName: isGranted ? "checkmark.seal.fill" : "xmark.seal.fill")
                     .foregroundStyle( isGranted ? .green : .red)
                 Spacer()
-                Text(title.capitalized)
+                Text(title)
                     .foregroundStyle(.label)
                     .whiteRoundedText()
                     

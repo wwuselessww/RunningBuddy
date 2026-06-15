@@ -9,17 +9,14 @@ import SwiftUI
 
 struct PermissionView<Content: View>: View {
     @Binding var viewModel: OnbnoardingViewModel
-    let title: String
-    let explanation: String
+    let title: LocalizedStringKey
+    let explanation: LocalizedStringKey
     var content: () -> Content
     var body: some View {
         VStack {
-            RoundedRectangle(cornerRadius: 10)
-                .frame(width: 100, height: 100)
-                .overlay {
-                    Text("CHANGE ME")
-                        .foregroundStyle(.label)
-                }
+            Image(.iconForApp)
+                .resizable()
+                .frame(width: 140, height: 140)
                 .padding(.top)
             Text(title)
                 .foregroundStyle(.label)

@@ -24,9 +24,9 @@ struct ContentView: View {
                         Tab("Profile", systemImage: "person.fill", role: .none) {
                             SettingsPage()
                         }
-                        Tab("Debug", systemImage: "ladybug", role: .none) {
-                            DebugPage()
-                        }
+//                        Tab("Debug", systemImage: "ladybug", role: .none) {
+//                            DebugPage()
+//                        }
                     }
             } else {
                 OnboardingRoot()

@@ -309,27 +309,41 @@ class HealthKitManager {
     }
     
     
-    func getActivityStreak() async -> Int {
+    func getActivityStreak(schedule: Set<Weekday>) async -> Int {
         let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+
         var streak = 0
-        var dayToCheck = calendar.startOfDay(for: Date())
-        
+        var dayToCheck = today
+        var skippedToday = false
+
         while true {
+            let weekday = Weekday(date: dayToCheck, calendar: calendar)
+
+            if !schedule.contains(weekday) {
+                dayToCheck = calendar.date(byAdding: .day, value: -1, to: dayToCheck)!
+                continue
+            }
+
             let nextDay = calendar.date(byAdding: .day, value: 1, to: dayToCheck)!
             let workouts = await getWorkouts(from: dayToCheck, to: nextDay)
-            
+
             if workouts.isEmpty {
-                if streak == 0 {
+
+                // Allow skipping ONLY today's workout
+                if !skippedToday && calendar.isDate(dayToCheck, inSameDayAs: today) {
+                    skippedToday = true
                     dayToCheck = calendar.date(byAdding: .day, value: -1, to: dayToCheck)!
                     continue
                 }
+
                 break
             }
-            
+
             streak += 1
             dayToCheck = calendar.date(byAdding: .day, value: -1, to: dayToCheck)!
         }
-        
+
         return streak
     }
     
@@ -346,3 +360,11 @@ class HealthKitManager {
     }
 }
 
+enum Weekday: Int, CaseIterable {
+    case sunday = 1, monday, tuesday, wednesday, thursday, friday, saturday
+    
+    init(date: Date, calendar: Calendar) {
+        let component = calendar.component(.weekday, from: date)
+        self = Weekday(rawValue: component)!
+    }
+}

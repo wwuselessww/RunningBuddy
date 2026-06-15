@@ -17,6 +17,7 @@ import SwiftUI
     var isCompleted: Bool = false
     var errorText: String = ""
     var weight: Int = 60
+    var currentPage: Int = 0
     
     func checkOnboardingCompletion(){
         if healthKitGranted && locationGranted && isCompleted {
