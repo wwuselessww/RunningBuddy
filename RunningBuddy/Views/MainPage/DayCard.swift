@@ -23,7 +23,8 @@ struct DayCard: View {
             }
             .foregroundStyle(Color(.label))
             .font(.caption.bold())
-            .frame(width: 30, height: 50)
+//            .frame(width: 30, height: 50)
+            .frame(minWidth: 25, maxWidth: 30, minHeight: 45, maxHeight: 50)
             .background {
                 RoundedRectangle(cornerRadius: 10)
                     .foregroundStyle( isChosen == day.number ? .gray.opacity(0.1) : .clear)

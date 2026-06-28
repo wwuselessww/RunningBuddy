@@ -23,7 +23,7 @@ struct WeekHeader: View {
                     Spacer()
                     StreakMeter(waterBalance: $waterLevel, title: $waterTitle)
                         .frame(width: 60)
-                        .padding(.leading)
+//                        .padding(.leading)
                     ForEach($days, id: \.id) { day in
                         Spacer()
                         DayCard(day: day, isChosen: $chosenDay)
@@ -31,17 +31,18 @@ struct WeekHeader: View {
                     
                     ActivityRing(value: $activityValue, title: $activityTitle)
                         .frame(width: 60)
-                        .padding(.bottom)
-                        .padding(.trailing)
+                        
+//                        .padding(.trailing)
                     Spacer()
                 }
+                .padding(.bottom)
             }
             .zIndex(1)
-            .padding(.horizontal)
+//            .padding(.horizontal)
             .glassEffect(in: .rect(cornerRadius: 50))
             .ignoresSafeArea(edges: .top)
             .frame(minWidth: 100, maxWidth: .infinity, minHeight: 60, maxHeight: 120)
-            
+//            .padding(.horizontal)
         }
     }
 

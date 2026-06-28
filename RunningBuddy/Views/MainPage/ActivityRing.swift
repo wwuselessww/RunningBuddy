@@ -41,7 +41,7 @@ struct ActivityRing: View {
                 .stroke(Color.gray.opacity(0.3), style: StrokeStyle(lineWidth: 5, lineCap: .round))
                 .rotationEffect(Angle(degrees: 90))
             Text(title.description)
-                .font(.caption.bold())
+                .font(.caption2.bold())
                 .padding()
         }
         
