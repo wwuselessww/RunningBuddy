@@ -21,6 +21,9 @@ struct WorkoutPage: View {
                         }
                     }
                     .pickerStyle(.segmented)
+                    .onChange(of: vm.selectedType) { _, newValue in
+                        vm.changeActivityToWalking()
+                    }
 
                     
                     Face(emotion: $vm.selectedEmotion, color: vm.backgroundColor)

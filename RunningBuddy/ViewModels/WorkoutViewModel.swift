@@ -119,6 +119,13 @@ import SwiftUI
         
     }
     
+    func changeActivityToWalking() {
+        if selectedType == .outdoorWalk {
+            selectedEmotion = .easy
+            backgroundColor = .green
+        }
+    }
+    
     
     
 }
