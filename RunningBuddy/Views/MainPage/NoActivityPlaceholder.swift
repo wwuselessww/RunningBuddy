@@ -23,7 +23,6 @@ struct NoActivityPlaceholder: View {
             Text("No recorded activities")
                 .font(.title)
                 .fontWeight(.semibold)
-                .fontDesign(.rounded)
         }
     }
 }
