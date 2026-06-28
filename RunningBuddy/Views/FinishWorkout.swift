@@ -22,7 +22,9 @@ struct FinishWorkout: View {
         if let workout = self.workout {
             ZStack(alignment: .leading) {
                 Map{
-                    MapPolygon(coordinates: vm.path)
+                    MapPolyline(coordinates: vm.path)
+                        .stroke(.blue, lineWidth: 5)
+                        .strokeStyle(style: .init(lineCap: .round))
                 }
                 .ignoresSafeArea(.all)
                 VStack(alignment: .leading) {
@@ -37,6 +39,7 @@ struct FinishWorkout: View {
                         InfoCell(title: "Distance", data: "\(vm.distanceString)", units: "km")
                         Spacer()
                         InfoCell(title: "Pace", data: "\(vm.paceString)", units: "km/h")
+                        
                     }
                     if isRecordedByWatch {
                         HStack {
